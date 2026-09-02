@@ -9,6 +9,7 @@ consumidor_principal: agente
 ofrece:
   - estándar transversal de diseño de sistemas, código, Git y GitHub
   - guía por fases F0→F3 con gate de cierre por evidencia, no por declaración
+  - ciclo F0→F3 completo validado sobre un proyecto real con evidencia verificada (piloto infosalud, 2026-09-01)
   - reglas de rigor derivadas de disparadores observables, no de calificadores subjetivos
   - contención de tamaño de archivos con polaridad cerrada y exenciones declaradas
   - gate local en Python estándar, sin dependencias ni CI remoto
@@ -50,6 +51,5 @@ fronteras_de_confianza:
   - toda operación destructiva o con efecto fuera del entorno local exige autorización previa y específica
 
 pospuesto:
-  - "piloto F0→F3 completo sobre un proyecto real (lo que el README exige para salir de Alpha; F2 asume cascarón desde cero); la clasificación, el plan, la clase Architectural y el gate de planes (A-4) sí corrieron sobre repos reales"
   - perfiles por herramienta más allá de GitHub
   - clasificación de sensibilidad de datos

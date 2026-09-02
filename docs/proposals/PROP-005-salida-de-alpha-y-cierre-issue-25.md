@@ -1,6 +1,8 @@
 # PROP-005 — Salida de Alpha y cierre formal del issue #25
 
-> **Estado:** en deliberación — no normativo hasta su adopción.
+> **Estado:** en deliberación — D1 aprobada por el humano el 2026-09-01
+> (en conversación) y aplicada en el PR de adopción; D2–D4 siguen en
+> deliberación.
 > **Origen:** piloto infosalud (`docs/history/piloto-infosalud.md`),
 > issue #25 (cerrado vía PR #26) y verificación independiente del
 > registro. Este documento resuelve lo que el cierre del #25 dejó sin
