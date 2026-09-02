@@ -1,3 +1,4 @@
 {
-  "plans": "docs/plans"
+  "plans": "docs/plans",
+  "root_markdown": ["AN-KLA.md"]
 }
