@@ -130,11 +130,11 @@ palabras, y envejece igual de mal que una copia literal.
 
 ## Estado
 
-**Alpha.** El estándar y la guía pueden cambiar sin aviso previo; ninguna
-fase F0→F3 corrió todavía de punta a punta sobre un proyecto real, y el gate
-sólo se verifica localmente (sin CI remoto). Sube a versión estable cuando
-exista un piloto F0→F3 completo con evidencia.
+**Estable.** El criterio de salida de Alpha — «un piloto F0→F3 completo
+con evidencia» — se cumplió el 2026-09-01 con el piloto infosalud
+(`docs/history/piloto-infosalud.md`). El gate sigue verificándose sólo
+localmente, sin CI remoto (ADR-001).
 
-`docs/history/` conserva los registros del piloto que originó estas reglas,
-incluida la ronda adversarial que corrigió el protocolo de orquestación. Ese
-material es evidencia de procedencia, no norma vigente.
+`docs/history/` conserva los registros de los pilotos que originaron
+estas reglas, incluida la ronda adversarial que corrigió el protocolo de
+orquestación. Ese material es evidencia de procedencia, no norma vigente.
