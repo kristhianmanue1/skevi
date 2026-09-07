@@ -1,8 +1,8 @@
 # ADR-017: autoridad Git graduada en tres zonas con gate delegable
 
 Estado: aceptado. Implementado en el §6.2, §6.6 y §4.3 del estándar y
-en `fronteras_de_confianza` de `project-manifest.yaml`; la referencia
-de commit se completa en el cambio que materializa (02 §3.3).
+en `fronteras_de_confianza` de `project-manifest.yaml`. Implementado
+en 442061a (02 §3.3).
 
 Contexto: PROP-007 (instrucción directa del humano, 2026-09-07). La
 norma exigía autorización humana previa por cada operación con efecto

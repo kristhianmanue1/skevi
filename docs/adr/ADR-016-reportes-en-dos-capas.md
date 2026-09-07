@@ -1,8 +1,8 @@
 # ADR-016: reportes de agente en dos capas con bloque de trazabilidad
 
 Estado: aceptado. Implementado en el formato de fase de `00-INDICE.md`,
-el reporte adversarial de `04` §5.2 y el §6 del estándar; la referencia
-de commit se completa en el cambio que materializa (02 §3.3).
+el reporte adversarial de `04` §5.2 y el §6 del estándar. Implementado
+en 442061a (02 §3.3).
 
 Contexto: PROP-006 (instrucción directa del humano, 2026-09-07) propuso
 separar los reportes del agente en dos capas — técnica en inglés para
