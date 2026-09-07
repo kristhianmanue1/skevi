@@ -120,6 +120,10 @@ actitud positiva: es intentar demostrar que está mal.
 proceed | fix-and-retry | escalate
 ```
 
+Ronda sobre tarea material: el reporte lleva las dos capas y el bloque
+de trazabilidad de ADR-016 (ver `00-INDICE.md`, §Reporte en dos capas);
+la decisión `proceed | fix-and-retry | escalate` vive en ambas capas.
+
 ### 5.3 Reglas de cierre
 
 - `BLOCKER` y `HIGH` se corrigen siempre antes de entregar. `MED` se corrige

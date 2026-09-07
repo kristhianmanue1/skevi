@@ -1,6 +1,12 @@
 # PROP-007 — Autoridad Git graduada: zonas de autonomía, dossier de gate y delegación del gate
 
-> **Estado:** en deliberación — sin efecto normativo hasta su aprobación.
+> **Estado:** ADOPTADA — D1-D3 aprobadas por el humano (2026-09-07,
+> «adelante con recomendación», en conversación). Piloto G1-G5 corrido
+> sobre el ciclo del dossier aceptado (folios `SKV-2026-09-07-01`/`-02`:
+> rama → commit → push → PR #29 → merge → reporte de cierre); G4-G5 en
+> vigilancia hasta que opere un orquestador designado. D4 ejecutada vía
+> ADR-017 y el PR de adopción (estándar §6.2/§6.6/§4.3, manifest).
+> Registro histórico: evidencia de decisión, no norma vigente.
 > **Origen:** instrucción directa del humano (2026-09-07) y análisis en
 > conversación. Aplica al dominio Git la graduación por clase de
 > operación de ADR-004; el dossier hereda el formato de dos capas de

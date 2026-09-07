@@ -88,3 +88,20 @@ decisión o permiso. Nunca emitas `OK` con un pendiente material, y
 adoptante declare que su validador la admite; desde esa declaración es
 obligatoria. Un validador debe aceptar la línea con marca y sin ella
 (procedencia: `../adr/ADR-005-resultado-por-linea-de-evidencia.md`).
+
+## Reporte en dos capas (tarea material)
+
+Para tareas material —disparadores de `04` §5.3— el reporte de fase
+viaja en dos capas (`../adr/ADR-016-reportes-en-dos-capas.md`). La
+**capa técnica** —en inglés, autoritativa, con claves fijas `STATE`,
+`GATE`, `EVIDENCE`, `PENDING` (correspondientes a las secciones del
+bloque de arriba) y el bloque de trazabilidad `id`, `date`, `time_utc`,
+`head_sha`, `report_sha256`, `model` (autodeclarado, nunca prueba),
+`session` si existe— es la que consumen parsers y rondas adversariales.
+La **capa humana** —idioma del proyecto, redacción natural— es
+proyección de la técnica: no introduce afirmaciones ausentes en ella y,
+ante contradicción, gana la técnica. El `report_sha256` cubre la capa
+técnica en forma canónica (UTF-8, LF, sin newline final, excluida la
+línea del hash) y debe poder reproducirse. Tarea trivial: capa humana
+sola. El bloque de arriba conserva sus semánticas (OK|PARCIAL|BLOQ,
+pass|fail|inconclusive, transición) sin cambio.

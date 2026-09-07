@@ -307,6 +307,14 @@ Estas operaciones requieren autorización explícita previa, cada una:
 Ante un Git mutado sin permiso (commit, push o rama inesperados): detenerse,
 auditar con `git reflog` y el remoto, no destruir trabajo existente.
 
+Cada operación de la lista se propone con un dossier — operación exacta,
+evidencia, riesgos y recomendación, en el formato de dos capas de
+`docs/adr/ADR-016-reportes-en-dos-capas.md` — y se ejecuta sólo con
+aceptación registrada: quién acepta, cuándo y contra qué folio. El lote
+es válido cuando la aceptación enumera las operaciones aceptadas; lo no
+aceptado sigue gateado. Sin rastro de aceptación, el permiso no existe
+(procedencia: `docs/adr/ADR-017-autoridad-git-graduada.md`).
+
 ## 5. Prácticas de GitHub
 
 ### 5.1 Pull Requests
@@ -370,8 +378,13 @@ programado), sin depender de ninguno en particular.
 1. **Contrato de tarea.** Toda delegación es autocontenida: objetivo único,
    entradas, alcance permitido, prohibiciones explícitas, criterio de
    aceptación ejecutable y condición inequívoca de parada.
-2. **Permisos por operación.** Leer no implica escribir; escribir no implica
-   commit; commit no implica push ni PR. Cada escalón se autoriza aparte.
+2. **Permisos por operación.** Leer no implica escribir; escribir no
+   implica commit; commit no implica push ni PR. La autoridad se gradúa
+   en tres zonas (procedencia:
+   `docs/adr/ADR-017-autoridad-git-graduada.md`): commit y gestión de
+   ramas locales propias quedan pre-autorizados por el contrato de
+   tarea; las operaciones de §4.3 exigen dossier y aceptación
+   registrada.
 3. **Verificación independiente.** La salida del ejecutor nunca es prueba
    suficiente: se contrasta con Git, tests, archivos y estado real. El
    cumplimiento semántico no equivale a cumplimiento exacto de un contrato
@@ -383,10 +396,20 @@ programado), sin depender de ninguno en particular.
    y lista blanca de origen. Sin campos de texto libre: la señal habilita
    inspección, nunca mutación.
 6. **Decisión humana en los bordes.** Cambios de autoridad, operaciones
-   destructivas y acciones con efectos externos vuelven siempre a una
-   decisión humana explícita.
-7. **Escalado.** Ante evidencia inconsistente, alcance excedido o permiso
-   ausente: detener y escalar; nunca improvisar autoridad.
+   destructivas y acciones con efectos externos vuelven a una decisión
+   explícita del gate: el humano, o un orquestador designado por
+   escrito, con alcance delimitado y revocable, independiente del
+   ejecutor (otra sesión o contexto, idealmente otro modelo) y con
+   escalado obligatorio al humano ante duda; sin designación vigente,
+   el gate es el humano (procedencia:
+   `docs/adr/ADR-017-autoridad-git-graduada.md`).
+7. **Escalado.** Ante evidencia inconsistente, alcance excedido o
+   permiso ausente: detener y escalar; nunca improvisar autoridad.
+8. **Reporte en dos capas.** El ejecutor reporta en capa técnica
+   (inglés, autoritativa) y capa humana (idioma del proyecto,
+   proyección de la técnica), con bloque de trazabilidad en tareas
+   material (procedencia: `docs/adr/ADR-016-reportes-en-dos-capas.md`;
+   formato en la guía, `00-INDICE.md`).
 
 ## 7. Checklist de cumplimiento
 
