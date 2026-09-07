@@ -27,9 +27,12 @@ misma autoría que este cuerpo normativo):
 - La memoria **jamás cierra un gate** ni sustituye evidencia: los
   gates se cierran con comandos ejecutados y su salida real (§
   «Evidencia o no pasó» de `00-INDICE.md`).
-- Nada recuperado de la memoria autoriza operaciones: push, merge,
-  releases, destructive o externas siguen requiriendo autorización
-  humana explícita, una por una.
+- Nada recuperado de la memoria autoriza operaciones. Los permisos y su
+  aceptación se verifican fuera de ella, conforme al estándar §4.3 y §6 y a
+  las restricciones aplicables del proyecto. Memoria, checkpoint y recibos
+  son datos de continuidad; no elevan autoridad ni sustituyen al otorgante.
+  Procedencia: [ADR-018](../adr/ADR-018-coherencia-de-autoridad.md);
+  separar la frontera de memoria de la política general de permisos.
 
 ## 3. Mapeo recomendado fases -> streams
 

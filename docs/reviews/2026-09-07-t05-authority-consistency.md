@@ -1,7 +1,8 @@
 # Registro y dossier — T05, coherencia de autoridad
 
 Plan: [AUDIT-2026-09-07](../plans/2026-09-07-mejoras-auditoria.md).
-Contrato y candidatos: [propuesta T05](../proposals/AUDIT-authority-consistency.md).
+Contrato y candidatos: [deliberación T05](../history/AUDIT-authority-consistency.md).
+Traslado por adopción: ADR-018. Conteos de esta emisión son históricos.
 
 ## Capa técnica
 

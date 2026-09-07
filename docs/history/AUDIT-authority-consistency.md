@@ -1,5 +1,11 @@
 # AUDIT-authority-consistency — T05: autoridad documental coherente
 
+Archivo histórico de deliberación. D1: opción A aprobada por el humano el
+2026-09-07 mediante «adelante» a la pregunta explícita de adopción.
+Decisión vigente: [ADR-018](../adr/ADR-018-coherencia-de-autoridad.md).
+El resto conserva el estado y los candidatos de la emisión previa a D1;
+sus menciones de pendientes y textos vigentes describen esa base histórica.
+
 Estado: propuesta en deliberación; no modifica norma ni concede permisos.
 Fecha: 2026-09-07. Base inspeccionada:
 `41d40d9a4e1a521e97810b4124e19e7e8431547f`.

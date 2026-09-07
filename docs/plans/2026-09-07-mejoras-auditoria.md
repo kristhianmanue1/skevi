@@ -3,9 +3,9 @@
 Autoriza: [SPEC-AUDIT](../specs/SPEC-AUDIT-2026-09-07-mejoras.md), derivada
 de la instrucción humana del 2026-09-07: persistir el plan detallado e iniciar.
 Clase de tarea: Architectural — crear plan multi-tarea (F0 §2, ADR-013).
-Estado: T05 en deliberación; T00-T04 y T14 completos. Fecha: 2026-09-07.
+Estado: T05 decidido; T05-A en ejecución. T00-T04 y T14 completos (2026-09-07).
 Base: `17413f150d08e1e65b72f70a858104505950e751`.
-Rama de retoma: `docs/audit-authority-consistency`. El plan es dueño de steps/DoD.
+Rama de retoma: `docs/adopt-authority-consistency`. El plan es dueño de steps/DoD.
 
 ## Propósito, alcance y restricciones
 
@@ -155,14 +155,21 @@ no está en las lecturas del recorrido cubiertas por SPEC-AUD-01. T14 cerrado:
 ```text
 TAREA T05
   Consumes: T04; REQ-AUD-06; `docs/estandar-diseno-software-github.md`
-  Produce: crea `docs/proposals/AUDIT-authority-consistency.md`
+  Produce: deliberación archivada en `docs/history/AUDIT-authority-consistency.md`
   Steps:
   - [x] Contrastar AGENTS, índice, F3 §7, guía 05 y estándar §6 —
         verificación: tabla con texto, prioridad efectiva y diferencia.
   - [x] Proponer excepción local explícita o remisión a fuente única —
         verificación: no ampliar permisos ni borrar restricciones humanas.
-  - [ ] Presentar decisión — verificación: aceptante elige alternativa;
+  - [x] Presentar decisión — verificación: aceptante elige A («adelante»);
         sólo después, tarea separada aplica norma/guía y revisa referencias.
+TAREA T05-A
+  Consumes: T05/D1=A; SPEC-AUD-03; aprobación humana del 2026-09-07
+  Produce: ADR-018 y cinco destinos A1-A5; reporte t05-adoption en reviews
+  Steps:
+  - [x] Aplicar A y archivar deliberación — verificación: ADR/índice y links.
+  - [x] Verificar y revisar — verificación: C1-C9, gates y ronda fresca proceed.
+  - [ ] Cerrar rastro Git — verificación: header con commit y SHA remoto exacto.
 TAREA T06
   Consumes: T05; REQ-AUD-06; `docs/adr/ADR-001-gate-local-sin-ci.md`
   Produce: crea `docs/proposals/AUDIT-review-enforcement.md`

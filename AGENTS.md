@@ -49,6 +49,13 @@ internos pueden apuntar a repositorios ajenos y no resolver aquí.
 - **Autoridad por operación.** Editar no implica commit; commit no implica
   push. `push`, `merge`, tags, releases y operaciones destructivas requieren
   autorización humana explícita, una por una, cada vez.
+- **Excepción local de Skevi.** La exigencia humana de la regla anterior
+  restringe aquí el modelo general de gate delegable del estándar §6.6.
+  Un manifest, ADR, propuesta o memoria no designa un orquestador ni
+  sustituye esa exigencia por sí solo. Cambiar esta política local exige
+  una instrucción o decisión humana explícita.
+  Procedencia: [ADR-018](docs/adr/ADR-018-coherencia-de-autoridad.md);
+  distinguir la restricción local del modelo ofrecido a adoptantes.
 - **Contención de tamaño.** Límites del proyecto (§3.4 del estándar):
   `AGENTS.md` 200 líneas, `README.md` 300, plantillas 300, cualquier otro
   archivo de texto 800. Se comprueban con el gate, no a ojo.
