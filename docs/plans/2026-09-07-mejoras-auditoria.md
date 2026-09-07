@@ -3,8 +3,7 @@
 Autoriza: [SPEC-AUDIT](../specs/SPEC-AUDIT-2026-09-07-mejoras.md), derivada
 de la instrucción humana del 2026-09-07: persistir el plan detallado e iniciar.
 Clase de tarea: Architectural — crear plan multi-tarea (F0 §2, ADR-013).
-Estado: T00-T06, T05-A y T14 completos; D1/D2 de PROP-008 aprobadas y
-aterrizadas vía ADR-019; T06 cerrado con O0; siguiente T07 (2026-09-07).
+Estado: T00-T07, T05-A y T14 completos; D1/D2 de PROP-008 aterrizadas (ADR-019); T06 cerrado (O0); T07 cerrado (O-A, PROP-006@#28); siguiente T08.
 Base: `17413f150d08e1e65b72f70a858104505950e751`.
 Rama de retoma: `docs/adopt-authority-consistency`. El plan es dueño de steps/DoD.
 
@@ -185,11 +184,11 @@ TAREA T07
   Consumes: T05; REQ-AUD-06; `docs/adr/ADR-016-reportes-en-dos-capas.md`
   Produce: crea `docs/proposals/AUDIT-proposal-identifiers.md`
   Steps:
-  - [ ] Inventariar PROP-006 local e issue 28 — verificación: títulos y
+  - [x] Inventariar PROP-006 local e issue 28 — verificación: títulos y
         enlaces exactos distinguen reportes de versionado de plantillas.
-  - [ ] Proponer ID inequívoco y alias histórico — verificación: referencias
+  - [x] Proponer ID inequívoco y alias histórico — verificación: referencias
         entrantes inventariadas; ninguna evidencia histórica se reescribe.
-  - [ ] Aplicar resolución tras decisión — verificación: búsquedas locales
+  - [x] Aplicar resolución tras decisión — verificación: búsquedas locales
         no ambiguas y cambio de issue sólo con autorización externa específica.
 ```
 
