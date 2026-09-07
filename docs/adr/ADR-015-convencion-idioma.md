@@ -1,8 +1,7 @@
 # ADR-015: convención de idioma — código en inglés, cara al usuario en el idioma del proyecto
 
-Estado: aceptado. Materializado en el estándar §3.1 (regla de convención
-de idioma); la referencia de commit se completa en el cambio que lo
-materializa, conforme a 02 §3.3.
+Estado: aceptado. Implementado en a0bcc6b — el commit que añade la
+viñeta de convención de idioma al estándar §3.1 (02 §3.3).
 
 Contexto: la instrucción directa del humano del 7 de septiembre de 2026
 llegó como hipótesis, mejorada en conversación hasta forma falsable:
