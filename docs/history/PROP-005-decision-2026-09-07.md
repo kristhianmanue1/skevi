@@ -1,8 +1,12 @@
 # PROP-005 — Salida de Alpha y cierre formal del issue #25
 
-> **Estado:** en deliberación — D1 aprobada por el humano el 2026-09-01
-> (en conversación) y aplicada en el PR de adopción; D2–D4 siguen en
-> deliberación.
+> **Estado:** CERRADA — D1 aprobada el 2026-09-01 y aplicada (PR #27,
+> tag v1.0.0). D2 y D3 resueltas el 2026-09-07 por recomendación
+> aceptada en conversación: D2 opción B (no añadir la línea al §7; el
+> 05 §3-4 ya lo cubre) y D3 dada por servida (ADR-001 + README, sin
+> editar el estándar). D4 aprobada y ejecutada el 2026-09-07 (edición
+> de `05` §4). Registro histórico: evidencia de decisión, no norma
+> vigente.
 > **Origen:** piloto infosalud (`docs/history/piloto-infosalud.md`),
 > issue #25 (cerrado vía PR #26) y verificación independiente del
 > registro. Este documento resuelve lo que el cierre del #25 dejó sin

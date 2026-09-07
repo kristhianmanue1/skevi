@@ -45,9 +45,10 @@ misma autoría que este cuerpo normativo):
 - Al iniciar sesión material: verificar integración
   (`context status`) y recuperar sólo lo necesario (`resume`).
 - Al cerrar tarea material: checkpoint + escritura de lo durable.
-- Empaquetar el protocolo en un wrapper del proyecto para no
-  reconstruirlo por sesión; revisar el wrapper de consumo real
-  (`infosalud/scripts/mem`) como referencia.
+- Empaquetar el protocolo en un wrapper del propio proyecto —
+  plan-write/commit-write-plan, guardias de fences y hook pre-commit —
+  instalable sin red; la memoria no se reconstruye por sesión
+  (referencia de consumo real: issue #25).
 - Update check desactivado y gates locales: la memoria no debe
   introducir llamadas de red rutinarias ni dependencia de CI
   remoto.
