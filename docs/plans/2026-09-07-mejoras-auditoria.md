@@ -3,7 +3,7 @@
 Autoriza: [SPEC-AUDIT](../specs/SPEC-AUDIT-2026-09-07-mejoras.md), derivada
 de la instrucción humana del 2026-09-07: persistir el plan detallado e iniciar.
 Clase de tarea: Architectural — crear plan multi-tarea (F0 §2, ADR-013).
-Estado: T05 decidido; T05-A en ejecución. T00-T04 y T14 completos (2026-09-07).
+Estado: T00-T05, T05-A y T14 completos; siguiente T06 (2026-09-07).
 Base: `17413f150d08e1e65b72f70a858104505950e751`.
 Rama de retoma: `docs/adopt-authority-consistency`. El plan es dueño de steps/DoD.
 
@@ -31,7 +31,7 @@ y publicar fix/audit-gate-read-errors en origin; ninguna otra operación externa
 La restricción anterior describe el primer incremento antes de esta autorización.
 Retoma T05: «adelante», con permiso vigente de commit/push a criterio del agente;
 publicación documental en docs/audit-authority-consistency, sin adoptar política.
-Evidencia T05: [revisión y dossier](../reviews/2026-09-07-t05-authority-consistency.md).
+Evidencia T05/A: [adopción y cierre](../reviews/2026-09-07-t05-adoption.md).
 
 ## Gobierno, calendario y medición
 
@@ -169,7 +169,7 @@ TAREA T05-A
   Steps:
   - [x] Aplicar A y archivar deliberación — verificación: ADR/índice y links.
   - [x] Verificar y revisar — verificación: C1-C9, gates y ronda fresca proceed.
-  - [ ] Cerrar rastro Git — verificación: header con commit y SHA remoto exacto.
+  - [x] Cerrar rastro Git — verificación: header con commit y SHA remoto exacto.
 TAREA T06
   Consumes: T05; REQ-AUD-06; `docs/adr/ADR-001-gate-local-sin-ci.md`
   Produce: crea `docs/proposals/AUDIT-review-enforcement.md`
