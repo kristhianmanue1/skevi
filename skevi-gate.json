@@ -1,4 +1,5 @@
 {
   "plans": "docs/plans",
-  "root_markdown": ["AN-KLA.md"]
+  "root_markdown": ["AN-KLA.md"],
+  "exempt_paths": [".DS_Store", "docs/.DS_Store"]
 }

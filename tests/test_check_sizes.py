@@ -5,11 +5,13 @@ from __future__ import annotations
 import importlib.util
 import io
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
+from unittest.mock import patch
 
 SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts"
 _SPEC = importlib.util.spec_from_file_location(
@@ -164,6 +166,89 @@ class MainIntegrationTests(unittest.TestCase):
         )
         exit_code, _ = self._run_main()
         self.assertEqual(exit_code, 0)
+
+    def _assert_read_failure(self, relative, error, fail_on_read=1):
+        target = self.root / relative
+        original_read = Path.read_text
+        reads = 0
+
+        def read_with_failure(path, *args, **kwargs):
+            nonlocal reads
+            if path == target:
+                reads += 1
+                if reads == fail_on_read:
+                    raise error
+            return original_read(path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", read_with_failure):
+            exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertTrue(output.startswith("BLOQ"))
+        self.assertIn(relative, output)
+        self.assertIn("no se pudo leer", output)
+        self.assertNotIn("Traceback", output)
+        self.assertNotIn("private-payload", output)
+        self.assertNotIn(str(self.root), output)
+
+    def test_unreadable_required_file_blocks(self):
+        self._assert_read_failure(
+            "README.md", PermissionError("/private/private-payload")
+        )
+
+    def test_unreadable_noncanonical_file_blocks(self):
+        (self.root / "docs" / "extra.md").write_text("texto\n", encoding="utf-8")
+        self._assert_read_failure(
+            "docs/extra.md", OSError("/private/private-payload")
+        )
+
+    def test_registry_second_read_failure_blocks(self):
+        # El conteo ya leyó el host; su lectura para validar el registro
+        # también debe fallar de forma controlada si el archivo cambia.
+        self._assert_read_failure(
+            "AGENTS.md", PermissionError("/private/private-payload"),
+            fail_on_read=2,
+        )
+
+    def test_invalid_utf8_blocks_cli_without_traceback(self):
+        (self.root / "README.md").write_bytes(b"private-payload\xff")
+        result = subprocess.run(
+            [sys.executable, "-B", "-c",
+             "import sys; from pathlib import Path; import check_sizes; "
+             "check_sizes.ROOT = Path(sys.argv[1]); "
+             "raise SystemExit(check_sizes.main())", str(self.root)],
+            cwd=SCRIPTS_DIR, capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 1)
+        self.assertTrue(result.stdout.startswith("BLOQ"))
+        self.assertIn("README.md", result.stdout)
+        self.assertIn("UTF-8", result.stdout)
+        self.assertEqual(result.stderr, "")
+        self.assertNotIn("private-payload", result.stdout)
+        self.assertNotIn(str(self.root), result.stdout)
+
+    def _assert_exempt_file_is_not_read(self, relative):
+        target = self.root / relative
+        target.write_bytes(b"\xff")
+        original_read = Path.read_text
+
+        def forbid_exempt_read(path, *args, **kwargs):
+            if path == target:
+                self.fail("el gate intentó leer un archivo exento")
+            return original_read(path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", forbid_exempt_read):
+            exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 0)
+        self.assertTrue(output.startswith("OK"))
+
+    def test_exempt_suffix_is_not_read(self):
+        self._assert_exempt_file_is_not_read("image.png")
+
+    def test_explicit_exempt_path_is_not_read(self):
+        (self.root / check_sizes.CONFIG_NAME).write_text(
+            json.dumps({"exempt_paths": ["docs/exempt.md"]}), encoding="utf-8"
+        )
+        self._assert_exempt_file_is_not_read("docs/exempt.md")
 
 
 class ConfigTests(unittest.TestCase):

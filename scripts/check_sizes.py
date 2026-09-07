@@ -312,14 +312,16 @@ def discover() -> list[Path]:
 
 
 def count_text_lines(relative: Path) -> int | None:
+    """None significa exención; los errores de lectura los reporta main.
+
+    Procedencia: estándar §3.4 y ADR-007; una lectura fallida no acredita
+    tamaño ni permite omitir el archivo como si estuviera exento.
+    """
     if relative.as_posix() in EXEMPT_PATHS:
         return None
     if relative.suffix.lower() in EXEMPT_SUFFIXES:
         return None
-    try:
-        text = (ROOT / relative).read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError):
-        return None
+    text = (ROOT / relative).read_text(encoding="utf-8")
     return len(text.splitlines())
 
 
@@ -350,17 +352,25 @@ def main() -> int:
 
     rows: list[tuple[str, int, int]] = []
     for relative in discover():
-        observed = count_text_lines(relative)
-        if observed is None:
-            continue
         name = relative.as_posix()
+        try:
+            observed = count_text_lines(relative)
+            if observed is None:
+                continue
+            if relative.name in REGISTRY_HOSTS:
+                text = (ROOT / relative).read_text(encoding="utf-8")
+                failures.extend(check_registry_block(relative, text))
+        except UnicodeDecodeError:
+            failures.append(f"{name}: contenido no válido como UTF-8")
+            continue
+        except OSError:
+            # No volcar la excepción: puede contener rutas o datos del host.
+            failures.append(f"{name}: no se pudo leer el archivo")
+            continue
         limit = limit_for(name)
         rows.append((name, observed, limit))
         if observed > limit:
             failures.append(f"{name}: {observed} líneas > límite {limit}")
-        if relative.name in REGISTRY_HOSTS:
-            text = (ROOT / relative).read_text(encoding="utf-8")
-            failures.extend(check_registry_block(relative, text))
 
     if failures:
         print("BLOQ — check_sizes encontró incumplimientos")
