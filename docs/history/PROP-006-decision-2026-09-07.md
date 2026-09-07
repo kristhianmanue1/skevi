@@ -1,6 +1,10 @@
 # PROP-006 — Reportes de agente en dos capas con bloque de trazabilidad
 
-> **Estado:** en deliberación — sin efecto normativo hasta su aprobación.
+> **Estado:** ADOPTADA — D1-D2 aprobadas por el humano (2026-09-07, en
+> conversación). Piloto F1-F4 corrido sobre los folios
+> `SKV-2026-09-07-01`/`-02` de esa misma sesión; D3 ejecutada vía
+> ADR-016 y el PR de adopción (00-INDICE, 04 §5.2, estándar §6).
+> Registro histórico: evidencia de decisión, no norma vigente.
 > **Origen:** instrucción directa del humano (2026-09-07) y análisis en
 > conversación. Corolario de ADR-015: aplica a los reportes la misma
 > polaridad de idioma que la convención aplica al proyecto.
