@@ -3,9 +3,9 @@
 Autoriza: [SPEC-AUDIT](../specs/SPEC-AUDIT-2026-09-07-mejoras.md), derivada
 de la instrucción humana del 2026-09-07: persistir el plan detallado e iniciar.
 Clase de tarea: Architectural — crear plan multi-tarea (F0 §2, ADR-013).
-Estado: en ejecución; T00-T04 y T14 completos, siguiente T05. Fecha: 2026-09-07.
+Estado: T05 en deliberación; T00-T04 y T14 completos. Fecha: 2026-09-07.
 Base: `17413f150d08e1e65b72f70a858104505950e751`.
-Rama: `fix/audit-gate-read-errors`. Este plan es dueño de steps y DoD.
+Rama de retoma: `docs/audit-authority-consistency`. El plan es dueño de steps/DoD.
 
 ## Propósito, alcance y restricciones
 
@@ -29,6 +29,9 @@ Actualización de autoridad, 2026-09-07: el humano autoriza «commit y push
 segun creas correponda» y continuar T14. Se permite versionar T00-T04 y T14,
 y publicar fix/audit-gate-read-errors en origin; ninguna otra operación externa.
 La restricción anterior describe el primer incremento antes de esta autorización.
+Retoma T05: «adelante», con permiso vigente de commit/push a criterio del agente;
+publicación documental en docs/audit-authority-consistency, sin adoptar política.
+Evidencia T05: [revisión y dossier](../reviews/2026-09-07-t05-authority-consistency.md).
 
 ## Gobierno, calendario y medición
 
@@ -154,9 +157,9 @@ TAREA T05
   Consumes: T04; REQ-AUD-06; `docs/estandar-diseno-software-github.md`
   Produce: crea `docs/proposals/AUDIT-authority-consistency.md`
   Steps:
-  - [ ] Contrastar AGENTS, índice, F3 §7, guía 05 y estándar §6 —
+  - [x] Contrastar AGENTS, índice, F3 §7, guía 05 y estándar §6 —
         verificación: tabla con texto, prioridad efectiva y diferencia.
-  - [ ] Proponer excepción local explícita o remisión a fuente única —
+  - [x] Proponer excepción local explícita o remisión a fuente única —
         verificación: no ampliar permisos ni borrar restricciones humanas.
   - [ ] Presentar decisión — verificación: aceptante elige alternativa;
         sólo después, tarea separada aplica norma/guía y revisa referencias.
