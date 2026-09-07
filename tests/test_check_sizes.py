@@ -289,6 +289,59 @@ class ConfigTests(unittest.TestCase):
             json.dumps(data), encoding="utf-8"
         )
 
+    def _assert_config_error_is_sanitized(self, reason):
+        stdout, stderr = io.StringIO(), io.StringIO()
+        with redirect_stdout(stdout), patch("sys.stderr", stderr):
+            exit_code = check_sizes.main()
+        output = stdout.getvalue()
+        self.assertEqual(exit_code, 1)
+        self.assertTrue(output.startswith("BLOQ"))
+        self.assertNotIn("private-payload", output)
+        self.assertNotIn(str(self.root), output)
+        self.assertNotIn("Traceback", output)
+        self.assertEqual(stderr.getvalue(), "")
+        self.assertIn(check_sizes.CONFIG_NAME, output)
+        self.assertIn(reason, output)
+
+    def test_config_read_error_does_not_echo_exception(self):
+        with patch.object(check_sizes, "load_config", side_effect=
+                          PermissionError("/private/private-payload")):
+            self._assert_config_error_is_sanitized("no se pudo leer")
+
+    def test_config_decode_error_does_not_echo_decoder(self):
+        error = UnicodeDecodeError("utf-8", b"\xff", 0, 1, "private-payload")
+        with patch.object(check_sizes, "load_config", side_effect=error):
+            self._assert_config_error_is_sanitized("UTF-8")
+        (self.root / check_sizes.CONFIG_NAME).write_bytes(b"\xff")
+        self._assert_config_error_is_sanitized("UTF-8")
+
+    def test_config_json_error_keeps_location_without_content(self):
+        (self.root / check_sizes.CONFIG_NAME).write_text(
+            '{"private-payload": }', encoding="utf-8"
+        )
+        self._assert_config_error_is_sanitized("JSON inválido (línea 1, columna 21)")
+
+    def test_config_validation_does_not_echo_input(self):
+        payload = "private-payload\nOK"
+        cases = [
+            ({payload: 1}, "claves desconocidas"),
+            ({"required": ["/" + payload]}, "«required»"),
+            ({"exempt_paths": ["/" + payload]}, "«exempt_paths»"),
+            ({"limits": {payload: "invalid"}}, "«limits»"),
+            ({"default_limit": payload}, "«default_limit»"),
+            ({"skip_dirs": payload}, "«skip_dirs»"),
+            ({"root_markdown": payload}, "«root_markdown»"),
+        ]
+        for config, reason in cases:
+            with self.subTest(field=reason):
+                self._write_config(config)
+                self._assert_config_error_is_sanitized(reason)
+
+    def test_config_unexpected_value_error_is_not_echoed(self):
+        with patch.object(check_sizes, "load_config", side_effect=
+                          ValueError("/private/private-payload")):
+            self._assert_config_error_is_sanitized("valor no válido")
+
     def test_absent_config_returns_empty_dict(self):
         self.assertEqual(check_sizes.load_config(), {})
 

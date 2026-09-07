@@ -3,7 +3,7 @@
 Autoriza: [SPEC-AUDIT](../specs/SPEC-AUDIT-2026-09-07-mejoras.md), derivada
 de la instrucción humana del 2026-09-07: persistir el plan detallado e iniciar.
 Clase de tarea: Architectural — crear plan multi-tarea (F0 §2, ADR-013).
-Estado: en ejecución; T00-T04 completos, siguiente T14. Fecha: 2026-09-07.
+Estado: en ejecución; T00-T04 y T14 completos, siguiente T05. Fecha: 2026-09-07.
 Base: `17413f150d08e1e65b72f70a858104505950e751`.
 Rama: `fix/audit-gate-read-errors`. Este plan es dueño de steps y DoD.
 
@@ -24,6 +24,11 @@ Restricciones globales, verbatim de SPEC-AUDIT:
 Las restricciones de ejecución externa se levantan sólo por autorización
 específica posterior y su registro; este plan nunca concede esa autoridad.
 No se incorporan AN-KLA obligatorio, motores de gobernanza ni certificaciones.
+
+Actualización de autoridad, 2026-09-07: el humano autoriza «commit y push
+segun creas correponda» y continuar T14. Se permite versionar T00-T04 y T14,
+y publicar fix/audit-gate-read-errors en origin; ninguna otra operación externa.
+La restricción anterior describe el primer incremento antes de esta autorización.
 
 ## Gobierno, calendario y medición
 
@@ -127,19 +132,20 @@ Seguimiento descubierto por la revisión fresca, posterior al primer cierre:
 
 ```text
 TAREA T14
-  Consumes: T04; REQ-AUD-03; `scripts/check_sizes.py`
+  Consumes: T04; SPEC-AUD-02/REQ-AUD-07; `scripts/check_sizes.py`
   Produce: diagnóstico saneado de configuración en incremento separado
   Steps:
-  - [ ] Fijar SPEC acotada de configuración — verificación: delimita lectura
+  - [x] Fijar SPEC acotada de configuración — verificación: delimita lectura
         y validación, sin atribuir a SPEC-AUD-01 saneamiento de todo el CLI.
-  - [ ] Reproducir payload en error de load_config — verificación: RED
+  - [x] Reproducir payload en error de load_config — verificación: RED
         falla porque BLOQ imprime la excepción cruda, no por salida exitosa.
-  - [ ] Corregir y revisar — verificación: diagnóstico útil sin payload,
+  - [x] Corregir y revisar — verificación: diagnóstico útil sin payload,
         GREEN focal/suite, gates y revisión fresca; mantener configuración válida.
 ```
 
 T14 precede a P2. No bloquea T04: el defecto ya existía antes del arreglo y
-no está en las lecturas del recorrido cubiertas por SPEC-AUD-01. Queda abierto.
+no está en las lecturas del recorrido cubiertas por SPEC-AUD-01. T14 cerrado:
+[evidencia y dossier](../reviews/2026-09-07-t14-config-diagnostics.md).
 
 ## P2 — Coherencia documental y revisión exigible
 

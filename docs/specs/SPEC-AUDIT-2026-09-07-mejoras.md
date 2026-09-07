@@ -153,3 +153,53 @@ F1: OK para SPEC-AUD-01; casos, errores y compatibilidad definidos.
 Estas marcas habilitan la ejecución local inicial, no cierran F3 ni las
 decisiones posteriores. Evidencia RED/GREEN y revisión: se crea el registro
 en docs/reviews/2026-09-07-mejoras-auditoria.md al cerrar el incremento.
+
+## T14 — F0/F1 del diagnóstico de configuración
+
+Base: `5a3a3af4477cdac76adacd2404537805ca2d28aa`, primer incremento ya
+versionado. Misma rama y entorno; PROP-008 continúa ajena y sin cambios.
+Fuente: humano, 2026-09-07, «tienes autorizado commit y push segun creas
+correponda adelante con siguietne». Habilita continuar T14 y publicar esta rama;
+no cambia decisiones de política, merge, tags, releases o memoria.
+
+Problema: el manejador de configuración imprime la excepción completa y puede
+revelar rutas, bytes o texto de entrada. Resultado: diagnóstico accionable sin
+copiar datos no confiables. Clase Architectural por disparador material de
+F3 §5.3 y actualización del plan. No hay preguntas abiertas para este arreglo.
+
+REQ-AUD-07 [funcional] [fuente: T14; estándar §2.4; ADR-007]
+Enunciado: errores de configuración bloquean sin revelar datos de entrada.
+Criterio de aceptación: T14 del plan; casos D1-D5 de SPEC-AUD-02.
+Prioridad: imprescindible.
+
+SPEC-AUD-02 [cubre: REQ-AUD-07, REQ-AUD-03, REQ-AUD-04]
+Entrada: configuración JSON/UTF-8 existente, misma forma y claves permitidas.
+Salida: BLOQ/1 para configuración inválida; OK/0 y semántica previa para válida.
+Errores: archivo y motivo fijo; campo conocido para errores de esquema;
+posición numérica para JSON mal formado. No imprimir valores, claves arbitrarias
+ni texto de excepciones inesperadas. No validar nuevas propiedades del esquema.
+
+- D1: OSError/PermissionError con ruta y payload → BLOQ/1, motivo de lectura,
+  sin payload ni traceback; conservar diagnóstico del nombre de configuración.
+- D2: UTF-8 inválido → BLOQ/1 con motivo UTF-8 sin texto del decoder.
+- D3: JSON inválido → BLOQ/1, línea y columna; sin contenido ni mensaje crudo.
+- D4: clave desconocida, ruta inválida o nombre de límite con texto hostil →
+  BLOQ/1; campo declarado y razón, nunca eco de nombres/valores arbitrarios.
+- D5: ValueError inesperado → BLOQ/1 genérico; configuración válida y casos
+  anteriores del gate conservan su comportamiento y tests.
+
+Diseño: distinguir validaciones deliberadas con una subclase privada de
+ValueError cuyos mensajes contienen sólo constantes/campos internos. Mantener
+compatibilidad para consumidores que capturan ValueError. El coordinador trata
+por separado errores de lectura, decodificación, JSON y ValueError inesperado;
+sólo el mensaje controlado se muestra. Sin inspección por regex de secretos.
+Alternativas descartadas: ocultar todo el error pierde campo y motivo;
+filtrar cadenas arbitrarias no garantiza saneamiento; rediseñar el parser
+completo excede el defecto. No hay nueva dependencia ni interfaz CLI.
+
+F2 reutiliza script, tests y documento SPEC existentes. Alcance T14: script,
+tests, esta SPEC, plan y nuevo reporte en docs/reviews; no cambiar check_plans,
+el registro de revisión anterior ni el comportamiento de exenciones.
+F0/F1: OK para T14 con criterios anteriores; F3 local cerrado con RED/GREEN
+y revisión fresca: [evidencia](../reviews/2026-09-07-t14-config-diagnostics.md).
+Parada: T14 verificada, commits y push autorizados comprobados.
