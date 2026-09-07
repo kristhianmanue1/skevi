@@ -103,6 +103,17 @@ duda, el principio gana sobre la regla concreta.
 
 - El código nuevo se parece al código que lo rodea: mismas convenciones de
   nombre, densidad de comentarios e idiomas estructurales del proyecto.
+- Convención de idioma: en código nuevo, los identificadores y nombres
+  estructurales —variables, funciones, clases, ramas, claves de
+  configuración— se escriben en inglés; los comentarios siguen el idioma
+  de la prosa del proyecto; el contenido de cara al usuario
+  —documentación, mensajes de interfaz y textos visibles— va en el
+  idioma del proyecto, que puede ser el nativo del equipo. Esta viñeta
+  precisa y gana sobre la lectura genérica de la anterior; renombrar
+  legado es refactorización aparte (§3.3), nunca efecto colateral
+  (procedencia: `docs/adr/ADR-015-convencion-idioma.md`, instrucción
+  directa del humano, 2026-09-07; extiende
+  `docs/adr/ADR-003-directorios-en-ingles.md`).
 - Funciones pequeñas con un único propósito; nombres que dicen qué hace el
   código sin necesidad de comentario.
 - Tres líneas similares son preferibles a una abstracción prematura.

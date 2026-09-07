@@ -16,6 +16,7 @@
 | ADR-012 | Los archivos de test nuevos no escalan la clase de una tarea | Aceptado | `01-analisis-y-requerimientos.md` §2, ADR-009 (Estado) | `piloto-orbitanova.md` PF-1 | 2026-08-20 |
 | ADR-013 | Crear un plan de implementación es disparador de Architectural | Aceptado | `01-analisis-y-requerimientos.md` §2 | `piloto-orbitanova-2.md` PF-2 | 2026-08-20 |
 | ADR-014 | Gate de planes con chequeo estructural mínimo (A-4) | Aceptado | `scripts/check_plans.py`, `skevi-gate.json` clave `plans` | PROP-004 §A-4 (condición cumplida) | 2026-08-20 |
+| ADR-015 | Convención de idioma: código en inglés, cara al usuario en el idioma del proyecto | Aceptado | `estandar-diseno-software-github.md` §3.1 | Instrucción directa | 2026-09-07 |
 
 **Reglas de este índice**
 
