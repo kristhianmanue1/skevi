@@ -3,7 +3,8 @@
 Autoriza: [SPEC-AUDIT](../specs/SPEC-AUDIT-2026-09-07-mejoras.md), derivada
 de la instrucción humana del 2026-09-07: persistir el plan detallado e iniciar.
 Clase de tarea: Architectural — crear plan multi-tarea (F0 §2, ADR-013).
-Estado: T00-T05, T05-A y T14 completos; siguiente T06 (2026-09-07).
+Estado: T00-T06, T05-A y T14 completos; D1/D2 de PROP-008 aprobadas y
+aterrizadas vía ADR-019; T06 cerrado con O0; siguiente T07 (2026-09-07).
 Base: `17413f150d08e1e65b72f70a858104505950e751`.
 Rama de retoma: `docs/adopt-authority-consistency`. El plan es dueño de steps/DoD.
 
@@ -174,11 +175,11 @@ TAREA T06
   Consumes: T05; REQ-AUD-06; `docs/adr/ADR-001-gate-local-sin-ci.md`
   Produce: crea `docs/proposals/AUDIT-review-enforcement.md`
   Steps:
-  - [ ] Leer configuración remota vigente — verificación: registrar
+  - [x] Leer configuración remota vigente — verificación: registrar
         revisión exigida, bypass y protección; no inferir historial de merges.
-  - [ ] Comparar revisión obligatoria con excepción compensada local —
+  - [x] Comparar revisión obligatoria con excepción compensada local —
         verificación: cada opción liga evidencia a SHA y declara riesgo/coste.
-  - [ ] Preparar cambio exacto o excepción — verificación: decisión humana
+  - [x] Preparar cambio exacto o excepción — verificación: decisión humana
         registrada antes de configurar GitHub; no añadir Actions por omisión.
 TAREA T07
   Consumes: T05; REQ-AUD-06; `docs/adr/ADR-016-reportes-en-dos-capas.md`
@@ -199,16 +200,16 @@ TAREA T08
   Consumes: T05/T07; REQ-AUD-06
   Produce: crea `docs/proposals/AUDIT-ankla-contract-review.md`
   Steps:
-  - [ ] Revisar PROP-008 sin sustituirla — verificación: separar estados
-        ausente, válido, dañado e inspección imposible con acción por estado.
+  - [ ] Revisar el contrato aterrizado (05 §6) — verificación: separar
+        estados ausente, válido, dañado e inspección imposible por estado.
   - [ ] Revisar upgrades y checkpoint — verificación: clasificación por
         disparadores; cadencia nunca concede escritura en una tarea de lectura.
   - [ ] Definir folios y concurrencia — verificación: alcance de unicidad
         explícito y dos productores desde la misma base no duplican folio.
   - [ ] Ejercitar casos negativos y sin memoria — verificación: no hay
         activación silenciosa ni reparación automática; revisión fresca proceed.
-  - [ ] Presentar D1-D2 y compatibilidad — verificación: decisión registrada
-        antes de aterrizar guía/ADR o modificar integración administrada.
+  - [x] Presentar D1-D2 y compatibilidad — verificación: decisión humana
+        registrada en conversación antes de aterrizar; ADR-019.
 TAREA T09
   Consumes: T07; REQ-AUD-06; `templates/skevi/usage-guide.md`
   Produce: crea `docs/proposals/AUDIT-template-provenance.md`
@@ -268,7 +269,7 @@ TAREA T13
   Produce: dossier exacto de publicación, sólo si se solicita
   Steps:
   - [ ] Preparar diff final y operaciones — verificación: archivos propios,
-        SHA revisado y operaciones enumeradas; no incluir PROP-008 ajena.
+        SHA revisado y operaciones enumeradas; no incluir trabajo ajeno.
   - [ ] Obtener autoridad por operación — verificación: aceptación vigente
         para commit/push/PR/merge/tag/release según lo que se proponga.
   - [ ] Verificar después de cada operación autorizada — verificación:
@@ -281,7 +282,7 @@ R1: falsos BLOQ sobre binarios no exentos → documentar UTF-8/exenciones;
 responsable ejecutor; no ampliar exenciones por conveniencia.
 R2: burocracia sin valor → piloto T11 y descarte explícito; aceptante humano.
 R3: autoridad inferida del plan → gates T05/T06/T08/T13; responsable ejecutor.
-R4: trabajo ajeno alterado → comprobar PROP-008 antes/después; ejecutor.
+R4: trabajo ajeno alterado → comprobar árboles ajenos antes/después; ejecutor.
 R5: hashes confundidos con autoridad → sólo integridad, nunca aceptación;
 responsable revisor. Fallos HIGH paran el incremento afectado.
 

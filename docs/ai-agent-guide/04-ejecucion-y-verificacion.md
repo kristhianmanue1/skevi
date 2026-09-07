@@ -206,8 +206,9 @@ Hallazgos fuera de alcance: <lista o "ninguno">
 
 Requieren autorización explícita previa: push, force-push, merge, rebase de
 historia compartida, reset destructivo, borrado de ramas remotas, tags,
-releases, publicación, instalación de dependencias nuevas y cualquier
-comando destructivo. El otorgante, las condiciones y la aceptación por
+releases, publicación, instalación de dependencias nuevas y su actualización
+cuando afecta archivos del repositorio, y cualquier comando destructivo. El
+otorgante, las condiciones y la aceptación por
 operación se rigen por el estándar §1.4, §4.3, §6.2 y §6.6, sujetos a
 `AGENTS.md` y a las instrucciones superiores aplicables. Una autorización
 anterior no habilita operaciones fuera de su alcance o vigencia. Si cubre
@@ -217,6 +218,11 @@ aplica fail-closed, sin ampliar ni renovar el permiso por inferencia.
 
 Procedencia: [ADR-018](../adr/ADR-018-coherencia-de-autoridad.md).
 Razón: remitir la política común a su fuente sin ampliar permisos vigentes.
+
+Instalar o actualizar una dependencia con efecto en archivos del
+repositorio es, como mínimo, tarea Bounded.
+Procedencia: [PROP-008](../history/PROP-008-integracion-ankla-por-contrato.md).
+Razón: el hueco textual de «dependencias nuevas» no cubría los upgrades.
 
 Ante un estado inesperado de Git (commit, rama o push que tú no hiciste):
 detente, audita (`reflog`, remoto) y reporta. No destruyas trabajo ajeno
