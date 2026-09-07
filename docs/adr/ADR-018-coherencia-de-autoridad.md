@@ -1,7 +1,7 @@
 # ADR-018: coherencia de autoridad general y restricción local
 
-Estado: aceptado el 2026-09-07. Implementación en preparación;
-se completará la referencia al commit antes de publicar.
+Estado: aceptado el 2026-09-07. Implementado en
+`29243f1548413a2d3b1f1e873e5eca019637de3c` (F1 §3.3).
 
 Contexto: T05 detectó copias divergentes entre índice, F3, guía de memoria,
 AGENTS y manifest. El estándar ya define el modelo general de ADR-017;

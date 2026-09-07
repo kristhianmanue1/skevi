@@ -19,7 +19,7 @@
 | ADR-015 | Convención de idioma: código en inglés, cara al usuario en el idioma del proyecto | Aceptado | `estandar-diseno-software-github.md` §3.1 | Instrucción directa | 2026-09-07 |
 | ADR-016 | Reportes de agente en dos capas con bloque de trazabilidad | Aceptado | `00-INDICE.md`, `04` §5.2, estándar §6 | PROP-006 | 2026-09-07 |
 | ADR-017 | Autoridad Git graduada (Z1-Z3) con gate delegable | Aceptado | estándar §6.2/§6.6/§4.3, `project-manifest.yaml` | PROP-007 | 2026-09-07 |
-| [ADR-018](ADR-018-coherencia-de-autoridad.md) | Coherencia de autoridad general y restricción local | Aceptado | Implementación en preparación | [T05, opción A](../history/AUDIT-authority-consistency.md) | 2026-09-07 |
+| [ADR-018](ADR-018-coherencia-de-autoridad.md) | Coherencia de autoridad general y restricción local | Aceptado | `29243f1` | [T05, opción A](../history/AUDIT-authority-consistency.md) | 2026-09-07 |
 
 **Reglas de este índice**
 
