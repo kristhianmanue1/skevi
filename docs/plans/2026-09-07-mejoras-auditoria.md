@@ -3,7 +3,7 @@
 Autoriza: [SPEC-AUDIT](../specs/SPEC-AUDIT-2026-09-07-mejoras.md), derivada
 de la instrucción humana del 2026-09-07: persistir el plan detallado e iniciar.
 Clase de tarea: Architectural — crear plan multi-tarea (F0 §2, ADR-013).
-Estado: T00-T07, T05-A y T14 completos; D1/D2 de PROP-008 aterrizadas (ADR-019); T06 cerrado (O0); T07 cerrado (O-A, PROP-006@#28); siguiente T08.
+Estado: T00-T08, T05-A y T14 completos; D1/D2 de PROP-008 aterrizadas (ADR-019); T06 (O0), T07 (O-A) y T08 (D1-D3) cerrados; siguiente T09.
 Base: `17413f150d08e1e65b72f70a858104505950e751`.
 Rama de retoma: `docs/adopt-authority-consistency`. El plan es dueño de steps/DoD.
 
@@ -199,13 +199,13 @@ TAREA T08
   Consumes: T05/T07; REQ-AUD-06
   Produce: crea `docs/proposals/AUDIT-ankla-contract-review.md`
   Steps:
-  - [ ] Revisar el contrato aterrizado (05 §6) — verificación: separar
+  - [x] Revisar el contrato aterrizado (05 §6) — verificación: separar
         estados ausente, válido, dañado e inspección imposible por estado.
-  - [ ] Revisar upgrades y checkpoint — verificación: clasificación por
+  - [x] Revisar upgrades y checkpoint — verificación: clasificación por
         disparadores; cadencia nunca concede escritura en una tarea de lectura.
-  - [ ] Definir folios y concurrencia — verificación: alcance de unicidad
+  - [x] Definir folios y concurrencia — verificación: alcance de unicidad
         explícito y dos productores desde la misma base no duplican folio.
-  - [ ] Ejercitar casos negativos y sin memoria — verificación: no hay
+  - [x] Ejercitar casos negativos y sin memoria — verificación: no hay
         activación silenciosa ni reparación automática; revisión fresca proceed.
   - [x] Presentar D1-D2 y compatibilidad — verificación: decisión humana
         registrada en conversación antes de aterrizar; ADR-019.
