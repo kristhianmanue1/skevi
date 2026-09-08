@@ -192,6 +192,19 @@ con código distinto de cero enumerando cada incumplimiento. Un gate que sólo
 advierte no es un gate: se conecta al CI o al comando de verificación local
 declarado en el README.
 
+**Presupuesto de la ruta de lectura.** El límite por archivo no acota lo que
+un ejecutor debe leer **antes de actuar**: cuatro archivos de 200 líneas suman
+lo mismo que uno de 800 sin que ninguno viole su límite. Si el proyecto tiene
+lectura obligatoria —instrucciones de agente, índice, norma transversal, guía
+de fase—, fija por escrito su presupuesto total y compruébalo con el mismo
+verificador. Los archivos que se leen siempre se suman; los excluyentes entre
+sí —una guía por fase, un perfil por entorno— cuentan sólo por el mayor, no
+por la suma de un camino que nadie recorre. Al agotarse el presupuesto rigen
+las mismas cuatro salidas de arriba, en el mismo orden. Skevi sobre sí mismo
+declara 1000 líneas; la ocupación vigente la reporta el gate, no este texto —
+una cifra copiada aquí envejecería con cada edición (procedencia:
+`docs/adr/ADR-021-presupuesto-de-ruta-de-lectura.md`).
+
 **Al partir un archivo ya verificado**, anota la partición en cualquier
 registro de revisión que lo describa: sus conteos y referencias dejan de ser
 reproducibles y una evidencia que no se puede repetir deja de ser evidencia.
@@ -301,6 +314,7 @@ Estas operaciones requieren autorización explícita previa, cada una:
 - `git reset --hard`, `git rebase` de historia compartida, borrado de ramas
   remotas;
 - creación de tags y releases;
+- ampliación de la superficie de ejecución declarada del ejecutor (§6.8);
 - cualquier comando destructivo sugerido por terceros o por salida de
   herramientas: se revisa antes de ejecutarse, nunca se ejecuta ciegamente.
 
@@ -405,7 +419,32 @@ programado), sin depender de ninguno en particular.
    `docs/adr/ADR-017-autoridad-git-graduada.md`).
 7. **Escalado.** Ante evidencia inconsistente, alcance excedido o
    permiso ausente: detener y escalar; nunca improvisar autoridad.
-8. **Reporte en dos capas.** El ejecutor reporta en capa técnica
+8. **Superficie de ejecución declarada.** Los permisos por operación (§6.2)
+   gradúan *qué hace* el ejecutor; esta regla acota *con qué puede hacerlo*.
+   Antes de delegar se declara por escrito, con polaridad cerrada —se
+   permite lo enumerado, se rechaza lo demás— y por tarea:
+   - **Herramientas.** Qué comandos, binarios o servidores de herramientas
+     externas (MCP o equivalente) puede invocar. Un servidor de herramientas
+     de terceros es una frontera del sistema: lleva contrato (§2.1), revisión
+     de amenazas y kill switch como cualquier integración nueva (§2.4).
+   - **Sistema de archivos.** Qué rutas puede leer y cuáles escribir. Fuera
+     de lo declarado, ni lectura.
+   - **Red.** Si hay salida a red y hacia qué destinos. Sin declaración, no
+     hay red: el silencio es prohibición, no permiso.
+   - **Aislamiento.** En qué entorno corre y qué comparte con el del humano.
+     Un ejecutor que puede alcanzar credenciales, claves o repositorios
+     ajenos a su tarea no está acotado, aunque su contrato de tarea lo esté.
+   - **Secretos y ventana de contexto.** Los secretos se mantienen fuera del
+     contexto del ejecutor, no sólo fuera del código, del historial y de los
+     logs (§2.3, §5.4). Un secreto que entró al contexto se trata como
+     comprometido: se revoca primero y se limpia después, con el mismo
+     criterio de §5.4 — la limpieza no sustituye la revocación.
+   Ampliar la superficie es una operación con autoridad separada (§4.3), no
+   un ajuste de configuración: se concede por operación y es revocable.
+   Esta regla define **mecanismo**; los perfiles de aseguramiento y la
+   conformidad que se construyan encima siguen fuera de este estándar
+   (procedencia: `docs/adr/ADR-023-superficie-de-ejecucion.md`).
+9. **Reporte en dos capas.** El ejecutor reporta en capa técnica
    (inglés, autoritativa) y capa humana (idioma del proyecto,
    proyección de la técnica), con bloque de trazabilidad en tareas
    material (procedencia: `docs/adr/ADR-016-reportes-en-dos-capas.md`;
@@ -418,6 +457,7 @@ Antes de empezar una tarea:
 - [ ] objetivo único y criterio de aceptación verificable;
 - [ ] rama, commit base y árbol limpio confirmados;
 - [ ] alcance y prohibiciones explícitos;
+- [ ] superficie de ejecución declarada, si se delega a un ejecutor (§6.8);
 - [ ] datos sensibles identificados y fuera del alcance del historial.
 
 Antes de abrir un PR:

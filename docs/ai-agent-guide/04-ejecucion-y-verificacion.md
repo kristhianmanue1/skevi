@@ -15,7 +15,11 @@ Clase: <Spike | Bounded | Architectural> — según los disparadores de 01 §2
 Base: <commit o rama de partida>
 Plan: <ruta del plan de implementación, sólo si existe — ver abajo>
 Permitido: <archivos/operaciones concretas>
+Superficie: <herramientas, rutas, red y aislamiento habilitados — polaridad
+  cerrada: lo no enumerado está prohibido (estándar §6.8)>
 Prohibido: <lo que no se toca; por defecto: push, merge, release, deps nuevas>
+Presupuesto: <techo de invocaciones, contexto o coste y qué pasa al agotarse —
+  sólo si aplica el disparador 3 de 06-componentes-con-llm.md §1>
 DoD: <checks ejecutables — o "ver PLAN <ruta>" si la tarea pertenece a un plan>
 Parada: <condición inequívoca para detenerse>
 ```
@@ -32,8 +36,16 @@ Reglas:
   plan; el plan existe sólo a partir de trabajo multi-tarea.
 - Lo no listado en "Permitido" está prohibido. La autoridad se concede por
   operación: editar no implica commit; commit no implica push.
+- `Superficie` acota **con qué** se ejecuta lo permitido: herramientas y
+  servidores externos invocables, rutas legibles y escribibles, salida a red
+  y aislamiento del entorno. Sin declaración no hay red. Ampliarla a mitad de
+  tarea es operación con autoridad separada (§7), no un ajuste (estándar §6.8).
 - La condición de parada es obligatoria aunque parezca obvia: es lo que te
   impide seguir "mejorando" más allá del alcance.
+- `Presupuesto` es opcional salvo que la tarea consuma cuota tarifada o
+  recursos compartidos por invocación; ahí es obligatorio y su agotamiento
+  produce un estado de fallo explícito, nunca éxito inferido
+  (`06-componentes-con-llm.md` §4; principio 5 y §2.2 del estándar).
 
 ## 2. Implementación
 
@@ -207,7 +219,9 @@ Hallazgos fuera de alcance: <lista o "ninguno">
 Requieren autorización explícita previa: push, force-push, merge, rebase de
 historia compartida, reset destructivo, borrado de ramas remotas, tags,
 releases, publicación, instalación de dependencias nuevas y su actualización
-cuando afecta archivos del repositorio, y cualquier comando destructivo. El
+cuando afecta archivos del repositorio, **ampliación de la superficie de
+ejecución declarada en la TAREA** (estándar §6.8), y cualquier comando
+destructivo. El
 otorgante, las condiciones y la aceptación por
 operación se rigen por el estándar §1.4, §4.3, §6.2 y §6.6, sujetos a
 `AGENTS.md` y a las instrucciones superiores aplicables. Una autorización

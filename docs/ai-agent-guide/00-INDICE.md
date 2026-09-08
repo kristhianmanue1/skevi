@@ -15,6 +15,7 @@
 | `03-cascaron-proyecto.md` | F2 — cascarón | Al crear la estructura inicial del proyecto |
 | `04-ejecucion-y-verificacion.md` | F3 — ejecución | Durante la implementación y antes de declarar "hecho" |
 | `05-memoria-del-agente.md` | Complemento — memoria | Al operar agentes con continuidad entre sesiones (recomendación) |
+| `06-componentes-con-llm.md` | Complemento — no determinismo | Si el componente depende de un LLM o consume cuota tarifada (lectura condicional) |
 | `../estandar-diseno-software-github.md` | Transversal | Capa normativa: Git, GitHub, seguridad, PRs. Rige siempre |
 
 ## Reglas de aplicación (obligatorias)
