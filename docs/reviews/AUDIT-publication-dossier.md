@@ -50,6 +50,7 @@
 
 ## Decisión solicitada
 
-Merge del PR #<pendiente al crear> con merge commit (patrón vigente
-#31-#33), sin squash ni rebase, sin tag ni release. Sin aceptación
-registrada, la operación no existe.
+Merge del PR [#34](https://github.com/kristhianmanue1/skevi/pull/34)
+(verificado: OPEN, MERGEABLE, head `f2363cd`) con merge commit (patrón
+vigente #31-#33), sin squash ni rebase, sin tag ni release. Sin
+aceptación registrada, la operación no existe.
