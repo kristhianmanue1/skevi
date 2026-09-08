@@ -1,0 +1,12 @@
+{
+  "schema": "skevi/script-manifest/v1",
+  "version": "gate/v2",
+  "generated_at": "2026-09-08T00:00:00Z",
+  "files": {
+    "check_sizes.py": "sha256:6afc7556213bec2db8986326ba5b431c9641ab8c0b204f3a6e2c7e371ed16a52",
+    "check_plans.py": "sha256:e6bff6446f2c5e73315cb4fafec904d5040d70195f67bbefa4a7597f9a14553d",
+    "check_reports.py": "sha256:90a7b9ba5b7c2745492018d166048749a8a0d75b33b90251abae8b3f6b3f9077",
+    "check_templates.py": "sha256:4844fe44c1c611e34cba04e9146fbe5b504f3ce78aa8a5c967097fbc54705bb1"
+  },
+  "history": []
+}

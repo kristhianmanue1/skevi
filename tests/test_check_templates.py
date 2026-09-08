@@ -343,3 +343,92 @@ class DriftCheckTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ScriptManifestFamilyTests(unittest.TestCase):
+    """Extensión de ADR-020 a scripts/ (ADR-028): el mecanismo de MANIFEST +
+    installed es genérico — no depende de que el artefacto sea una plantilla.
+    Se añade una segunda familia de esquema (`skevi/script-manifest/v1` +
+    `skevi/script-install/v1`) sin tocar la primera."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.manifest_path = self.root / "MANIFEST.json"
+        self.installed_path = self.root / "installed.json"
+
+    def _run(self):
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            code = check_templates.main(
+                ["--manifest", str(self.manifest_path),
+                 "--installed", str(self.installed_path)]
+            )
+        return code, buf.getvalue()
+
+    def test_script_manifest_schema_is_accepted(self):
+        write_json(self.manifest_path, {
+            "schema": "skevi/script-manifest/v1",
+            "version": "gate/v2",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": files_for(["check_sizes.py"]),
+            "history": [],
+        })
+        write_json(self.installed_path, {
+            "schema": "skevi/script-install/v1",
+            "version": "gate/v2",
+            "files": files_for(["check_sizes.py"]),
+            "installed_at": "2026-09-08T00:00:00Z",
+            "source": "skevi/scripts",
+            "customized": [],
+        })
+        code, output = self._run()
+        self.assertEqual(code, 0, output)
+        self.assertTrue(output.startswith("OK —"))
+
+    def test_gate_version_format_is_accepted(self):
+        """El formato de versión no queda anclado a «plantillas»: cualquier
+        espacio de nombres en minúsculas con /vN es válido."""
+        self.assertTrue(check_templates.VERSION_RE.match("gate/v2"))
+        self.assertTrue(check_templates.VERSION_RE.match("plantillas/v1"))
+        self.assertFalse(check_templates.VERSION_RE.match("Gate/v2"))
+        self.assertFalse(check_templates.VERSION_RE.match("gate/2"))
+
+    def test_unknown_schema_family_is_still_rejected(self):
+        write_json(self.manifest_path, {
+            "schema": "skevi/inventado/v1",
+            "version": "gate/v2",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": files_for(["x.py"]),
+            "history": [],
+        })
+        write_json(self.installed_path, installed_data())
+        code, output = self._run()
+        self.assertEqual(code, 1)
+        self.assertTrue(output.startswith("BLOQ"))
+
+    def test_template_family_still_works_unchanged(self):
+        """No regresión: la familia original sigue funcionando tal cual."""
+        write_json(self.manifest_path, manifest_data(
+            version="plantillas/v1", files=files_for(TWO_FILES)))
+        write_json(self.installed_path, installed_data(
+            version="plantillas/v1", files=files_for(TWO_FILES)))
+        code, output = self._run()
+        self.assertEqual(code, 0, output)
+
+    def test_mismatched_families_fail_closed_via_missing_chain(self):
+        """Comparar un manifiesto de scripts contra un registro de plantillas
+        no encuentra cadena de versión y falla cerrado — sin necesidad de un
+        chequeo de familia explícito."""
+        write_json(self.manifest_path, {
+            "schema": "skevi/script-manifest/v1",
+            "version": "gate/v2",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": files_for(["check_sizes.py"]),
+            "history": [],
+        })
+        write_json(self.installed_path, installed_data(version="plantillas/v1"))
+        code, output = self._run()
+        self.assertEqual(code, 1)
+        self.assertIn("sin cadena hasta la vigente", output)

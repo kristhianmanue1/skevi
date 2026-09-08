@@ -243,3 +243,167 @@ class TemplateManifestIntegrationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ScriptManifestGateTests(unittest.TestCase):
+    """Extensión de ADR-020 a scripts/ (ADR-028): mismo comprobador, distinto
+    esquema y directorio, con validación estricta por artefacto — un
+    manifiesto de scripts no puede colarse con el esquema de plantillas."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.dir = Path(self.tmp.name) / "scripts"
+        self.dir.mkdir(parents=True)
+        self.manifest_path = self.dir / "MANIFEST.json"
+        (self.dir / "check_sizes.py").write_text("# gate\n", encoding="utf-8")
+
+    def _manifest(self, schema=None):
+        data = {
+            "schema": schema or check_sizes.SCRIPT_MANIFEST_SCHEMA,
+            "version": "gate/v2",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": {"check_sizes.py": digest_of(self.dir / "check_sizes.py")},
+            "history": [],
+        }
+        self.manifest_path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+
+    def test_accepts_script_schema_when_declared_explicitly(self):
+        self._manifest()
+        failures = check_sizes.check_template_manifest(
+            self.manifest_path, self.dir,
+            expected_schema=check_sizes.SCRIPT_MANIFEST_SCHEMA,
+        )
+        self.assertEqual(failures, [])
+
+    def test_template_schema_is_rejected_for_a_script_manifest(self):
+        """Validación estricta por artefacto: aceptar cualquier esquema
+        reconocido por Skevi en cualquier directorio sería más laxo de lo
+        necesario — cada manifiesto declara y se valida contra el suyo."""
+        self._manifest(schema=check_sizes.TEMPLATE_MANIFEST_SCHEMA)
+        failures = check_sizes.check_template_manifest(
+            self.manifest_path, self.dir,
+            expected_schema=check_sizes.SCRIPT_MANIFEST_SCHEMA,
+        )
+        self.assertTrue(failures)
+        self.assertIn("schema desconocido", failures[0])
+
+    def test_default_expected_schema_is_the_template_one(self):
+        """Compatibilidad: llamadas existentes sin el parámetro nuevo siguen
+        validando contra el esquema de plantillas, sin cambio de firma."""
+        import inspect
+        sig = inspect.signature(check_sizes.check_template_manifest)
+        self.assertEqual(
+            sig.parameters["expected_schema"].default,
+            check_sizes.TEMPLATE_MANIFEST_SCHEMA,
+        )
+
+    def test_label_reflects_the_scripts_directory(self):
+        """El mensaje de error generaliza más allá de "templates/skevi/"."""
+        (self.dir / "extra.py").write_text("# no listado\n", encoding="utf-8")
+        self._manifest()
+        failures = check_sizes.check_template_manifest(
+            self.manifest_path, self.dir,
+            expected_schema=check_sizes.SCRIPT_MANIFEST_SCHEMA,
+        )
+        self.assertTrue(any("scripts/MANIFEST.json" in f for f in failures), failures)
+        self.assertFalse(any("templates/skevi/" in f for f in failures), failures)
+
+
+class MainRunsScriptsManifestTests(unittest.TestCase):
+    """main() valida scripts/MANIFEST.json cuando existe, igual que ya hace
+    con templates/skevi/MANIFEST.json."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self._orig_root = check_sizes.ROOT
+        check_sizes.ROOT = self.root
+        for relative in sorted(check_sizes.REQUIRED):
+            path = self.root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(f"# {relative}\n", encoding="utf-8")
+        skevi_dir = self.root / "templates" / "skevi"
+        data = {
+            "schema": check_sizes.TEMPLATE_MANIFEST_SCHEMA,
+            "version": "plantillas/v1",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": {
+                p.name: digest_of(p)
+                for p in sorted(skevi_dir.iterdir())
+                if p.is_file() and p.name != "MANIFEST.json"
+            },
+            "history": [],
+        }
+        (skevi_dir / "MANIFEST.json").write_text(
+            json.dumps(data, indent=2) + "\n", encoding="utf-8"
+        )
+
+    def tearDown(self):
+        check_sizes.ROOT = self._orig_root
+
+    def _run(self):
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            code = check_sizes.main()
+        return code, buf.getvalue()
+
+    def test_absent_scripts_manifest_is_not_an_error(self):
+        """Adopción progresiva: sin scripts/MANIFEST.json, nada se comprueba
+        — mismo criterio que templates/skevi/MANIFEST.json."""
+        exit_code, output = self._run()
+        self.assertEqual(exit_code, 0, output)
+
+    def test_scripts_manifest_out_of_sync_is_blocked(self):
+        (self.root / "scripts" / "MANIFEST.json").write_text(
+            json.dumps({
+                "schema": check_sizes.SCRIPT_MANIFEST_SCHEMA,
+                "version": "gate/v2",
+                "generated_at": "2026-09-08T00:00:00Z",
+                "files": {"check_sizes.py": "sha256:" + "0" * 64},
+                "history": [],
+            }) + "\n",
+            encoding="utf-8",
+        )
+        exit_code, output = self._run()
+        self.assertEqual(exit_code, 1)
+        self.assertIn("scripts/MANIFEST.json", output)
+
+    def test_scripts_manifest_in_sync_passes(self):
+        real = digest_of(self.root / "scripts" / "check_sizes.py")
+        (self.root / "scripts" / "MANIFEST.json").write_text(
+            json.dumps({
+                "schema": check_sizes.SCRIPT_MANIFEST_SCHEMA,
+                "version": "gate/v2",
+                "generated_at": "2026-09-08T00:00:00Z",
+                "files": {"check_sizes.py": real},
+                "history": [],
+            }) + "\n",
+            encoding="utf-8",
+        )
+        exit_code, output = self._run()
+        self.assertEqual(exit_code, 0, output)
+
+
+class ScriptManifestMatchesGateVersionTests(unittest.TestCase):
+    """scripts/MANIFEST.json.version y check_sizes.GATE_VERSION (ADR-027) son
+    el mismo número por convención, no por código compartido: si divergen,
+    nada los detecta salvo este test. Subir GATE_VERSION sin regenerar el
+    manifiesto —o al revés— debe romper aquí (ADR-028)."""
+
+    def test_manifest_version_equals_gate_version_constant(self):
+        root = Path(__file__).resolve().parent.parent
+        data = json.loads((root / "scripts" / "MANIFEST.json").read_text(
+            encoding="utf-8"))
+        self.assertEqual(data["version"], check_sizes.GATE_VERSION)
+
+    def test_manifest_digests_match_the_real_files_on_disk(self):
+        root = Path(__file__).resolve().parent.parent
+        data = json.loads((root / "scripts" / "MANIFEST.json").read_text(
+            encoding="utf-8"))
+        for name, digest in data["files"].items():
+            self.assertEqual(digest_of(root / "scripts" / name), digest, name)

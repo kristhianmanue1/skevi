@@ -101,11 +101,17 @@ TEMPLATE_LIMIT = 300
 # no en estos valores por defecto.
 TEMPLATE_MANIFEST_NAME = "MANIFEST.json"
 TEMPLATE_MANIFEST_SCHEMA = "skevi/template-manifest/v1"
+# Segunda familia de MANIFEST (ADR-028): mismo mecanismo de check_template_manifest,
+# aplicado a scripts/ en vez de templates/skevi/. Validación estricta por
+# artefacto — cada directorio se valida sólo contra su propio esquema.
+SCRIPT_MANIFEST_SCHEMA = "skevi/script-manifest/v1"
 TEMPLATE_MANIFEST_KEYS = {"schema", "version", "generated_at", "files",
                           "history"}
 TEMPLATE_HISTORY_KEYS = {"from", "to", "breaking", "changes"}
 DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
-TEMPLATE_VERSION_RE = re.compile(r"^plantillas/v\d+(\.\d+)*$")
+# Namespace en minúsculas + /vN: cubre "plantillas/v1" (ADR-020) y
+# "gate/v2" (ADR-028) con la misma expresión.
+MANIFEST_VERSION_RE = re.compile(r"^[a-z]+/v\d+(\.\d+)*$")
 
 # Instantánea de los valores de Skevi, congelada al importar el módulo, antes
 # de que ninguna configuración de proyecto pueda tocarlos. `main()` restaura
@@ -396,15 +402,20 @@ def check_registry_block(relative: Path, text: str) -> list[str]:
     return failures
 
 
-def _validate_template_manifest(data, label: str) -> list[str]:
-    """Esquema cerrado del MANIFEST (formato de ADR-020). Falla por campo,
-    con motivo fijo, sin volcar contenido."""
+def _validate_template_manifest(
+    data, label: str, expected_schema: str = TEMPLATE_MANIFEST_SCHEMA
+) -> list[str]:
+    """Esquema cerrado del MANIFEST (formato de ADR-020, familias en ADR-028).
+    Falla por campo, con motivo fijo, sin volcar contenido. Validación
+    estricta: cada manifiesto se valida contra un único esquema esperado,
+    no contra cualquiera que Skevi reconozca — un manifiesto de scripts no
+    puede colarse donde se espera uno de plantillas."""
     failures: list[str] = []
     if not isinstance(data, dict):
         return [f"{label}: la raíz debe ser un objeto"]
-    if data.get("schema") != TEMPLATE_MANIFEST_SCHEMA:
+    if data.get("schema") != expected_schema:
         failures.append(
-            f"{label}: schema desconocido (se espera {TEMPLATE_MANIFEST_SCHEMA})"
+            f"{label}: schema desconocido (se espera {expected_schema})"
         )
     unknown = sorted(set(data) - TEMPLATE_MANIFEST_KEYS)
     if unknown:
@@ -413,7 +424,7 @@ def _validate_template_manifest(data, label: str) -> list[str]:
         )
         return failures
     if not isinstance(data["version"], str) \
-            or not TEMPLATE_VERSION_RE.match(data["version"]):
+            or not MANIFEST_VERSION_RE.match(data["version"]):
         failures.append(f"{label}: version no coincide con plantillas/v<n>")
     if not isinstance(data["generated_at"], str) or not data["generated_at"]:
         failures.append(f"{label}: generated_at debe ser texto con fecha")
@@ -440,11 +451,11 @@ def _validate_template_manifest(data, label: str) -> list[str]:
             continue
         if jump["from"] is not None and (
             not isinstance(jump["from"], str)
-            or not TEMPLATE_VERSION_RE.match(jump["from"])
+            or not MANIFEST_VERSION_RE.match(jump["from"])
         ):
             failures.append(f"{where}.from no es una versión válida")
         if not isinstance(jump["to"], str) \
-                or not TEMPLATE_VERSION_RE.match(jump["to"]):
+                or not MANIFEST_VERSION_RE.match(jump["to"]):
             failures.append(f"{where}.to no es una versión válida")
         if not isinstance(jump["breaking"], bool):
             failures.append(f"{where}.breaking debe ser booleano")
@@ -457,11 +468,24 @@ def _validate_template_manifest(data, label: str) -> list[str]:
     return failures
 
 
-def check_template_manifest(manifest_path: Path, templates_dir: Path) -> list[str]:
-    """Valida el MANIFEST de plantillas (#28 D1 + T09): esquema cerrado,
-    listado exacto de templates/skevi/ (sin el MANIFEST mismo) y digests
-    vigentes sobre los bytes reales. Fail-closed, sin tracebacks."""
-    label = f"templates/skevi/{TEMPLATE_MANIFEST_NAME}"
+def check_template_manifest(
+    manifest_path: Path,
+    templates_dir: Path,
+    expected_schema: str = TEMPLATE_MANIFEST_SCHEMA,
+) -> list[str]:
+    """Valida un MANIFEST fuente de Skevi (#28 D1 + T09; familias ADR-028):
+    esquema cerrado, listado exacto del directorio (sin el MANIFEST mismo) y
+    digests vigentes sobre los bytes reales. Fail-closed, sin tracebacks.
+    Genérico por directorio: se usa igual para templates/skevi/ y scripts/."""
+    # Bajo ROOT (uso real): la etiqueta refleja la ruta real, "scripts/..." o
+    # "templates/skevi/...". Fuera de ROOT (tests con directorios propios):
+    # se degrada al nombre del directorio — sin relative_to no hay ambigüedad
+    # que resolver, y ningún llamador de producción está fuera de ROOT.
+    try:
+        dir_label = templates_dir.relative_to(ROOT).as_posix()
+    except ValueError:
+        dir_label = templates_dir.name
+    label = f"{dir_label}/{TEMPLATE_MANIFEST_NAME}"
     try:
         data = json.loads(manifest_path.read_text(encoding="utf-8"))
     except UnicodeDecodeError:
@@ -474,7 +498,7 @@ def check_template_manifest(manifest_path: Path, templates_dir: Path) -> list[st
         ]
     except RecursionError:
         return [f"{label}: JSON inválido o demasiado anidado"]
-    failures = _validate_template_manifest(data, label)
+    failures = _validate_template_manifest(data, label, expected_schema)
     if failures:
         return failures
     try:
@@ -491,8 +515,7 @@ def check_template_manifest(manifest_path: Path, templates_dir: Path) -> list[st
             # Los symlinks no se siguen: la frontera de raíz vale también
             # para el listado de plantillas (ronda adversarial, LOW).
             failures.append(
-                f"{label}: symlink no permitido en templates/skevi/: "
-                f"{path.name}"
+                f"{label}: symlink no permitido en {dir_label}/: {path.name}"
             )
             continue
         on_disk.append(path.name)
@@ -675,6 +698,15 @@ def main() -> int:
     if manifest_path.is_file():
         failures.extend(
             check_template_manifest(manifest_path, manifest_path.parent)
+        )
+
+    scripts_manifest_path = ROOT / "scripts" / TEMPLATE_MANIFEST_NAME
+    if scripts_manifest_path.is_file():
+        failures.extend(
+            check_template_manifest(
+                scripts_manifest_path, scripts_manifest_path.parent,
+                expected_schema=SCRIPT_MANIFEST_SCHEMA,
+            )
         )
 
     unexpected_markdown = sorted(
