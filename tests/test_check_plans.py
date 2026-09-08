@@ -8,10 +8,12 @@ legítima con "pendiente de definir" no debe fallar por vocabulario.
 """
 
 import importlib
+import io
 import json
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -332,6 +334,37 @@ class TestFailClosed(BaseConProyecto):
         with self.assertRaises(ValueError):
             check_plans.planes_declarados(self.root)
 
+
+
+
+class RootBoundaryTests(unittest.TestCase):
+    """Hallazgo F-3 de la ronda del 2026-09-07: una raíz inexistente se
+    reportaba como «sin planes declarados» con código 0 — fail-open.
+    Apuntar el gate a la ruta equivocada daba verde."""
+
+    def _run(self, argv):
+        check_plans = importlib.import_module("check_plans")
+        importlib.reload(check_plans)
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            code = check_plans.main(argv)
+        return code, buf.getvalue()
+
+    def test_missing_root_is_blocked_not_inactive(self):
+        code, output = self._run(["--root", "/tmp/skevi-no-existe-f3"])
+        self.assertEqual(code, 1)
+        self.assertNotIn("sin planes declarados", output)
+        self.assertNotIn("Traceback", output)
+
+    def test_root_pointing_to_a_file_is_blocked(self):
+        with tempfile.NamedTemporaryFile(suffix=".md") as archivo:
+            code, output = self._run(["--root", archivo.name])
+        self.assertEqual(code, 1)
+
+    def test_root_without_value_still_fails_controlled(self):
+        code, output = self._run(["--root"])
+        self.assertNotEqual(code, 0)
+        self.assertNotIn("Traceback", output)
 
 if __name__ == "__main__":
     unittest.main()

@@ -57,7 +57,7 @@ def _claves_validas() -> set[str]:
     except ImportError:
         return {
             "limits", "default_limit", "exempt_paths", "required",
-            "skip_dirs", "root_markdown", "plans",
+            "skip_dirs", "root_markdown", "plans", "reading_path", "reports",
         }
 
 
@@ -247,6 +247,13 @@ def main(argv: list[str] | None = None) -> int:
             print("BLOQ — --root exige un directorio")
             return 2
         raiz = Path(argv[1]).resolve()
+        # Una raíz inexistente no equivale a un repo sin planes: sin esta
+        # comprobación, apuntar el gate a la ruta equivocada devolvía
+        # "sin planes declarados" con código 0 — fail-open, lo contrario de
+        # la polaridad que este gate declara (hallazgo F-3, 2026-09-07).
+        if not raiz.is_dir():
+            print("BLOQ — --root debe apuntar a un directorio existente")
+            return 1
         argv = argv[2:]
 
     if argv:  # archivos explícitos: evidencia sobre planes de cualquier repo
