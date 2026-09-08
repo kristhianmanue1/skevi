@@ -3,7 +3,7 @@
 Autoriza: [SPEC-AUDIT](../specs/SPEC-AUDIT-2026-09-07-mejoras.md), derivada
 de la instrucción humana del 2026-09-07: persistir el plan detallado e iniciar.
 Clase de tarea: Architectural — crear plan multi-tarea (F0 §2, ADR-013).
-Estado: T00-T10, T05-A y T14 completos; T06-T10 cerrados por decisión; siguiente T11.
+Estado: T00-T11, T05-A y T14 completos; T06-T11 cerrados por decisión; siguiente T12 (P5, cierre del programa).
 Base: `17413f150d08e1e65b72f70a858104505950e751`.
 Rama de retoma: `docs/adopt-authority-consistency`. El plan es dueño de steps/DoD.
 
@@ -240,13 +240,13 @@ TAREA T11
   Consumes: T10; REQ-AUD-06
   Produce: crea `docs/proposals/AUDIT-management-pilot.md`
   Steps:
-  - [ ] Fijar piloto antes de medir — verificación: beneficiario, resultado,
+  - [x] Fijar piloto antes de medir — verificación: beneficiario, resultado,
         línea base, métrica, muestra, límite de esfuerzo y umbral acordados.
-  - [ ] Ejecutar seguimiento proporcional — verificación: responsables,
+  - [x] Ejecutar seguimiento proporcional — verificación: responsables,
         hitos/dependencias, esfuerzo real, riesgos y cambios con impacto.
-  - [ ] Evaluar beneficio frente a carga — verificación: datos de tiempos
+  - [x] Evaluar beneficio frente a carga — verificación: datos de tiempos
         y retrabajo sustentan adoptar, ajustar o descartar; no certificación PMI.
-  - [ ] Proponer sólo prácticas que superen el piloto — verificación:
+  - [x] Proponer sólo prácticas que superen el piloto — verificación:
         cada regla tiene procedencia, coste y excepción según contexto.
 ```
 
