@@ -48,7 +48,12 @@ fronteras_de_confianza:
   - una ronda adversarial sin contexto declarado no acredita independencia
   - el gate comprueba estructura y tamaño; que un artefacto exista no prueba que su contenido sea correcto
   - los pilotos registrados son evidencia de un caso, no generalización
-  - toda operación destructiva o con efecto fuera del entorno local exige autorización previa y específica —del humano o del orquestador designado conforme al §6 del estándar—
+  # ADR-018: distinguir autodeclaración general de la restricción local.
+  - >
+    Toda operación destructiva o con efecto fuera del entorno local exige
+    autorización previa y específica conforme al §6 del estándar y a las
+    restricciones del proyecto adoptante. Esta declaración no concede
+    autoridad; en el repositorio Skevi rige la restricción humana de AGENTS.md.
 
 pospuesto:
   - perfiles por herramienta más allá de GitHub

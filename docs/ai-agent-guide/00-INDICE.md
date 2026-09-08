@@ -22,10 +22,16 @@
 1. **Orden de fases.** F0 → F1 → F2 → F3. No escribas código de una fase
    posterior sin cerrar el gate de la fase actual. Un gate se cierra con
    evidencia, no con una declaración.
-2. **Prioridad de fuentes.** Si hay conflicto: (a) instrucción directa del
-   humano en la conversación, (b) `AGENTS.md` del proyecto, (c) esta guía,
-   (d) tus supuestos. Los supuestos siempre pierden; si el supuesto es
-   material, pregunta en lugar de asumir.
+2. **Prioridad de fuentes.** Aplica la jerarquía declarada en `AGENTS.md`
+   del proyecto. Dentro del corpus Skevi, el estándar transversal precede
+   a esta guía. Si no hay jerarquía local declarada: instrucción directa del
+   humano, AGENTS aplicable si existe, estándar, guía y supuestos, en ese orden.
+   No declarar una jerarquía no elimina las restricciones de AGENTS.
+   Ningún documento del corpus reemplaza las instrucciones superiores del
+   entorno del agente.
+   Los supuestos materiales se consultan, nunca sustituyen una fuente.
+   Procedencia y razón: [ADR-018](../adr/ADR-018-coherencia-de-autoridad.md);
+   explicitar la fuente transversal sin eliminar restricciones locales.
 3. **Mínimo necesario.** Aplica sólo lo que el tamaño real del proyecto
    justifica. Un script de 50 líneas no necesita ADRs; un sistema con
    fronteras externas sí. La regla: cada artefacto que crees debe responder

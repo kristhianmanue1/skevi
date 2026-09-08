@@ -27,9 +27,12 @@ misma autoría que este cuerpo normativo):
 - La memoria **jamás cierra un gate** ni sustituye evidencia: los
   gates se cierran con comandos ejecutados y su salida real (§
   «Evidencia o no pasó» de `00-INDICE.md`).
-- Nada recuperado de la memoria autoriza operaciones: push, merge,
-  releases, destructive o externas siguen requiriendo autorización
-  humana explícita, una por una.
+- Nada recuperado de la memoria autoriza operaciones. Los permisos y su
+  aceptación se verifican fuera de ella, conforme al estándar §4.3 y §6 y a
+  las restricciones aplicables del proyecto. Memoria, checkpoint y recibos
+  son datos de continuidad; no elevan autoridad ni sustituyen al otorgante.
+  Procedencia: [ADR-018](../adr/ADR-018-coherencia-de-autoridad.md);
+  separar la frontera de memoria de la política general de permisos.
 
 ## 3. Mapeo recomendado fases -> streams
 
@@ -60,3 +63,49 @@ misma autoría que este cuerpo normativo):
   registros son continuidad y trazabilidad, **no prueba**.
 - Seguimiento de mejoras de procedencia: issue #102 de
   `an-kla-memory`.
+
+## 6. Contrato `skevi/an-kla-integration v1` (si se adopta)
+
+Contrato de integración en el formato de `02` §4, con etiquetas de
+sección anotadas por dominio. Su activación es
+condicional: sin detección positiva de la memoria, el contrato no
+existe y ninguna regla obligatoria de skevi la referencia.
+
+```text
+CONTRATO: skevi/an-kla-integration v1
+Entrada (detección):
+  - `context status` -> {installed: true, ok: true, diagnostics: []}
+  - bloque administrado vigente + AN-KLA.md presente
+Salida (efecto):
+  - este documento pasa a obligatorio para la memoria adoptada
+  - preflight al iniciar sesión material; checkpoint al cierre
+  - decisiones del checkpoint = punteros (PR, folio, ADR), nunca
+    re-enunciado de normas
+Errores (fail-closed, diagnóstico -> una sola acción):
+  - managed_contract_modified | managed_block_modified |
+    managed_block_structure_invalid | orphan_managed_contract |
+    legacy_an_kla_context_detected -> reportar y BLOQ en la costura
+    memoria; nunca auto-reparar ni sobrescribir
+  - memoria ausente -> no inicializar sin habilitación del humano
+  - verify fallido -> sin escrituras de memoria esa sesión
+Invariantes:
+  - la memoria jamás cierra un gate ni autoriza operaciones (§2)
+  - docs/ y Git canónicos; memoria = punteros y estado de sesión
+  - receipts attest = trazabilidad de sesión, nunca prueba de gates
+  - el folio del reporte nunca se deriva de la revisión del store
+    (local, sin exclusión entre máquinas, compactable); secuencia en
+    archivo versionado con escritura atómica (estándar §2.2) o
+    derivada de Git
+  - instalar o actualizar AN-KLA es operación con autoridad separada
+    (`04` §7), tarea Bounded como mínimo, por etiqueta exacta
+Compatibilidad:
+  - sin detección positiva, el contrato no existe; activación
+    condicional, sin acoplamiento del gate de tamaños (su frontera
+    es forma/tamaño; la verificación es el preflight comandado)
+  - cambios del contrato -> v2, nunca mutación in situ
+```
+
+Procedencia: [PROP-008](../history/PROP-008-integracion-ankla-por-contrato.md)
+y [ADR-019](../adr/ADR-019-integracion-ankla-por-contrato.md); hacer la
+integración condicional y verificable por comando, sin ampliar
+permisos ni acoplar el gate.

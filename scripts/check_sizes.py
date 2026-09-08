@@ -121,6 +121,14 @@ CONFIG_KEYS = {
 # ADR-014): misma config, polaridad cerrada compartida — ausente = inactivo.
 
 
+class _ConfigError(ValueError):
+    """Diagnóstico interno con constantes/campos conocidos, nunca payload.
+
+    Procedencia: ADR-007 y SPEC-AUD-02. Conserva compatibilidad con quienes
+    capturan ValueError; sólo esta variante admite mostrar su mensaje.
+    """
+
+
 def _resolve_project_path(value: object) -> Path | None:
     """Resuelve `value` contra ROOT; None si no es texto, es absoluta,
     empieza por `~` o escapa de ROOT. No exige que el archivo exista: los
@@ -140,12 +148,12 @@ def _safe_relative_paths(field: str, values: object) -> list[str]:
     ROOT. Rechaza absolutas y saltos hacia fuera (`../..`), con la misma
     frontera que `_resolve_registry_path` aplica al bloque de registro."""
     if not isinstance(values, list):
-        raise ValueError(f"{CONFIG_NAME}: «{field}» debe ser una lista de rutas")
+        raise _ConfigError(f"{CONFIG_NAME}: «{field}» debe ser una lista de rutas")
     safe: list[str] = []
     for value in values:
         if _resolve_project_path(value) is None:
-            raise ValueError(
-                f"{CONFIG_NAME}: «{field}» tiene una ruta inválida: {value!r} "
+            raise _ConfigError(
+                f"{CONFIG_NAME}: «{field}» tiene una ruta inválida "
                 "(debe ser relativa a la raíz del proyecto)"
             )
         safe.append(value)
@@ -154,7 +162,7 @@ def _safe_relative_paths(field: str, values: object) -> list[str]:
 
 def _string_list(field: str, values: object) -> list[str]:
     if not isinstance(values, list) or not all(isinstance(v, str) for v in values):
-        raise ValueError(f"{CONFIG_NAME}: «{field}» debe ser una lista de texto")
+        raise _ConfigError(f"{CONFIG_NAME}: «{field}» debe ser una lista de texto")
     return values
 
 
@@ -169,10 +177,13 @@ def load_config() -> dict:
         return {}
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
-        raise ValueError(f"{CONFIG_NAME}: la raíz debe ser un objeto")
+        raise _ConfigError(f"{CONFIG_NAME}: la raíz debe ser un objeto")
     unknown = sorted(set(data) - CONFIG_KEYS)
     if unknown:
-        raise ValueError(f"{CONFIG_NAME}: claves desconocidas: {', '.join(unknown)}")
+        raise _ConfigError(
+            f"{CONFIG_NAME}: claves desconocidas; permitidas: "
+            + ", ".join(sorted(CONFIG_KEYS))
+        )
     return data
 
 
@@ -199,17 +210,17 @@ def apply_config(config: dict) -> None:
     if "limits" in config:
         raw = config["limits"]
         if not isinstance(raw, dict):
-            raise ValueError(f"{CONFIG_NAME}: «limits» debe ser un objeto")
+            raise _ConfigError(f"{CONFIG_NAME}: «limits» debe ser un objeto")
         for name, value in raw.items():
             if not isinstance(value, int) or isinstance(value, bool):
-                raise ValueError(
-                    f"{CONFIG_NAME}: «limits.{name}» debe ser un entero"
+                raise _ConfigError(
+                    f"{CONFIG_NAME}: cada valor de «limits» debe ser un entero"
                 )
             LIMITS[str(name)] = value
     if "default_limit" in config:
         value = config["default_limit"]
         if not isinstance(value, int) or isinstance(value, bool):
-            raise ValueError(f"{CONFIG_NAME}: «default_limit» debe ser un entero")
+            raise _ConfigError(f"{CONFIG_NAME}: «default_limit» debe ser un entero")
         DEFAULT_LIMIT = value
     if "exempt_paths" in config:
         EXEMPT_PATHS.update(_safe_relative_paths("exempt_paths", config["exempt_paths"]))
@@ -312,26 +323,42 @@ def discover() -> list[Path]:
 
 
 def count_text_lines(relative: Path) -> int | None:
+    """None significa exención; los errores de lectura los reporta main.
+
+    Procedencia: estándar §3.4 y ADR-007; una lectura fallida no acredita
+    tamaño ni permite omitir el archivo como si estuviera exento.
+    """
     if relative.as_posix() in EXEMPT_PATHS:
         return None
     if relative.suffix.lower() in EXEMPT_SUFFIXES:
         return None
-    try:
-        text = (ROOT / relative).read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError):
-        return None
+    text = (ROOT / relative).read_text(encoding="utf-8")
     return len(text.splitlines())
 
 
 def main() -> int:
     failures: list[str] = []
 
+    config_error = None
     try:
         reset_to_skevi_defaults()
         apply_config(load_config())
-    except (ValueError, OSError) as exc:
-        print("BLOQ — check_sizes no pudo leer la configuración del proyecto")
-        print(f"- {exc}")
+    except _ConfigError as exc:
+        config_error = str(exc)
+    except UnicodeDecodeError:
+        config_error = f"{CONFIG_NAME}: contenido no válido como UTF-8"
+    except json.JSONDecodeError as exc:
+        config_error = (
+            f"{CONFIG_NAME}: JSON inválido "
+            f"(línea {exc.lineno}, columna {exc.colno})"
+        )
+    except OSError:
+        config_error = f"{CONFIG_NAME}: no se pudo leer la configuración"
+    except ValueError:
+        config_error = f"{CONFIG_NAME}: valor no válido en la configuración"
+    if config_error is not None:
+        print("BLOQ — check_sizes encontró configuración inválida")
+        print(f"- {config_error}")
         return 1
 
     for relative in sorted(REQUIRED):
@@ -350,17 +377,25 @@ def main() -> int:
 
     rows: list[tuple[str, int, int]] = []
     for relative in discover():
-        observed = count_text_lines(relative)
-        if observed is None:
-            continue
         name = relative.as_posix()
+        try:
+            observed = count_text_lines(relative)
+            if observed is None:
+                continue
+            if relative.name in REGISTRY_HOSTS:
+                text = (ROOT / relative).read_text(encoding="utf-8")
+                failures.extend(check_registry_block(relative, text))
+        except UnicodeDecodeError:
+            failures.append(f"{name}: contenido no válido como UTF-8")
+            continue
+        except OSError:
+            # No volcar la excepción: puede contener rutas o datos del host.
+            failures.append(f"{name}: no se pudo leer el archivo")
+            continue
         limit = limit_for(name)
         rows.append((name, observed, limit))
         if observed > limit:
             failures.append(f"{name}: {observed} líneas > límite {limit}")
-        if relative.name in REGISTRY_HOSTS:
-            text = (ROOT / relative).read_text(encoding="utf-8")
-            failures.extend(check_registry_block(relative, text))
 
     if failures:
         print("BLOQ — check_sizes encontró incumplimientos")
