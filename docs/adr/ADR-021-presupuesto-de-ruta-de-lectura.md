@@ -1,7 +1,16 @@
 # ADR-021: Presupuesto de la ruta de lectura obligatoria
 
-Estado: aceptado; implementado en `scripts/check_sizes.py` (clave
-`reading_path` de `skevi-gate.json`) y en el §3.4 del estándar.
+Estado: aceptado.
+
+El vocabulario de `02` §3.2 —`propuesto | aceptado | rechazado | sustituido
+por ADR-<m>`— no admite sustitución parcial, así que este ADR **no** se marca
+sustituido: sigue aceptado y su mecanismo vigente. Lo que cambia es la
+**justificación** del techo, que rehace
+[ADR-025](ADR-025-trinquete-no-techo-derivado.md): donde aquí se presentaba
+1000 como límite, ADR-025 lo declara trinquete sobre lo observado. Ante
+contradicción entre ambos textos gana ADR-025, por posterior y explícito.
+Implementado en `scripts/check_sizes.py` (clave `reading_path` de
+`skevi-gate.json`) y en el §3.4 del estándar.
 
 Contexto: §3.4 acota **cada archivo** porque «un archivo que no cabe en una
 lectura se aplica a medias». El argumento es correcto y estaba aplicado a
