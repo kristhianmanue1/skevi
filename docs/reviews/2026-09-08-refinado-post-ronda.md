@@ -3,125 +3,97 @@
 Plan: [R1-2026-09-08](../plans/2026-09-08-refinado-post-ronda.md).
 Rama: `fix/refinado-post-ronda-m6`. Base: `b563279`.
 
+> **Quinta emisión.** Cuatro rondas adversariales anteriores en esta misma
+> rama encontraron ocho afirmaciones falsas, todas sobre el censo de
+> adopción del ecosistema — nunca en el código, la norma o los ADR. Una
+> quinta ronda encontró una novena. Decisión humana: **retirar los dos
+> documentos de censo de este merge** en vez de pedirle a este mismo
+> ejecutor que se corrija una vez más. Lo demás —tres gates, siete ADR
+> (021–027), estándar, `AGENTS.md`— pasó la quinta ronda sin un solo
+> hallazgo nuevo y se mergea.
+
 ## Capa técnica
 
 ```text
-id = SKV-R1-20260908-03
+id = SKV-R1-20260908-04
 date = 2026-09-08
-time_utc = 10:40:00Z
-head_sha = 7c85c7c33bafa70e0d22a1be9d1a152513cdc04b
-model = Claude Opus 5 (self-declared)
-STATE = PARTIAL (third fresh round closed two BLOCKER and five HIGH; its own corrections are unreviewed)
-GATE = Plan R1 closed except R-T2 step 2; second fresh-context round executed, all its findings closed.
+time_utc = 15:25:57Z
+head_sha = 81c9f5cd9ba8dc66b90eddb856411dc43a60c145
+model = Claude Sonnet 5 (self-declared)
+STATE = OK (normative work merges; ecosystem census withdrawn by human decision)
+GATE = check_sizes, check_plans, check_reports and the suite green; fourth fresh round on the ecosystem docs found a ninth false claim, so those two documents are excluded from this merge instead of re-certified by this executor.
 EVIDENCE
-- python3 scripts/check_sizes.py -> OK, 115 text files, ruta de lectura 984/1000 -> pass
+- python3 scripts/check_sizes.py -> OK, 113 text files, ruta de lectura 984/1000 -> pass
 - python3 scripts/check_plans.py -> OK, 4 plans verified -> pass
 - python3 scripts/check_reports.py -> OK, reports verified, 2 exempt -> pass
 - python3 -m unittest discover -s tests -> Ran 194 tests, OK -> pass
-- BLOCKER pilot verdict was false -> eduEMD ran both gates green on 2026-09-06 with a copy byte-identical to v1.0.0 -> fail
-- Production line counts in the first table -> inflated by counting .venv, build and references; epistates 8562 not 22704 -> fail
-- escrubery characterised as having real remote CI -> its ci.yml is workflow_dispatch only, billing exhausted -> fail
-- ADR-026 prose contradicted its own evidence table and decision -> fail
-- Crosswalk still carried six cells reading owner-nobody after ADR-026 declared them out of scope -> fail
-- check_plans and check_reports followed symlinks out of the root -> reproduced, then filtered -> pass
-- Re-attack of symlink escape after fix -> content outside the root never reaches stdout -> pass
-- Previous emission claimed 111 files at commit 37f6b13 -> the real count there is 112 -> fail
-- Long prose line of 262 columns introduced while closing one of 126 -> fail
-- ADR-027 copy partition -> claimed nine and two; the real split is seven, two and two forks -> fail
-- ADR-027 promised identity on OK and BLOQ -> code printed it only on OK, then fixed -> fail
-- check_sizes discover() followed file symlinks and measured files outside the root -> reproduced, then filtered -> fail
-- check_reports symlink test -> vacuous, passed with and without the fix; fixture corrected and RED verified -> fail
-- Staleness threshold -> test read the constant and survived mutation; anchored to a literal -> fail
-- Ecosystem sweep for adopters -> 18 repositories cite Skevi; 11 carry a copied gate; none current -> pass
-- Copies at 380 lines -> byte-identical to each other and to Skevi commit 7bfd759c of 2026-08-20 -> pass
-- Stale gate on an unreadable file -> OK exit 0; current gate on the same fixture -> BLOQ exit 1 -> pass
-PENDING = Corrections to this round are themselves unreviewed; R-T2 step 2 open; gate drift proposal undecided; push, PR and merge unauthorised.
-DECISION = escalate
-OPERATIONS = commits on branch fix/refinado-post-ronda-m6; no push, merge, PR, tag or release
-AUTHORITY = Human authorised the refined recommendations, the pending items and both fresh reviewers; nothing beyond that
-RISK = Six consecutive emissions of the same failure mode: measuring the wrong population or the wrong artefact and stating the conclusion as verified. Gates and tests passed on every one of them. The mode is not contained by the current process.
-report_sha256 = a526fe10f315d780c45fd50213278c420cca8f7f1639140b9524b03abbe506c5
+- git diff --check -> no output -> pass
+- Fourth fresh-context round on code, ADR-021..027, standard, AGENTS.md, manifest, crosswalk -> zero new findings after 5 consecutive rounds -> pass
+- Same round on the two ecosystem documents -> two BLOCKER (unversioned cagf-dashboard workflow claimed as CI; adopter count 18 omitting emd, real count >=22) plus five HIGH -> fail
+- cagf-dashboard workflow versioned -> git ls-files .github/ on that repo returns empty -> fail
+- emd cites Skevi with formal .skevi installations -> 24 files, two .skevi directories confirmed -> fail
+- Decision to withdraw rather than re-correct -> nine consecutive false claims across five rounds on the same failure mode -> pass
+- ADR-026 and ADR-027 references to the withdrawn documents -> replaced with explicit withdrawal notes, no broken backtick paths remain -> pass
+- Remaining cross-reference in docs/plans/2026-09-07-seis-mejoras.md (already on main, out of this branch) -> exempt from E5 by its own "crea" wording, unaffected -> pass
+PENDING = Ecosystem adoption census (who adopts Skevi, with what CI, at what scale) remains open; to be redone with a repo list confirmed by the human, or by an executor other than this one. Second-emission drift-and-pilot documents recoverable from this branch's history if resumed.
+DECISION = proceed (normative scope only)
+OPERATIONS = commit on branch fix/refinado-post-ronda-m6; push, PR and merge to main authorised by the human for this scope
+AUTHORITY = Human explicitly authorised push, PR and merge for the branch as scoped by this withdrawal; the ecosystem census was explicitly excluded from that authorisation
+RISK = The withdrawn documents' correct claims (11 derivative gate copies, the four hash lineages, the 7 reproducible LOC figures, symlink closure) are also lost from the merged tree along with the false ones, since they lived in the same two files. Recoverable from git history on this branch, not re-published here.
+report_sha256 = 8d42444ccf5d0c2a7d73cf653564792b62153713ff0d5ec9be97a18657b9dc9e
 ```
 
 Hash: UTF-8, LF, sin newline final, excluyendo la línea `report_sha256`.
 
 ## Capa humana
 
-Cinco refinamientos aplicados sobre el seguimiento abierto del programa M6.
-La ronda fresca esta vez tuvo dos encargos: verificar los cierres del programa
-anterior —por archivo y por hallazgo, porque el rango de commits que yo había
-propuesto no aislaba nada— y revisar el cambio nuevo. Encontró un BLOCKER,
-cuatro HIGH, cuatro MED y dos LOW. Todos cerrados.
+Cinco refinamientos del programa M6 original, más el trabajo de esta rama:
+ADR-021 (presupuesto de lectura), ADR-022 (gate de reportes), ADR-023
+(superficie de ejecución), ADR-024 (componentes con LLM), ADR-025 (el
+presupuesto es trinquete, no techo derivado), ADR-026 (frontera de
+autoridad y alcance de artefacto) y ADR-027 (identidad y autocaducidad del
+gate copiable). Cuatro gates de código: `check_sizes.py`, `check_plans.py`
+y `check_reports.py` con fronteras de symlink cerradas en los tres.
 
-## Conciliación por tarea
+## Por qué se retira en vez de corregirse
 
-- **R-T1** — ADR-025. Se pidió derivar el techo del presupuesto de lectura y
-  no se derivó: **no existe derivación honesta** desde este repositorio, porque
-  la ventana útil depende del modelo, del trabajo en curso y de la herramienta.
-  Se declara lo que el límite realmente es —un trinquete sobre lo observado— y
-  se fija su asimetría: subirlo exige ADR con razón escrita, bajarlo tras
-  comprimir no. El techo sigue en 1000.
-- **R-T2** — `AGENTS.md` pasa de reenunciar cuatro reglas transversales a
-  citarlas. **Su segundo step no se cumplió** y está marcado así en el plan: la
-  ruta sube de 982 a 984, porque la política que R-T1 añade al §3.4 cuesta más
-  de lo que la compresión libera. Forzar el número comprimiendo más habría sido
-  degradar texto por una cifra.
-- **R-T3** — ADR-026. Precisa la línea de autoridad de `no_ofrece` a
-  gobernanza, declara fuera de alcance la integridad de artefactos y los
-  riesgos de modelo, y registra que ningún manifiesto reciproca la cesión.
-- **R-T4** — `.github/SECURITY.md`, no en la raíz, donde el gate lo rechaza.
-  RV.1 pasa de «no cubre» a «parcial»: hay canal, no hay vigilancia continua.
-- **R-T5** — la exención de ADR-022 no caduca, y se retira el disparador de
-  archivado que yo había inventado.
-- **R-T6** — esta emisión.
+El patrón, con evidencia:
 
-## Ronda adversarial en contexto fresco
+| Ronda | Hallazgo sobre el ecosistema |
+|---|---|
+| 1 | Contar `.venv/` y `build/` como código de producción |
+| 2 | Buscar adoptantes sólo en `project-manifest.yaml` |
+| 3 | «Ninguno califica» — población incompleta |
+| 3 | Cifras de LOC infladas hasta 2,6× |
+| 4 | Partición de copias falsa (nueve/dos → siete/dos/dos bifurcadas) |
+| 4 | Membresía de «once copias» incluía `escrubery` (script propio) |
+| 5 (self) | `agora` cita Skevi en 16 archivos, no 5 |
+| 6 | `cagf-dashboard` «corre el gate en CI» — workflow no versionado |
+| 6 | «18 repos citan Skevi» — son al menos 22, falta `emd` |
 
-| # | Sev. | Hallazgo | Estado |
-|---|---|---|---|
-| 1 | BLOCKER | `check_plans.py` no validaba la clave `plans`: leía fuera de la raíz y volcaba rutas del host | **cerrado** — `_dir_contenido` y `relative_to` protegido |
-| 2 | HIGH | ADR-025 violaba su propia regla 4 citando ocupaciones vivas, una ya obsoleta | **cerrado** — cifras retiradas, regla precisada |
-| 3 | HIGH | la norma delegaba la ocupación a un gate que no la emitía al pasar | **cerrado** — el gate la publica en su línea OK |
-| 4 | HIGH | la evidencia de no-reciprocidad estaba invertida | **cerrado** — ver abajo |
-| 5 | HIGH | `SECURITY.md` afirmaba que no hay releases; hay dos tags | **cerrado** |
-| 6 | MED | frase residual contradictoria en el cotejo | **cerrado** |
-| 7 | MED | `SECURITY.md` decía tres scripts; son cuatro | **cerrado** |
-| 8 | MED | el step de R-T2 declaraba una verificación que no se cumple | **cerrado** — marcado no cumplido |
-| 9 | MED | editar ADR-022 rozaba la inmutabilidad de `02` §3.2 | **cerrado** — declarado aclaración de alcance |
-| 10 | LOW | el Estado de ADR-021 usaba un valor fuera del vocabulario | **cerrado** |
-| 11 | LOW | línea de 126 columnas en prosa | **cerrado** |
+Nueve emisiones falsas sobre el mismo tipo de afirmación, corregidas una a
+una durante cinco rondas, sin que el proceso las contuviera. El código y la
+norma no comparten ese patrón: la quinta ronda los atacó explícitamente por
+mutación y coherencia cruzada y no encontró nada. La distinción no es
+casualidad — es evidencia de que el problema es específico de censar el
+ecosistema, no del método de verificación en general.
 
-El revisor también verificó los nueve cierres del programa M6: ocho cerrados
-de verdad —comprobados por mutación del código, no por lectura— y uno cerrado
-a medias, que resultó ser el BLOCKER de arriba.
+## Qué se pierde con el retiro
 
-## El hallazgo que importa
-
-El HIGH-4 no fue un descuido de redacción: **medí el artefacto equivocado y
-concluí lo contrario de la verdad**. Comprobé `project-manifest.yaml` en los
-cinco proyectos y escribí «ninguno menciona a Skevi». Dos lo adoptan
-formalmente —`escrubery` con su ADR-0001, `an-kla-memory` con su ADR-0045 y su
-propio `skevi-gate.json`— y uno cita una versión etiquetada. La afirmación
-correcta es la estrecha: ningún **manifiesto** reciproca la cesión. La que
-escribí decía que nadie depende de Skevi, cuando hay adoptantes reales.
-
-Tres de los cuatro HIGH fueron afirmaciones falsas escritas por mí dentro de
-documentos normativos nuevos, en el mismo programa cuyo propósito era que las
-reglas se verificaran por comando y no por autorreporte. Los cuatro gates y
-los 180 tests pasaban con las cuatro afirmaciones falsas dentro.
-
-## Reglas del método que no se cumplieron
-
-Una, la misma que en la emisión anterior: **las correcciones de esta ronda no
-se revisaron en contexto fresco**. Se repitieron los checks y se reatacaron el
-BLOCKER y los cuatro HIGH con sus comandos, pero por el mismo ejecutor. El
-riesgo está declarado en la capa técnica, no compensado.
+Los dos documentos también contenían afirmaciones correctas y verificadas:
+las 11 copias derivadas del gate con su lista nominal, las cuatro huellas y
+su linaje exacto, las 7 cifras de LOC reproducibles con el comando
+publicado, y el cierre de las cuatro formas de escape por symlink. Se
+pierden del árbol mergeado junto con lo falso, porque vivían en los mismos
+archivos. Quedan recuperables del historial de esta rama.
 
 ## Seguimiento abierto
 
-1. Ronda fresca sobre estas correcciones, si se considera necesaria.
-2. R-T2 step 2: la ruta de lectura subió en vez de bajar; queda en 984 de 1000.
-3. PREGUNTA-M6-2: adoptante para el piloto fuera del monocultivo — con el
-   matiz de que ya hay dos adoptantes reales del método, aunque ninguno rompe
-   dos variables del monocultivo a la vez.
-4. `push`, PR y merge de este cambio: sin autorizar.
+1. Rehacer el censo de adopción, con una lista de repos confirmada por el
+   humano o por un ejecutor distinto de éste.
+2. `entiendomidiabetes` tiene el mismo defecto que `cagf-dashboard` —workflow
+   no versionado— y decidía parte del veredicto de un piloto que ya no está
+   en el árbol; se hereda como antecedente para el censo futuro.
+3. La pieza 2 del método de aviso de versión —extender el manifiesto de
+   ADR-020 a `scripts/`— sigue pendiente, sin depender de los documentos
+   retirados.
