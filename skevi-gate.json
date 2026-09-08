@@ -1,7 +1,12 @@
 {
   "plans": "docs/plans",
-  "root_markdown": ["AN-KLA.md"],
-  "exempt_paths": [".DS_Store", "docs/.DS_Store"],
+  "root_markdown": [
+    "AN-KLA.md"
+  ],
+  "exempt_paths": [
+    ".DS_Store",
+    "docs/.DS_Store"
+  ],
   "required": [
     "AGENTS.md",
     "README.md",
@@ -12,6 +17,7 @@
     "docs/ai-agent-guide/03-cascaron-proyecto.md",
     "docs/ai-agent-guide/04-ejecucion-y-verificacion.md",
     "scripts/check_sizes.py",
+    "scripts/check_reports.py",
     "scripts/check_templates.py",
     "templates/registro-contexto.md",
     "templates/plan-de-implementacion.md",
@@ -19,5 +25,26 @@
     "templates/skevi/architecture-overview.md",
     "templates/skevi/MANIFEST.json",
     "templates/skevi/installed.json"
-  ]
+  ],
+  "reading_path": {
+    "limit": 1000,
+    "files": [
+      "AGENTS.md",
+      "docs/ai-agent-guide/00-INDICE.md",
+      "docs/estandar-diseno-software-github.md"
+    ],
+    "worst_case_of": [
+      "docs/ai-agent-guide/01-analisis-y-requerimientos.md",
+      "docs/ai-agent-guide/02-specs-adr-contratos.md",
+      "docs/ai-agent-guide/03-cascaron-proyecto.md",
+      "docs/ai-agent-guide/04-ejecucion-y-verificacion.md"
+    ]
+  },
+  "reports": {
+    "dir": "docs/reviews",
+    "exempt": [
+      "docs/reviews/2026-09-07-prop008-aterrizaje.md",
+      "docs/reviews/2026-09-07-t05-authority-consistency.md"
+    ]
+  }
 }
