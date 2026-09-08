@@ -19,19 +19,40 @@ ofrece:
   - plantilla de plan de implementación multi-tarea, subordinada al contrato de tarea
   - versionado de plantillas de adopción con manifiesto fuente y registro de instalación del consumidor (ADR-020)
   - chequeo local de drift de plantillas, manual, sin red y fail-closed ante incompatibilidad (ADR-020)
-  - presupuesto verificado de la ruta de lectura obligatoria del ejecutor, con espina sumada y alternativas contadas por su máximo (ADR-021)
-  - gate local de forma de los reportes de dos capas, con hash canónico reproducible y fail-closed por configuración (ADR-022)
-  - superficie de ejecución declarada del ejecutor —herramientas, archivos, red, aislamiento y secretos en contexto— como mecanismo, no como perfil de aseguramiento (ADR-023)
-  - complemento de fase para componentes con salida no determinista: propiedades en vez de texto, conjunto de referencia versionado y presupuesto de consumo con fallo explícito (ADR-024)
+  - >
+    presupuesto verificado de la ruta de lectura obligatoria del ejecutor, con
+    espina sumada y alternativas contadas por su máximo (ADR-021)
+  - >
+    gate local de forma de los reportes de dos capas, con hash canónico
+    reproducible y fail-closed por configuración (ADR-022)
+  - >
+    superficie de ejecución declarada del ejecutor —herramientas, archivos,
+    red, aislamiento y secretos en contexto— como mecanismo, no como perfil de
+    aseguramiento (ADR-023)
+  - >
+    complemento de fase para componentes con salida no determinista:
+    propiedades en vez de texto, conjunto de referencia versionado y
+    presupuesto de consumo con fallo explícito (ADR-024)
   - registro histórico de pilotos con procedencia de cada regla
 
 no_ofrece:
-  - "autoridad, conformidad ni perfiles de aseguramiento; ese plano es de praxis-dev"
+  - >
+    gobernanza de autoridad, conformidad ni perfiles de aseguramiento; ese plano
+    es de praxis-dev. El mecanismo de graduación de permisos —qué operación exige
+    qué autorización, cómo se escala— sí es de Skevi: §4.3, §6.2 y §6.8 del
+    estándar, ADR-017, ADR-018 y ADR-023 (precisado por ADR-026)
   - "observación de corpus, extracción de evidencia ni claims; ese plano es de argos"
   - "memoria ni continuidad entre sesiones; ese plano es de an-kla-memory"
   - "contrato de tarea ejecutable ni máquina de estados de auditoría; ese plano es de epistates"
   - "inteligencia sobre modelos y CLIs disponibles; ese plano es de escrubery"
   - "cualquier ejecutable propio: no instala, no observa y no muta un proyecto"
+  - >
+    integridad del artefacto publicado ni riesgos propios del modelo: firma y
+    verificación de releases, archivo de componentes, endurecimiento del build,
+    envenenamiento de datos o modelo, fuga de system prompt y debilidades de
+    embeddings (SSDF PS.2, PS.3, PW.6; OWASP LLM04, LLM07, LLM08). Skevi norma
+    el método con que se construye software, no propiedades del artefacto ni
+    del modelo empleado (ADR-026)
   - reglas específicas de un lenguaje de programación
   - >
     verificación de que una regla se cumplió de verdad; los gates comprueban
@@ -57,6 +78,13 @@ fronteras_de_confianza:
   - una ronda adversarial sin contexto declarado no acredita independencia
   - el gate comprueba estructura y tamaño; que un artefacto exista no prueba que su contenido sea correcto
   - los pilotos registrados son evidencia de un caso, no generalización
+  - >
+    las cesiones de plano de no_ofrece son decisiones de alcance propias, no
+    acuerdos: al 2026-09-08 ningún manifiesto de los cinco proyectos citados
+    menciona a Skevi. Que no lo cedan de vuelta no significa que lo ignoren —
+    escrubery y an-kla-memory adoptan Skevi por otra vía, con ADR propio y, en
+    el segundo caso, con su propio skevi-gate.json. La cesión no garantiza que
+    alguien cubra ese plano (ADR-026)
   # ADR-018: distinguir autodeclaración general de la restricción local.
   - >
     Toda operación destructiva o con efecto fuera del entorno local exige
