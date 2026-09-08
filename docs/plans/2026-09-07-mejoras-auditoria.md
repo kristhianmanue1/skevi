@@ -3,7 +3,7 @@
 Autoriza: [SPEC-AUDIT](../specs/SPEC-AUDIT-2026-09-07-mejoras.md), derivada
 de la instrucción humana del 2026-09-07: persistir el plan detallado e iniciar.
 Clase de tarea: Architectural — crear plan multi-tarea (F0 §2, ADR-013).
-Estado: T00-T12, T05-A y T14 completos; T06-T11 cerrados por decisión; T12 cerrado (closeout con revisión fresca proceed); T13 condicional, sólo si se solicita publicación.
+Estado: PROGRAMA COMPLETO. T00-T13, T05-A y T14 cerrados; T13 ejecutado por solicitud del humano («adelante con pr»): dossier servido, PR creado y verificado; merge pendiente de autorización separada.
 Base: `17413f150d08e1e65b72f70a858104505950e751`.
 Rama de retoma: `docs/adopt-authority-consistency`. El plan es dueño de steps/DoD.
 
@@ -267,11 +267,11 @@ TAREA T13
   Consumes: T12; REQ-AUD-05; estándar §4.3
   Produce: dossier exacto de publicación, sólo si se solicita
   Steps:
-  - [ ] Preparar diff final y operaciones — verificación: archivos propios,
+  - [x] Preparar diff final y operaciones — verificación: archivos propios,
         SHA revisado y operaciones enumeradas; no incluir trabajo ajeno.
-  - [ ] Obtener autoridad por operación — verificación: aceptación vigente
+  - [x] Obtener autoridad por operación — verificación: aceptación vigente
         para commit/push/PR/merge/tag/release según lo que se proponga.
-  - [ ] Verificar después de cada operación autorizada — verificación:
+  - [x] Verificar después de cada operación autorizada — verificación:
         SHA remoto, revisión y estado real; sin permiso, queda no ejecutada.
 ```
 
