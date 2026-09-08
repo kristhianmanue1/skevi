@@ -81,7 +81,7 @@ cotejarlo — en su propio repositorio, no aquí.
 
 | Control | Estado | Dónde / dueño |
 |---|---|---|
-| RV.1 Identify and Confirm Vulnerabilities on an Ongoing Basis | **no cubre** | Sin vigilancia de CVE, sin política de divulgación, sin canal de reporte, sin `SECURITY.md`. **Dueño: nadie.** |
+| RV.1 Identify and Confirm Vulnerabilities on an Ongoing Basis | parcial (desde 2026-09-08) | `../.github/SECURITY.md` da canal de reporte privado, define qué cuenta como vulnerabilidad en un repositorio normativo —fail-open de un gate, fuga de datos del entorno, escape de la raíz— y qué esperar. **No cubre** la vigilancia continua: sin escaneo de CVE ni revisión periódica, que requeriría dependencias que el proyecto no tiene. |
 | RV.2 Assess, Prioritize, and Remediate Vulnerabilities | parcial | `04` §5.2 define severidades `BLOCKER/HIGH/MED/LOW` y §5.3 sus reglas de cierre (BLOCKER y HIGH siempre se corrigen; MED se corrige o se justifica por escrito). Aplica a hallazgos de la **ronda propia**; no hay ruta para una vulnerabilidad reportada desde fuera. |
 | RV.3 Analyze Vulnerabilities to Identify Their Root Causes | cubre, y excede | La procedencia obligatoria por regla es análisis de causa raíz institucionalizado: cada norma cita el fallo que la originó. Caso canónico: `adr/ADR-008-disparadores-objetivos-de-rigor.md` sustituye un criterio subjetivo por disparadores observables tras cuatro fallos consecutivos registrados en `history/piloto-skopos.md` F3. Pocos estándares exigen esto. |
 
@@ -113,8 +113,8 @@ ambas tablas porque cada marco los formula distinto.
 | | SSDF v1.1 (19) | OWASP LLM 2025 (10) |
 |---|---|---|
 | cubre | 9 (era 8) | 5 (era 3) |
-| parcial | 6 (era 6) | 2 (era 2) |
-| no cubre | 4 (era 5) | 3 (era 5) |
+| parcial | 7 (era 6) | 2 (era 2) |
+| no cubre | 3 (era 5) | 3 (era 5) |
 
 Las cifras «era» son las del cotejo inicial del 2026-09-07, antes de que
 ADR-023 cerrara PO.5, el límite de LLM06 y el vector de contexto de LLM02, y
@@ -139,11 +139,12 @@ que la produjo; Skevi sí.
 
 **Dónde no llega, con dueño identificado:**
 
-- **Sin dueño declarado** — integridad y archivo de releases (PS.2, PS.3),
-  el eje de integridad de la cadena de suministro (PW.4 parcial, PW.6, RV.1,
-  LLM03 parcial), y los riesgos de modelo propiamente dichos (LLM04, LLM07,
-  LLM08). Ninguna línea de `no_ofrece` los cede a otro proyecto: son huecos
-  abiertos, no fronteras.
+- **Declarado fuera de alcance desde el 2026-09-08** — integridad y archivo
+  de releases (PS.2, PS.3), endurecimiento del build (PW.6) y los riesgos de
+  modelo (LLM04, LLM07, LLM08). Ya no son huecos sin dueño: `no_ofrece` los
+  declara fuera del método (ADR-026). El eje de integridad de la cadena de
+  suministro (PW.4 y LLM03, ambos parciales) queda cubierto en su parte de
+  autorización y descubierto en su parte de verificación.
 - **Dueño Skevi, cerrado** — entorno y superficie de herramientas del
   ejecutor (PO.5, límite de LLM06, vector de contexto de LLM02): §6.8 del
   estándar, ADR-023, 2026-09-07.

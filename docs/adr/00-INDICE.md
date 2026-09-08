@@ -26,6 +26,8 @@
 | [ADR-022](ADR-022-gate-de-reportes-de-dos-capas.md) | Gate estructural de reportes de dos capas | Aceptado | `scripts/check_reports.py`, `skevi-gate.json` clave `reports` | [SPEC-M6 REQ-M6-02](../specs/SPEC-M6-2026-09-07-seis-mejoras.md) | 2026-09-07 |
 | [ADR-023](ADR-023-superficie-de-ejecucion.md) | Superficie de ejecución declarada del ejecutor | Aceptado | estándar §6.8 | [PREGUNTA-M6-1, opción A](../specs/SPEC-M6-2026-09-07-seis-mejoras.md) | 2026-09-07 |
 | [ADR-024](ADR-024-componentes-con-salida-no-determinista.md) | Complemento de fase para componentes con salida no determinista | Aceptado | `docs/ai-agent-guide/06-componentes-con-llm.md`, `04` §1 | [SPEC-M6 REQ-M6-04](../specs/SPEC-M6-2026-09-07-seis-mejoras.md) | 2026-09-07 |
+| [ADR-025](ADR-025-trinquete-no-techo-derivado.md) | El presupuesto de lectura es un trinquete, no un techo derivado | Aceptado | estándar §3.4; sustituye la cláusula de techo de ADR-021 | Ronda adversarial 2026-09-08 | 2026-09-08 |
+| [ADR-026](ADR-026-fronteras-unilaterales-y-alcance-de-artefacto.md) | Precisión de la frontera de autoridad y alcance de artefacto | Aceptado | `project-manifest.yaml` §no_ofrece y §fronteras_de_confianza | [PREGUNTA-M6-3, opción A](../specs/SPEC-M6-2026-09-07-seis-mejoras.md) | 2026-09-08 |
 
 **Reglas de este índice**
 

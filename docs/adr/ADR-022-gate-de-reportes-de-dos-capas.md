@@ -96,6 +96,14 @@ añadieron además detección de claves duplicadas —`STATE = BLOCKED` seguido
 de `STATE = OK` pasaba— y exclusión del hash por clave exacta en vez de por
 prefijo.
 
+**Vigencia de la exención** — aclaración de alcance, no decisión nueva: precisa hasta cuándo rige la exención que este mismo ADR ya decidió, sin cambiarla. Una decisión distinta exigiría un ADR propio (`02` §3.2). Las dos exenciones **no caducan**. El
+`report_sha256` de esos registros cubre su propio texto y es permanente:
+mientras existan, corregirlos seguirá invalidando su hash. No hay disparador
+de archivado que las retire —`docs/reviews/` no tiene política de antigüedad,
+comprobado con `grep -rn` sobre ADR-002, `AGENTS.md` y `README.md`—, y no se
+inventa uno: una caducidad sin proceso que la ejecute es una nota que nadie
+lee. Si alguna vez se crea esa política, la exención se revisa entonces.
+
 **Límite declarado.** De las claves opcionales, `session` la fija ADR-016 y
 `DECISION` la exige `04` §5.2 para una ronda adversarial. `OPERATIONS`,
 `AUTHORITY` y `RISK` **no tienen fuente normativa**: son práctica heredada de
