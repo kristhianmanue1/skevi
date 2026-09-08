@@ -366,5 +366,89 @@ class RootBoundaryTests(unittest.TestCase):
         self.assertNotEqual(code, 0)
         self.assertNotIn("Traceback", output)
 
+class PlansPathBoundaryTests(unittest.TestCase):
+    """La clave `plans` es entrada no confiable: misma frontera que
+    `reading_path` en check_sizes y `reports.dir` en check_reports.
+
+    Hallazgo BLOCKER de la ronda fresca del 2026-09-08: era la única de las
+    tres claves de directorio sin validar, y `.github/SECURITY.md` tipifica
+    justo eso como vulnerabilidad de este repositorio."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        (self.root / "inner").mkdir()
+        (self.root / "fuera").mkdir()
+        (self.root / "fuera" / "p.md").write_text("# plan", encoding="utf-8")
+
+    def _run(self, plans_valor):
+        (self.root / "inner" / "skevi-gate.json").write_text(
+            json.dumps({"plans": plans_valor}), encoding="utf-8")
+        check_plans = importlib.import_module("check_plans")
+        importlib.reload(check_plans)
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            code = check_plans.main(["--root", str(self.root / "inner")])
+        return code, buf.getvalue()
+
+    def test_absolute_plans_dir_is_rejected_without_traceback(self):
+        code, output = self._run(str(self.root / "fuera"))
+        self.assertEqual(code, 1)
+        self.assertNotIn("Traceback", output)
+        self.assertNotIn(str(self.root), output)
+
+    def test_plans_dir_escaping_root_is_rejected(self):
+        code, output = self._run("../fuera")
+        self.assertEqual(code, 1)
+        self.assertNotIn("p.md", output)
+
+    def test_helper_rejects_escapes_directly(self):
+        """Cobertura propia de `_dir_contenido`: borrarla dejaba la suite en
+        verde porque el `relative_to` protegido absorbía el caso."""
+        check_plans = importlib.import_module("check_plans")
+        importlib.reload(check_plans)
+        for valor in ("/etc", "~/x", "../fuera", "planes/../../fuera"):
+            self.assertIsNone(
+                check_plans._dir_contenido(self.root, valor), valor)
+        (self.root / "planes").mkdir(exist_ok=True)
+        self.assertIsNotNone(check_plans._dir_contenido(self.root, "planes"))
+
+    def test_home_plans_dir_is_rejected(self):
+        code, output = self._run("~/planes")
+        self.assertEqual(code, 1)
+        self.assertNotIn("Traceback", output)
+
+
+class SymlinkTests(unittest.TestCase):
+    """Un plan que sea symlink fuera de la raíz no se lee: la regla E5
+    emitiría cadenas de su contenido (ronda fresca 2026-09-08)."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        (self.root / "planes").mkdir()
+        self.fuera = self.root.parent / f"victima-{self.root.name}.md"
+        self.fuera.write_text("SECRETO-FUERA\n", encoding="utf-8")
+        self.addCleanup(self.fuera.unlink)
+        (self.root / "skevi-gate.json").write_text(
+            json.dumps({"plans": "planes"}), encoding="utf-8")
+        (self.root / "planes" / "real.md").write_text(
+            "```text\nTAREA T1\n  Consumes: x\n  Produce: y\n  Steps:\n"
+            "  - [ ] paso — verificación: comando\n```\n", encoding="utf-8")
+
+    def test_symlink_plan_is_not_read(self):
+        (self.root / "planes" / "enlace.md").symlink_to(self.fuera)
+        check_plans = importlib.import_module("check_plans")
+        importlib.reload(check_plans)
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            code = check_plans.main(["--root", str(self.root)])
+        salida = buf.getvalue()
+        self.assertNotIn("SECRETO-FUERA", salida)
+        self.assertNotIn("enlace.md", salida)
+        self.assertEqual(code, 0, salida)
+
 if __name__ == "__main__":
     unittest.main()

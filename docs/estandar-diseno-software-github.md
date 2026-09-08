@@ -200,10 +200,15 @@ de fase—, fija por escrito su presupuesto total y compruébalo con el mismo
 verificador. Los archivos que se leen siempre se suman; los excluyentes entre
 sí —una guía por fase, un perfil por entorno— cuentan sólo por el mayor, no
 por la suma de un camino que nadie recorre. Al agotarse el presupuesto rigen
-las mismas cuatro salidas de arriba, en el mismo orden. Skevi sobre sí mismo
-declara 1000 líneas; la ocupación vigente la reporta el gate, no este texto —
-una cifra copiada aquí envejecería con cada edición (procedencia:
-`docs/adr/ADR-021-presupuesto-de-ruta-de-lectura.md`).
+las mismas cuatro salidas de arriba, en el mismo orden. Este presupuesto es un
+**trinquete sobre lo observado**, no un techo derivado de la ventana de
+lectura: su función es impedir que la ruta crezca sin que alguien lo decida.
+Por eso **subirlo exige una decisión escrita**, con el mismo rango que
+cualquier otra decisión de norma, mientras que **bajarlo tras borrar o
+comprimir no la exige** — el trinquete resiste en una sola dirección. La
+ocupación vigente la reporta el gate, no este texto (procedencia:
+`docs/adr/ADR-021-presupuesto-de-ruta-de-lectura.md` y
+`docs/adr/ADR-025-trinquete-no-techo-derivado.md`).
 
 **Al partir un archivo ya verificado**, anota la partición en cualquier
 registro de revisión que lo describa: sus conteos y referencias dejan de ser

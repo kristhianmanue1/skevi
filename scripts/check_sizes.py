@@ -15,8 +15,18 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from datetime import date
 from pathlib import Path
 
+
+# Identidad de esta copia del gate (ADR-027). Skevi no puede avisar a un
+# adoptante de que existe una versión nueva: el manifiesto le prohíbe observar
+# proyectos ajenos. Lo que sí puede es que la copia diga quién es y cuántos
+# días tiene, en la salida que el adoptante ya ejecuta. Al cambiar el
+# comportamiento del gate se sube GATE_VERSION y se pone la fecha del cambio.
+GATE_VERSION = "gate/v2"
+GATE_GENERATED_AT = "2026-09-08"
+GATE_STALE_AFTER_DAYS = 90
 
 ROOT = Path(__file__).resolve().parent.parent
 ROOT_MARKDOWN = {"AGENTS.md", "CLAUDE.md", "README.md"}
@@ -73,6 +83,8 @@ EXEMPT_PATHS: set[str] = set()
 # inactivo: §3.4 acota cada archivo por separado, y hasta ADR-021
 # nada acotaba la suma que un ejecutor debe leer antes de actuar.
 READING_PATH: dict = {}
+# Ocupación medida en la última corrida; None si el presupuesto está inactivo.
+READING_PATH_OBSERVED: int | None = None
 LIMITS = {
     "AGENTS.md": 200,
     "README.md": 300,
@@ -517,7 +529,10 @@ def check_template_manifest(manifest_path: Path, templates_dir: Path) -> list[st
 def discover() -> list[Path]:
     paths: list[Path] = []
     for path in ROOT.rglob("*"):
-        if not path.is_file():
+        # Los symlinks no se siguen: la frontera de raíz vale también para el
+        # listado. Sin esto el gate medía y reportaba el tamaño de un archivo
+        # ajeno al repositorio, y el nombre del enlace bastaba para inferirlo.
+        if path.is_symlink() or not path.is_file():
             continue
         relative = path.relative_to(ROOT)
         if any(part in SKIP_DIRS for part in relative.parts[:-1]):
@@ -547,6 +562,8 @@ def check_reading_path() -> list[str]:
     la misma lógica que `count_text_lines` aplica a la exención (ADR-007).
     Nunca vuelca la excepción: puede llevar rutas o datos del host.
     """
+    global READING_PATH_OBSERVED
+    READING_PATH_OBSERVED = None
     if not READING_PATH:
         return []
     failures: list[str] = []
@@ -589,7 +606,40 @@ def check_reading_path() -> list[str]:
         failures.append(
             f"ruta de lectura obligatoria: {total} líneas > límite {limit}"
         )
+    else:
+        # La norma (§3.4 y ADR-025) delega en el gate la cifra vigente; si
+        # sólo se emitiera al fallar, el trinquete no sería auditable sin un
+        # script ad-hoc. Se publica aparte, no dentro de READING_PATH: ese
+        # dict modela la configuración del adoptante y no debe llevar estado
+        # de salida.
+        READING_PATH_OBSERVED = total
     return failures
+
+
+def gate_staleness(hoy: date | None = None) -> str | None:
+    """Aviso de vejez de esta copia, o None si aún no lo amerita.
+
+    Dice «soy vieja», nunca «existe una nueva»: lo segundo exigiría observar
+    el origen, y `project-manifest.yaml` §no_ofrece lo cede. Un adoptante que
+    ve la edad decide si comprobar; el gate no decide por él, ni falla por
+    ello — la polaridad de aviso la hereda de ADR-020.
+    """
+    hoy = hoy or date.today()
+    try:
+        generado = date.fromisoformat(GATE_GENERATED_AT)
+    except (ValueError, TypeError):
+        # Constante mal editada al copiar —formato roto, comillas borradas—:
+        # la identidad de la copia no es frontera de seguridad y no puede
+        # tumbar el gate de nadie.
+        return None
+    dias = (hoy - generado).days
+    if dias < GATE_STALE_AFTER_DAYS:
+        return None
+    return (
+        f"AVISO: esta copia del gate ({GATE_VERSION}, {GATE_GENERATED_AT}) "
+        f"tiene {dias} días. Comprueba contra su origen si sigue vigente; "
+        "este gate no consulta la red ni observa el repositorio de origen."
+    )
 
 
 def main() -> int:
@@ -661,17 +711,33 @@ def main() -> int:
         if observed > limit:
             failures.append(f"{name}: {observed} líneas > límite {limit}")
 
+    aviso = gate_staleness()
+
     if failures:
-        print("BLOQ — check_sizes encontró incumplimientos")
+        print(
+            "BLOQ — check_sizes encontró incumplimientos "
+            f"({GATE_VERSION}, {GATE_GENERATED_AT})"
+        )
         for failure in failures:
             print(f"- {failure}")
+        if aviso:
+            print(aviso)
         return 1
 
+    observado = READING_PATH_OBSERVED
+    ruta = (
+        f"; ruta de lectura {observado}/{READING_PATH['limit']}"
+        if observado is not None
+        else ""
+    )
     print(
         "OK — "
         f"{len(rows)} archivos de texto dentro de límites; "
-        "estructura y hogares canónicos verificados"
+        f"estructura y hogares canónicos verificados{ruta}"
+        f"; {GATE_VERSION} ({GATE_GENERATED_AT})"
     )
+    if aviso:
+        print(aviso)
     return 0
 
 

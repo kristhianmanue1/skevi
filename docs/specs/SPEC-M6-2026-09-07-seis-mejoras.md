@@ -142,8 +142,10 @@ Opciones: (A) precisar la línea a «gobernanza de autoridad, conformidad y
   perfiles de aseguramiento», dejando el mecanismo en Skevi — recomendada,
   es la lectura que ya hace coherente al corpus; (B) dejarla como está y
   aceptar la ambigüedad; (C) coordinar con praxis-dev antes de tocarla.
-Estado: abierta. Modificar `no_ofrece` es decisión de política del humano;
-  el ejecutor no la resuelve por su cuenta (fail-closed, principio 5).
+RESUELTA 2026-09-08: opción (A), por instrucción directa del humano, en
+  [ADR-026](../adr/ADR-026-fronteras-unilaterales-y-alcance-de-artefacto.md).
+  La opción (C) se descartó por evidencia: praxis-dev no tiene manifiesto,
+  de modo que no había contraparte con quien coordinar.
 
 PREGUNTA-M6-2: ¿hay un adoptante externo disponible para el piloto de
   REQ-M6-06 (otro autor humano, CI remoto real, lenguaje compilado o repo

@@ -106,6 +106,26 @@ def _bloques_tarea(texto: str) -> list[list[str]]:
     return bloques
 
 
+def _dir_contenido(root: Path, valor: str) -> Path | None:
+    """Resuelve `valor` contra `root`; None si es absoluta, empieza por `~`
+    o escapa de la raíz tras `.resolve()`.
+
+    `plans` era la única de las tres claves de directorio del corpus sin esta
+    frontera: check_sizes usa `_safe_relative_paths` y check_reports
+    `_ruta_contenida`. Sin ella, una ruta absoluta hacía leer fuera del repo y
+    reventar con traceback en `relative_to`, filtrando rutas del host — lo que
+    ADR-007 prohíbe y `.github/SECURITY.md` tipifica como vulnerabilidad.
+    """
+    if valor.startswith("/") or valor.startswith("~"):
+        return None
+    candidato = (root / valor).resolve()
+    try:
+        candidato.relative_to(root.resolve())
+    except ValueError:
+        return None
+    return candidato
+
+
 def _contenida(root: Path, ruta: Path) -> bool:
     try:
         (root / ruta).resolve().relative_to(root.resolve())
@@ -204,12 +224,22 @@ def planes_declarados(root: Path) -> list[Path] | None:
         raise ValueError(
             f"{CONFIG_NAME}: «plans» debe ser un directorio relativo (texto)"
         )
-    directorio = root / plans_dir
+    directorio = _dir_contenido(root, plans_dir)
+    if directorio is None:
+        raise ValueError(
+            f"{CONFIG_NAME}: «plans» debe ser una ruta relativa contenida "
+            "en la raíz del proyecto"
+        )
     if not directorio.is_dir():
         raise ValueError(
             f"{CONFIG_NAME}: plans declarado pero el directorio no existe: {plans_dir}"
         )
-    archivos = sorted(directorio.glob("*.md"))
+    # Los symlinks no se siguen: la frontera de raíz vale también para el
+    # listado, igual que en check_sizes.py. Un plan enlazado fuera del repo
+    # se leería y la regla E5 emitiría cadenas de su contenido.
+    archivos = sorted(
+        p for p in directorio.glob("*.md") if not p.is_symlink()
+    )
     if not archivos:
         raise ValueError(
             f"{CONFIG_NAME}: plans declarado pero sin planes en {plans_dir}"
@@ -288,12 +318,15 @@ def main(argv: list[str] | None = None) -> int:
 
     fallos = []
     for ruta in archivos:
+        try:
+            relativo = ruta.relative_to(raiz).as_posix()
+        except ValueError:
+            # Defensa en profundidad: la config ya no lo permite, pero un
+            # relative_to sin proteger vuelca la ruta absoluta del host.
+            print("BLOQ — check_plans encontró un plan fuera de la raíz")
+            return 1
         fallos.extend(
-            comprobar_plan(
-                ruta.relative_to(raiz).as_posix(),
-                ruta.read_text(encoding="utf-8"),
-                raiz,
-            )
+            comprobar_plan(relativo, ruta.read_text(encoding="utf-8"), raiz)
         )
     if fallos:
         print("BLOQ — check_plans encontró incumplimientos")
