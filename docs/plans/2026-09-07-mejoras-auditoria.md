@@ -3,7 +3,7 @@
 Autoriza: [SPEC-AUDIT](../specs/SPEC-AUDIT-2026-09-07-mejoras.md), derivada
 de la instrucción humana del 2026-09-07: persistir el plan detallado e iniciar.
 Clase de tarea: Architectural — crear plan multi-tarea (F0 §2, ADR-013).
-Estado: T00-T08, T05-A y T14 completos; D1/D2 de PROP-008 aterrizadas (ADR-019); T06 (O0), T07 (O-A) y T08 (D1-D3) cerrados; siguiente T09.
+Estado: T00-T09, T05-A y T14 completos; T06 (O0), T07 (O-A), T08 (D1-D3) y T09 (D1-D3) cerrados; siguiente T10.
 Base: `17413f150d08e1e65b72f70a858104505950e751`.
 Rama de retoma: `docs/adopt-authority-consistency`. El plan es dueño de steps/DoD.
 
@@ -213,13 +213,13 @@ TAREA T09
   Consumes: T07; REQ-AUD-06; `templates/skevi/usage-guide.md`
   Produce: crea `docs/proposals/AUDIT-template-provenance.md`
   Steps:
-  - [ ] Reconciliar con issue 28 — verificación: una sola propuesta viva
+  - [x] Reconciliar con issue 28 — verificación: una sola propuesta viva
         por objetivo; no duplicar el trabajo de versionado existente.
-  - [ ] Definir origen/versiones/adaptaciones — verificación: tres casos
+  - [x] Definir origen/versiones/adaptaciones — verificación: tres casos
         separan copia antigua compatible, incompatible y personalizada.
-  - [ ] Diseñar migración reversible — verificación: no comparar como
+  - [x] Diseñar migración reversible — verificación: no comparar como
         iguales los bytes de plantilla y relleno; no mutar consumidores.
-  - [ ] Pilotar con fixture local tras decisión de diseño — verificación:
+  - [x] Pilotar con fixture local tras decisión de diseño — verificación:
         un adoptante identifica origen exacto y cambios sin requerir red.
 ```
 
