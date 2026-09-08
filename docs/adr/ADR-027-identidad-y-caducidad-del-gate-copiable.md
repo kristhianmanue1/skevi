@@ -86,8 +86,10 @@ generación, constante mal editada de cualquier tipo (formato roto o comillas
 borradas), y que el aviso **no** afirme la existencia de una versión más
 nueva. El total vigente de la suite lo reporta la suite.
 
-Procedencia: [`M6-deriva-del-gate-copiable`](../proposals/M6-deriva-del-gate-copiable.md)
-(el barrido, los hashes y el fixture); [ADR-020](ADR-020-adopcion-versionado-plantillas.md)
+**Retirado de este merge, 2026-09-08.** El documento que motivó este ADR —`docs/proposals/M6-deriva-del-gate-copiable.md`— contenía afirmaciones verificadas sobre el ecosistema que resultaron falsas en dos rondas adversariales sucesivas (repos que citan Skevi, adoptantes con CI real). Se retira del merge en vez de reemitirse una vez más con el mismo ejecutor; el mecanismo que este ADR implementa —identidad y autocaducidad del gate— no depende de esas cifras y queda vigente.
+
+Procedencia: el barrido de adoptantes, los hashes de las copias y el fixture
+UTF-8 que originaron este ADR (documento retirado, ver nota arriba); [ADR-020](ADR-020-adopcion-versionado-plantillas.md)
 (la polaridad de aviso y el mecanismo que no llegaba a `scripts/`);
 [ADR-006](ADR-006-gate-configurable-por-proyecto.md) (el script se copia sin
 modificar, la variación va en la config); instrucción directa del humano,

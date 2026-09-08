@@ -95,7 +95,7 @@ TAREA R-T5 — Exención de registros sin caducidad inventada
         de docs/reviews que respalde una caducidad
 
 TAREA R-T7 — Identidad y autocaducidad del gate copiable
-  Consumes: `docs/proposals/M6-deriva-del-gate-copiable.md`; ADR-006; ADR-020
+  Consumes: el barrido de adoptantes de esa sesión (documento retirado del merge); ADR-006; ADR-020
   Produce:  crea ADR-027; amplía `scripts/check_sizes.py`
   Steps:
   - [x] RED de identidad y umbral antes del código — verificación: los tests
@@ -138,3 +138,4 @@ TAREA R-T6 — Ronda fresca por archivo y cierre
   argumentos: no forma parte del gate por omisión (ADR-020).
 - Ronda fresca con decisión `proceed` o `escalate`.
 - Cero operaciones de autoridad separada sin autorización nueva y específica.
+- Los dos documentos de barrido del ecosistema (`M6-deriva-del-gate-copiable.md`, `M6-piloto-fuera-del-monocultivo.md`) se retiran de este merge, decisión humana 2026-09-08: nueve afirmaciones falsas en cinco rondas adversariales sobre el mismo modo de fallo. ADR-027 no depende de ellos y queda vigente; el censo de adopción queda pendiente, a rehacerse fuera de este ejecutor o con la lista de repos que el humano confirme.

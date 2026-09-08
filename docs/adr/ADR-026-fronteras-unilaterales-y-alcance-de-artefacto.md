@@ -41,8 +41,9 @@ porque ninguna contraparte ha aceptado una frontera que se pudiera
 contradecir. Lo que **no** se sigue: que nadie dependa de Skevi. Tres de
 estos cinco sí, y dos citan la versión etiquetada `v1.0.0` —`escrubery` en su
 ADR-0001 y `an-kla-memory` en su `.skevi/usage-guide.md`—. Un barrido posterior
-sobre todo el ecosistema, y no sólo sobre estos cinco, encontró 18 repositorios
-que citan a Skevi: ver [la deriva del gate](../proposals/M6-deriva-del-gate-copiable.md) §1.
+sobre todo el ecosistema, y no sólo sobre estos cinco, encontró un número de repositorios que citan a Skevi mayor que los cinco de esta
+tabla —el barrido completo se retiró de este merge el 2026-09-08 por contener
+cifras falsas verificadas en dos rondas adversariales; pendiente de rehacerse.
 
 Decisión, en tres partes:
 
