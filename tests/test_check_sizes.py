@@ -529,5 +529,200 @@ class ConfigTests(unittest.TestCase):
         self.assertIn("falta archivo requerido: AGENTS.md", buf2.getvalue())
 
 
+
+
+class ReadingPathTests(unittest.TestCase):
+    """`reading_path` — presupuesto de la ruta de lectura obligatoria.
+
+    §3.4 acota cada archivo por separado; nada acotaba el camino completo
+    que un ejecutor debe leer antes de actuar. Procedencia: ADR-021.
+    """
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self._orig_root = check_sizes.ROOT
+        check_sizes.ROOT = self.root
+        self._orig_reading_path = dict(check_sizes.READING_PATH)
+        for relative in sorted(check_sizes.REQUIRED):
+            path = self.root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(f"# {relative}\n", encoding="utf-8")
+        skevi_dir = self.root / "templates" / "skevi"
+        data = {
+            "schema": check_sizes.TEMPLATE_MANIFEST_SCHEMA,
+            "version": "plantillas/v1",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": {
+                p.name: "sha256:" + hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in sorted(skevi_dir.iterdir())
+                if p.is_file() and p.name != "MANIFEST.json"
+            },
+            "history": [],
+        }
+        (skevi_dir / "MANIFEST.json").write_text(
+            json.dumps(data, indent=2) + "\n", encoding="utf-8"
+        )
+
+    def tearDown(self):
+        check_sizes.ROOT = self._orig_root
+        check_sizes.READING_PATH.clear()
+        check_sizes.READING_PATH.update(self._orig_reading_path)
+
+    def _write_config(self, data):
+        (self.root / check_sizes.CONFIG_NAME).write_text(
+            json.dumps(data), encoding="utf-8"
+        )
+
+    def _write_lines(self, relative, count):
+        path = self.root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("\n".join(f"l{i}" for i in range(count)) + "\n",
+                        encoding="utf-8")
+
+    def _run_main(self):
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            exit_code = check_sizes.main()
+        return exit_code, buf.getvalue()
+
+    def test_absent_key_checks_nothing(self):
+        """Fail-closed como `plans` (ADR-006): sin clave, gate inactivo."""
+        self._write_lines("docs/uno.md", 500)
+        self._write_lines("docs/dos.md", 500)
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 0)
+        self.assertNotIn("ruta de lectura", output)
+
+    def test_sum_over_limit_fails(self):
+        self._write_lines("docs/uno.md", 400)
+        self._write_lines("docs/dos.md", 201)
+        self._write_config(
+            {"reading_path": {"limit": 600,
+                              "files": ["docs/uno.md", "docs/dos.md"]}}
+        )
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertIn("ruta de lectura obligatoria: 601 líneas > límite 600",
+                      output)
+
+    def test_sum_at_limit_passes(self):
+        self._write_lines("docs/uno.md", 400)
+        self._write_lines("docs/dos.md", 200)
+        self._write_config(
+            {"reading_path": {"limit": 600,
+                              "files": ["docs/uno.md", "docs/dos.md"]}}
+        )
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 0)
+
+    def test_missing_file_in_path_fails(self):
+        """Una ruta que no existe no acredita tamaño cero (ADR-007)."""
+        self._write_config(
+            {"reading_path": {"limit": 600, "files": ["docs/ausente.md"]}}
+        )
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertIn("docs/ausente.md", output)
+        self.assertNotIn("Traceback", output)
+
+    def test_invalid_type_is_config_error(self):
+        """Un typo no puede apagar el gate: mismo criterio que `plans`."""
+        self._write_config({"reading_path": ["docs/uno.md"]})
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertTrue(output.startswith("BLOQ"))
+        self.assertIn("reading_path", output)
+
+    def test_limit_must_be_integer(self):
+        self._write_config(
+            {"reading_path": {"limit": "600", "files": ["docs/uno.md"]}}
+        )
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertIn("reading_path", output)
+
+    def test_path_escaping_root_is_rejected(self):
+        self._write_config(
+            {"reading_path": {"limit": 600, "files": ["../fuera.md"]}}
+        )
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertTrue(output.startswith("BLOQ"))
+        self.assertNotIn(str(self.root), output)
+
+    def test_unreadable_file_does_not_credit_size(self):
+        """Igual que count_text_lines: lectura fallida ≠ verificado.
+
+        Se parchea **sólo** la lectura del archivo objetivo. Parchear
+        Path.read_text entero rompía antes load_config, el test pasaba por
+        el diagnóstico de configuración y la rama OSError de la ruta de
+        lectura no llegaba a ejecutarse (hallazgo de la ronda fresca del
+        2026-09-08)."""
+        self._write_lines("docs/uno.md", 10)
+        self._write_config(
+            {"reading_path": {"limit": 600, "files": ["docs/uno.md"]}}
+        )
+        original = Path.read_text
+
+        def falla_sólo_el_objetivo(self_path, *args, **kwargs):
+            if self_path.name == "uno.md":
+                raise OSError("payload")
+            return original(self_path, *args, **kwargs)
+
+        with patch.object(Path, "read_text", falla_sólo_el_objetivo):
+            exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertIn("ruta de lectura obligatoria: no se pudo leer", output)
+        self.assertIn("docs/uno.md", output)
+        self.assertNotIn("payload", output)
+        self.assertNotIn("Traceback", output)
+
+    def test_worst_case_counts_only_the_largest(self):
+        """La espina se lee siempre; de las fases, sólo una por sesión.
+        Sumarlas todas mediría un camino que nadie recorre."""
+        self._write_lines("docs/espina.md", 100)
+        self._write_lines("docs/fase-corta.md", 50)
+        self._write_lines("docs/fase-larga.md", 90)
+        self._write_config({"reading_path": {
+            "limit": 190,
+            "files": ["docs/espina.md"],
+            "worst_case_of": ["docs/fase-corta.md", "docs/fase-larga.md"],
+        }})
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 0, output)
+
+    def test_worst_case_over_limit_fails(self):
+        self._write_lines("docs/espina.md", 100)
+        self._write_lines("docs/fase-corta.md", 50)
+        self._write_lines("docs/fase-larga.md", 91)
+        self._write_config({"reading_path": {
+            "limit": 190,
+            "files": ["docs/espina.md"],
+            "worst_case_of": ["docs/fase-corta.md", "docs/fase-larga.md"],
+        }})
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertIn("191 líneas > límite 190", output)
+
+    def test_worst_case_missing_file_fails(self):
+        self._write_lines("docs/espina.md", 10)
+        self._write_config({"reading_path": {
+            "limit": 190,
+            "files": ["docs/espina.md"],
+            "worst_case_of": ["docs/ausente.md"],
+        }})
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertIn("docs/ausente.md", output)
+
+    def test_worst_case_is_optional(self):
+        self._write_lines("docs/espina.md", 10)
+        self._write_config({"reading_path": {
+            "limit": 190, "files": ["docs/espina.md"]}})
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 0, output)
+
 if __name__ == "__main__":
     unittest.main()

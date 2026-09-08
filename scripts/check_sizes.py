@@ -69,6 +69,10 @@ EXEMPT_SUFFIXES = {
     ".zip",
 }
 EXEMPT_PATHS: set[str] = set()
+# Presupuesto de la ruta de lectura obligatoria (ADR-021). Vacío =
+# inactivo: §3.4 acota cada archivo por separado, y hasta ADR-021
+# nada acotaba la suma que un ejecutor debe leer antes de actuar.
+READING_PATH: dict = {}
 LIMITS = {
     "AGENTS.md": 200,
     "README.md": 300,
@@ -101,6 +105,7 @@ _SKEVI_DEFAULTS = {
     "REQUIRED": frozenset(REQUIRED),
     "SKIP_DIRS": frozenset(SKIP_DIRS),
     "EXEMPT_PATHS": frozenset(EXEMPT_PATHS),
+    "READING_PATH": dict(READING_PATH),
     "LIMITS": dict(LIMITS),
     "DEFAULT_LIMIT": DEFAULT_LIMIT,
 }
@@ -118,6 +123,8 @@ def reset_to_skevi_defaults() -> None:
     SKIP_DIRS.update(_SKEVI_DEFAULTS["SKIP_DIRS"])
     EXEMPT_PATHS.clear()
     EXEMPT_PATHS.update(_SKEVI_DEFAULTS["EXEMPT_PATHS"])
+    READING_PATH.clear()
+    READING_PATH.update(_SKEVI_DEFAULTS["READING_PATH"])
     LIMITS.clear()
     LIMITS.update(_SKEVI_DEFAULTS["LIMITS"])
     DEFAULT_LIMIT = _SKEVI_DEFAULTS["DEFAULT_LIMIT"]
@@ -130,10 +137,13 @@ def reset_to_skevi_defaults() -> None:
 CONFIG_NAME = "skevi-gate.json"
 CONFIG_KEYS = {
     "limits", "default_limit", "exempt_paths", "required", "skip_dirs",
-    "root_markdown", "plans",
+    "root_markdown", "plans", "reading_path", "reports",
 }
 # "plans" la consume scripts/check_plans.py (gate estructural de planes,
-# ADR-014): misma config, polaridad cerrada compartida — ausente = inactivo.
+# ADR-014) y "reports" scripts/check_reports.py (gate de reportes de dos
+# capas, ADR-022): misma config, polaridad cerrada compartida — ausente =
+# inactivo. Un check_sizes desactualizado las rechaza con BLOQ en vez de
+# ignorarlas, que es el efecto buscado.
 
 
 class _ConfigError(ValueError):
@@ -179,6 +189,53 @@ def _string_list(field: str, values: object) -> list[str]:
     if not isinstance(values, list) or not all(isinstance(v, str) for v in values):
         raise _ConfigError(f"{CONFIG_NAME}: «{field}» debe ser una lista de texto")
     return values
+
+
+def _reading_path(values: object) -> dict:
+    """Valida la clave `reading_path` de `skevi-gate.json` (ADR-021).
+
+    Polaridad cerrada como el resto de la config: subclave desconocida,
+    límite no entero o ruta que escapa la raíz fallan en vez de ignorarse.
+    Un typo no puede apagar el presupuesto en silencio — mismo criterio que
+    `plans` en scripts/check_plans.py.
+    """
+    if not isinstance(values, dict):
+        raise _ConfigError(
+            f"{CONFIG_NAME}: «reading_path» debe ser un objeto con "
+            "«limit» y «files»"
+        )
+    unknown = sorted(set(values) - {"limit", "files", "worst_case_of"})
+    if unknown:
+        raise _ConfigError(
+            f"{CONFIG_NAME}: «reading_path» sólo admite «limit», «files» "
+            "y «worst_case_of»"
+        )
+    if "limit" not in values or "files" not in values:
+        raise _ConfigError(
+            f"{CONFIG_NAME}: «reading_path» exige «limit» y «files»"
+        )
+    limit = values["limit"]
+    if not isinstance(limit, int) or isinstance(limit, bool) or limit <= 0:
+        raise _ConfigError(
+            f"{CONFIG_NAME}: «reading_path.limit» debe ser un entero positivo"
+        )
+    files = _safe_relative_paths("reading_path.files", values["files"])
+    if not files:
+        raise _ConfigError(
+            f"{CONFIG_NAME}: «reading_path.files» no puede estar vacía"
+        )
+    resultado = {"limit": limit, "files": files}
+    if "worst_case_of" in values:
+        alternativas = _safe_relative_paths(
+            "reading_path.worst_case_of", values["worst_case_of"]
+        )
+        if not alternativas:
+            raise _ConfigError(
+                f"{CONFIG_NAME}: «reading_path.worst_case_of» no puede "
+                "estar vacía"
+            )
+        resultado["worst_case_of"] = alternativas
+    return resultado
 
 
 def load_config() -> dict:
@@ -246,6 +303,8 @@ def apply_config(config: dict) -> None:
         SKIP_DIRS.update(_string_list("skip_dirs", config["skip_dirs"]))
     if "root_markdown" in config:
         ROOT_MARKDOWN.update(_string_list("root_markdown", config["root_markdown"]))
+    if "reading_path" in config:
+        READING_PATH.update(_reading_path(config["reading_path"]))
 
 
 def limit_for(name: str) -> int:
@@ -481,6 +540,58 @@ def count_text_lines(relative: Path) -> int | None:
     return len(text.splitlines())
 
 
+def check_reading_path() -> list[str]:
+    """Suma las líneas de la ruta de lectura obligatoria (ADR-021).
+
+    Un archivo ausente o ilegible no acredita tamaño cero: es un fallo, con
+    la misma lógica que `count_text_lines` aplica a la exención (ADR-007).
+    Nunca vuelca la excepción: puede llevar rutas o datos del host.
+    """
+    if not READING_PATH:
+        return []
+    failures: list[str] = []
+
+    def contar(name: str) -> int | None:
+        path = ROOT / name
+        if not path.is_file():
+            failures.append(f"ruta de lectura obligatoria: falta {name}")
+            return None
+        try:
+            return len(path.read_text(encoding="utf-8").splitlines())
+        except UnicodeDecodeError:
+            failures.append(
+                f"ruta de lectura obligatoria: {name} no es UTF-8 válido"
+            )
+        except OSError:
+            failures.append(
+                f"ruta de lectura obligatoria: no se pudo leer {name}"
+            )
+        return None
+
+    total = 0
+    for name in READING_PATH["files"]:
+        observado = contar(name)
+        if observado is not None:
+            total += observado
+    # De las alternativas sólo cuenta la mayor: son excluyentes entre sí —
+    # un ejecutor lee el archivo de la fase en la que está, no las cinco.
+    alternativas = [
+        observado
+        for name in READING_PATH.get("worst_case_of", [])
+        if (observado := contar(name)) is not None
+    ]
+    if alternativas:
+        total += max(alternativas)
+    if failures:
+        return failures
+    limit = READING_PATH["limit"]
+    if total > limit:
+        failures.append(
+            f"ruta de lectura obligatoria: {total} líneas > límite {limit}"
+        )
+    return failures
+
+
 def main() -> int:
     failures: list[str] = []
 
@@ -525,6 +636,8 @@ def main() -> int:
         failures.append(
             "Markdown operativo suelto en raíz: " + ", ".join(unexpected_markdown)
         )
+
+    failures.extend(check_reading_path())
 
     rows: list[tuple[str, int, int]] = []
     for relative in discover():
