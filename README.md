@@ -28,17 +28,21 @@ skevi/
 ├── docs/
 │   ├── adr/                                  # decisiones estructurales inmutables
 │   ├── estandar-diseno-software-github.md   # capa normativa transversal
+│   ├── crosswalk-estandares.md              # cotejo con NIST SSDF y OWASP LLM
 │   ├── ai-agent-guide/                     # pipeline F0→F3 para agentes
 │   │   ├── 00-INDICE.md
 │   │   ├── 01-analisis-y-requerimientos.md
 │   │   ├── 02-specs-adr-contratos.md
 │   │   ├── 03-cascaron-proyecto.md
-│   │   └── 04-ejecucion-y-verificacion.md
+│   │   ├── 04-ejecucion-y-verificacion.md
+│   │   ├── 05-memoria-del-agente.md
+│   │   └── 06-componentes-con-llm.md
 │   ├── orchestration/                        # método concreto, acoplado a herramientas
 │   │   ├── orquestacion-codex-opencode-tmux.md
 │   │   └── orquestacion-codex-opencode-tmux-runbook.md
 │   ├── plans/                                # planes de implementación (ADR-010)
-│   │   └── 2026-08-20-a4-gate-de-planes.md
+│   ├── specs/                               # F0/F1 de los programas de mejora
+│   ├── reviews/                             # rondas y cierres de programa
 │   ├── proposals/                           # cambios bajo deliberación, no normativos
 │   └── history/                            # registro, no normativo
 │       ├── PROP-001-agent-native-model-improvements.md
@@ -66,6 +70,7 @@ skevi/
 ├── scripts/
 │   ├── check_sizes.py         # gate de estructura y tamaños
 │   ├── check_plans.py         # gate estructural de planes (ADR-014)
+│   ├── check_reports.py       # forma de los reportes de dos capas (ADR-022)
 │   ├── check_templates.py     # drift de plantillas de adopción (ADR-020)
 │   └── hooks/                 # hooks de Git (pre-push)
 └── tests/                     # suites de scripts/ (check_sizes, check_plans,
@@ -119,15 +124,23 @@ registro.
 ```bash
 python3 scripts/check_sizes.py
 python3 scripts/check_plans.py
+python3 scripts/check_reports.py
 ```
 
 `check_sizes` comprueba que existen los archivos canónicos, que no hay
-Markdown operativo suelto en la raíz y que ningún archivo de texto excede su
-límite. `check_plans` verifica la estructura de los planes de implementación
-de `docs/plans/` (ADR-014) — cada tarea con Consumes/Produce/Steps, cada step
+Markdown operativo suelto en la raíz, que ningún archivo de texto excede su
+límite y que la ruta de lectura obligatoria cabe en su presupuesto — clave
+`reading_path`, 1000 líneas en este repo (ADR-021). `check_plans` verifica la
+estructura de los planes de implementación de `docs/plans/` (ADR-014) — cada tarea con Consumes/Produce/Steps, cada step
 con criterio de verificación, cada ruta referenciada existente —; es
 opcional y fail-closed: sin clave `plans` en `skevi-gate.json`, no comprueba
-nada. `OK` o `BLOQ` con código de salida distinto de cero.
+nada. `check_reports` (ADR-022) verifica la forma de la capa técnica de los
+reportes de dos capas de `docs/reviews/` —claves, `STATE`, marcas y hash
+canónico reproducible—, también fail-closed vía la clave `reports`. Los tres
+dan `OK` o `BLOQ` con código de salida distinto de cero.
+
+Comprueban **forma**: que un reporte pase no prueba que su evidencia sea
+cierta. Esa verificación sigue fuera del alcance de Skevi.
 
 ```bash
 python3 -m unittest discover -s tests

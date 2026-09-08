@@ -19,6 +19,10 @@ ofrece:
   - plantilla de plan de implementación multi-tarea, subordinada al contrato de tarea
   - versionado de plantillas de adopción con manifiesto fuente y registro de instalación del consumidor (ADR-020)
   - chequeo local de drift de plantillas, manual, sin red y fail-closed ante incompatibilidad (ADR-020)
+  - presupuesto verificado de la ruta de lectura obligatoria del ejecutor, con espina sumada y alternativas contadas por su máximo (ADR-021)
+  - gate local de forma de los reportes de dos capas, con hash canónico reproducible y fail-closed por configuración (ADR-022)
+  - superficie de ejecución declarada del ejecutor —herramientas, archivos, red, aislamiento y secretos en contexto— como mecanismo, no como perfil de aseguramiento (ADR-023)
+  - complemento de fase para componentes con salida no determinista: propiedades en vez de texto, conjunto de referencia versionado y presupuesto de consumo con fallo explícito (ADR-024)
   - registro histórico de pilotos con procedencia de cada regla
 
 no_ofrece:
@@ -29,7 +33,10 @@ no_ofrece:
   - "inteligencia sobre modelos y CLIs disponibles; ese plano es de escrubery"
   - "cualquier ejecutable propio: no instala, no observa y no muta un proyecto"
   - reglas específicas de un lenguaje de programación
-  - "verificación de que una regla se cumplió de verdad; el gate comprueba forma y tamaño"
+  - >
+    verificación de que una regla se cumplió de verdad; los gates comprueban
+    forma, tamaño y hash reproducible — que un reporte esté completo no prueba
+    que su evidencia sea cierta ni que la ronda adversarial se ejecutara
   - "garantía de que adoptarlo mejore un proyecto; los pilotos son evidencia de casos, no promesa"
 
 publica:

@@ -69,17 +69,21 @@ internos pueden apuntar a repositorios ajenos y no resolver aquí.
 ```bash
 python3 scripts/check_sizes.py
 python3 scripts/check_plans.py
+python3 scripts/check_reports.py
 ```
 
-`check_sizes` comprueba archivos canónicos y tamaños; `check_plans` (ADR-014)
-verifica estructura de los planes de `docs/plans/` (E1–E5), fail-closed vía
-la clave `plans` de `skevi-gate.json`. Salida `OK` o `BLOQ` con código de
+`check_sizes` comprueba archivos canónicos, tamaños y el presupuesto de la ruta
+de lectura obligatoria (ADR-021); `check_plans` (ADR-014) verifica la
+estructura de los planes de `docs/plans/` (E1–E5), fail-closed vía
+la clave `plans` de `skevi-gate.json`; `check_reports` (ADR-022) verifica la
+forma de la capa técnica de los reportes de `docs/reviews/`, incluido el hash
+canónico. Salida `OK` o `BLOQ` con código de
 salida distinto de cero. Ejecútalos antes de declarar terminado cualquier
 cambio y registra su salida como evidencia.
 
 Si tu cambio toca `scripts/`, corre además `python3 -m unittest discover -s
 tests` y registra su salida. Todo script del repo con lógica no trivial
-lleva su test en `tests/` (`check_sizes`, `check_plans`).
+lleva su test en `tests/` (`check_sizes`, `check_plans`, `check_reports`).
 
 ## Convenciones de edición
 
