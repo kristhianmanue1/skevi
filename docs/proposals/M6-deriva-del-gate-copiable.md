@@ -15,9 +15,9 @@
 
 **18 repositorios citan a Skevi.** `basanos` lo cita en 115 archivos — más que
 los 85 del propio Skevi. Le siguen `explotumarca` (40), `an-kla-memory` (30),
-`eduEMD` (28), `krathos` (24), `alubia` (14), `cagf-dashboard` (12), `pinax`
-(11), `entiendomidiabetes` (10), `skopos` (9), `orbitaNova`, `glosomata` y
-`epistates` (8 cada uno), `expertoGobernanza` (6), `agora` (5), `escrubery`
+`eduEMD` (28), `krathos` (24), `agora` (16), `alubia` (14), `cagf-dashboard` (12),
+`pinax` (11), `entiendomidiabetes` (10), `skopos` (9), `orbitaNova`,
+`glosomata` y `epistates` (8 cada uno), `expertoGobernanza` (6), `escrubery`
 (3), `quantoken` y `kratos` (1).
 
 Ninguno de esos números estaba registrado en Skevi. La primera estimación de
