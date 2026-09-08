@@ -80,6 +80,10 @@ lee y se dejó sin versionar lo que se ejecuta.
 
 Tres piezas, en orden de valor sobre coste:
 
+**Estado 2026-09-08:** las piezas 1 y 2 están **implementadas** en
+[ADR-027](../adr/ADR-027-identidad-y-caducidad-del-gate-copiable.md); la 3
+queda como trabajo siguiente con su propio ADR.
+
 1. **Versión en el propio script.** Una constante `GATE_VERSION` que
    `check_sizes.py` imprima en su línea de salida. Un adoptante ve en su log
    de CI con qué versión validó. Coste: una línea y su test.

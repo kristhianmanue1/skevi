@@ -15,8 +15,18 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from datetime import date
 from pathlib import Path
 
+
+# Identidad de esta copia del gate (ADR-027). Skevi no puede avisar a un
+# adoptante de que existe una versión nueva: el manifiesto le prohíbe observar
+# proyectos ajenos. Lo que sí puede es que la copia diga quién es y cuántos
+# días tiene, en la salida que el adoptante ya ejecuta. Al cambiar el
+# comportamiento del gate se sube GATE_VERSION y se pone la fecha del cambio.
+GATE_VERSION = "gate/v2"
+GATE_GENERATED_AT = "2026-09-08"
+GATE_STALE_AFTER_DAYS = 90
 
 ROOT = Path(__file__).resolve().parent.parent
 ROOT_MARKDOWN = {"AGENTS.md", "CLAUDE.md", "README.md"}
@@ -597,6 +607,29 @@ def check_reading_path() -> list[str]:
     return failures
 
 
+def gate_staleness(hoy: date | None = None) -> str | None:
+    """Aviso de vejez de esta copia, o None si aún no lo amerita.
+
+    Dice «soy vieja», nunca «existe una nueva»: lo segundo exigiría observar
+    el origen, y `project-manifest.yaml` §no_ofrece lo cede. Un adoptante que
+    ve la edad decide si comprobar; el gate no decide por él, ni falla por
+    ello — la polaridad de aviso la hereda de ADR-020.
+    """
+    hoy = hoy or date.today()
+    try:
+        generado = date.fromisoformat(GATE_GENERATED_AT)
+    except ValueError:  # constante mal editada al copiar: no es motivo de BLOQ
+        return None
+    dias = (hoy - generado).days
+    if dias < GATE_STALE_AFTER_DAYS:
+        return None
+    return (
+        f"AVISO: esta copia del gate ({GATE_VERSION}, {GATE_GENERATED_AT}) "
+        f"tiene {dias} días. Comprueba contra su origen si sigue vigente; "
+        "este gate no consulta la red ni observa el repositorio de origen."
+    )
+
+
 def main() -> int:
     failures: list[str] = []
 
@@ -666,10 +699,14 @@ def main() -> int:
         if observed > limit:
             failures.append(f"{name}: {observed} líneas > límite {limit}")
 
+    aviso = gate_staleness()
+
     if failures:
         print("BLOQ — check_sizes encontró incumplimientos")
         for failure in failures:
             print(f"- {failure}")
+        if aviso:
+            print(aviso)
         return 1
 
     observado = READING_PATH.get("_observado")
@@ -682,7 +719,10 @@ def main() -> int:
         "OK — "
         f"{len(rows)} archivos de texto dentro de límites; "
         f"estructura y hogares canónicos verificados{ruta}"
+        f"; {GATE_VERSION} ({GATE_GENERATED_AT})"
     )
+    if aviso:
+        print(aviso)
     return 0
 
 

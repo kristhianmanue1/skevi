@@ -33,6 +33,10 @@ ofrece:
     complemento de fase para componentes con salida no determinista:
     propiedades en vez de texto, conjunto de referencia versionado y
     presupuesto de consumo con fallo explícito (ADR-024)
+  - >
+    identidad y autocaducidad del gate copiable: la copia declara su versión y
+    su edad en la salida que el adoptante ya ejecuta, sin red y sin observar
+    el origen (ADR-027)
   - registro histórico de pilotos con procedencia de cada regla
 
 no_ofrece:

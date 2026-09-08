@@ -11,6 +11,7 @@ import sys
 import tempfile
 import unittest
 from contextlib import redirect_stdout
+from datetime import date
 from pathlib import Path
 from unittest.mock import patch
 
@@ -147,6 +148,13 @@ class MainIntegrationTests(unittest.TestCase):
         exit_code, output = self._run_main()
         self.assertEqual(exit_code, 0)
         self.assertTrue(output.startswith("OK —"))
+
+    def test_ok_line_carries_the_gate_version(self):
+        """Visible en cada log de CI del adoptante, sin que tenga que
+        acordarse de correr nada aparte."""
+        _, output = self._run_main()
+        self.assertIn(check_sizes.GATE_VERSION, output)
+        self.assertIn(check_sizes.GATE_GENERATED_AT, output)
 
     def test_missing_required_file_fails(self):
         (self.root / "README.md").unlink()
@@ -529,6 +537,39 @@ class ConfigTests(unittest.TestCase):
         self.assertIn("falta archivo requerido: AGENTS.md", buf2.getvalue())
 
 
+
+
+class GateVersionTests(unittest.TestCase):
+    """Versión visible y autocaducidad (ADR-027).
+
+    El gate es lo único que un adoptante ya ejecuta; si la señal de vejez no
+    va ahí, no llega a quien no sabe que tiene un problema. Once adoptantes
+    corrían copias de hace tres semanas sin manera de notarlo.
+    """
+
+    def test_version_constants_exist(self):
+        self.assertRegex(check_sizes.GATE_VERSION, r"^gate/v\d+$")
+        self.assertRegex(check_sizes.GATE_GENERATED_AT, r"^\d{4}-\d{2}-\d{2}$")
+        self.assertIsInstance(check_sizes.GATE_STALE_AFTER_DAYS, int)
+
+    def test_fresh_copy_reports_version_without_warning(self):
+        aviso = check_sizes.gate_staleness(hoy=date(2026, 9, 10))
+        self.assertIsNone(aviso)
+
+    def test_stale_copy_warns_with_its_age(self):
+        aviso = check_sizes.gate_staleness(hoy=date(2027, 1, 1))
+        self.assertIsNotNone(aviso)
+        self.assertIn("115 días", aviso)
+        self.assertIn(check_sizes.GATE_VERSION, aviso)
+
+    def test_warning_never_claims_a_newer_version_exists(self):
+        """El gate no observa a nadie: sabe que es viejo, no que haya otro."""
+        aviso = check_sizes.gate_staleness(hoy=date(2027, 1, 1))
+        for palabra in ("nueva versión", "actualiza", "disponible"):
+            self.assertNotIn(palabra, aviso.lower())
+
+    def test_clock_before_generation_does_not_warn(self):
+        self.assertIsNone(check_sizes.gate_staleness(hoy=date(2020, 1, 1)))
 
 
 class ReadingPathTests(unittest.TestCase):
