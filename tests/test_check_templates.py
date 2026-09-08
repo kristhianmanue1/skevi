@@ -8,6 +8,7 @@ from __future__ import annotations
 import importlib.util
 import io
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -488,9 +489,6 @@ class ScriptManifestFamilyTests(unittest.TestCase):
         self.assertEqual(code, 1, output)
         self.assertTrue(output.startswith("BLOQ"))
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class SchemaNamespaceCompletenessTests(unittest.TestCase):
     """Ancla que SCHEMA_NAMESPACE cubre exactamente los esquemas reconocidos
@@ -502,3 +500,23 @@ class SchemaNamespaceCompletenessTests(unittest.TestCase):
             set(check_templates.SCHEMA_NAMESPACE),
             check_templates.MANIFEST_SCHEMAS | check_templates.INSTALL_SCHEMAS,
         )
+
+
+class MainBlockIsAtTheEndTests(unittest.TestCase):
+    """Este defecto reapareció tres veces en la misma sesión: cada clase
+    anexada con `>>` aterriza después de `if __name__ == "__main__":`, y
+    ejecutar el archivo suelto la omite en silencio. Guardia estructural
+    para que la próxima vez lo atrape la suite, no una ronda adversarial."""
+
+    def test_nothing_meaningful_follows_the_main_block(self):
+        # Ancla en columna 0: así no se confunde con el propio literal de
+        # este método, que aparece indentado en el código fuente.
+        texto = Path(__file__).read_text(encoding="utf-8")
+        patron = r'(?m)^if __name__ == "__main__":\n    unittest\.main\(\)\n'
+        match = re.search(patron, texto)
+        self.assertIsNotNone(match, "no se encontró el bloque __main__")
+        self.assertEqual(texto[match.end():].strip(), "",
+                         "hay código después del bloque __main__")
+
+if __name__ == "__main__":
+    unittest.main()

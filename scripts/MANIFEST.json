@@ -3,7 +3,7 @@
   "version": "gate/v2",
   "generated_at": "2026-09-08T16:00:00Z",
   "files": {
-    "check_sizes.py": "sha256:8b0faab8eb1fa1b46630f725fcd1be2c14d32d05a7638db86a4b50990dc9914e",
+    "check_sizes.py": "sha256:93cfa7a023d30bdae3c990bed59525b1673e8e7d894efa412734a32a08bcb70c",
     "check_plans.py": "sha256:e6bff6446f2c5e73315cb4fafec904d5040d70195f67bbefa4a7597f9a14553d",
     "check_reports.py": "sha256:90a7b9ba5b7c2745492018d166048749a8a0d75b33b90251abae8b3f6b3f9077",
     "check_templates.py": "sha256:629361eff3bec932344c839fda866b5431be96747ebb0a6f66ce4e0b1c7b4a47"

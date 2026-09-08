@@ -104,9 +104,7 @@ TEMPLATE_MANIFEST_SCHEMA = "skevi/template-manifest/v1"
 # Segunda familia (ADR-028): mismo check_template_manifest, sobre scripts/
 # en vez de templates/skevi/, validación estricta por directorio.
 SCRIPT_MANIFEST_SCHEMA = "skevi/script-manifest/v1"
-# Namespace por esquema (ADR-028), simétrico con check_templates.py: sin
-# esto, Skevi aceptaba internamente un manifiesto con namespace ajeno a su
-# propio esquema, que el comparador del adoptante sí rechazaba.
+# Namespace por esquema (ADR-028), simétrico con check_templates.py.
 SCHEMA_NAMESPACE = {
     TEMPLATE_MANIFEST_SCHEMA: "plantillas",
     SCRIPT_MANIFEST_SCHEMA: "gate",
@@ -408,9 +406,13 @@ def check_registry_block(relative: Path, text: str) -> list[str]:
 
 
 def _check_namespace(version, expected_schema: str, where: str) -> str | None:
-    esperado = SCHEMA_NAMESPACE.get(expected_schema)
-    if esperado is None or not isinstance(version, str):
+    if not isinstance(version, str):
         return None
+    # Fail-closed: esquema sin namespace registrado es olvido de
+    # mantenimiento, no motivo para omitir la comprobación.
+    esperado = SCHEMA_NAMESPACE.get(expected_schema)
+    if esperado is None:
+        return f"{where}: {expected_schema} no tiene namespace registrado"
     if version.startswith(esperado + "/"):
         return None
     return (f"{where}: version «{version}» no corresponde al espacio de "
@@ -536,13 +538,10 @@ def check_template_manifest(
                 f"{label}: symlink no permitido en {dir_label}/: {path.name}"
             )
             continue
-        # Mismas exenciones que discover() (p.ej. .DS_Store de Finder).
-        try:
-            relative = path.relative_to(ROOT).as_posix()
-        except ValueError:
-            relative = None
-        if (relative is not None and relative in EXEMPT_PATHS) \
-                or path.suffix.lower() in EXEMPT_SUFFIXES:
+        if path.name.startswith("."):
+            # Dotfiles del sistema (.DS_Store), nunca EXEMPT_PATHS/SUFFIXES:
+            # esos son "exento de tamaño" y no deben poder ocultar un
+            # archivo real de la exigencia de versionado (ronda, HIGH).
             continue
         on_disk.append(path.name)
     listed = sorted(data["files"])

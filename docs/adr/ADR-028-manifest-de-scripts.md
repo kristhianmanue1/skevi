@@ -60,8 +60,12 @@ Invariantes:
     plantilla
 Compatibilidad:
   - familia aditiva: ningún consumidor de skevi/template-manifest/v1 nota
-    el cambio; la clave "scripts" en skevi-gate.json ya estaba reservada
-    por check_sizes.py y no se toca aquí
+    el cambio; skevi-gate.json no gana clave nueva — la ubicación de
+    scripts/MANIFEST.json es fija (junto a los scripts, como
+    templates/skevi/MANIFEST.json junto a las plantillas), no configurable
+    (corregido: la primera versión de este ADR afirmaba, sin verificarlo,
+    que existía una clave "scripts" reservada; declararla produce BLOQ por
+    clave desconocida — ronda adversarial, MED)
   - cambios de este contrato -> v2, nunca mutación in situ
 ```
 

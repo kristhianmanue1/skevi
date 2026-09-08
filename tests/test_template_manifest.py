@@ -9,6 +9,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -449,9 +450,6 @@ class ScriptsInstalledTemplateTests(unittest.TestCase):
                 ])
         self.assertEqual(code, 0, buf.getvalue())
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class CheckSizesEnforcesNamespaceTests(unittest.TestCase):
     """HIGH de la segunda ronda (2026-09-08): check_templates.py ataba
@@ -519,27 +517,26 @@ class CheckSizesEnforcesNamespaceTests(unittest.TestCase):
 
 
 class ManifestListingRespectsExemptionsTests(unittest.TestCase):
-    """Un .DS_Store en el directorio del manifiesto no debe exigir entrada:
-    mismas exenciones que discover() ya aplica al resto del árbol (ronda
-    adversarial, LOW — el gate exime .DS_Store en skevi-gate.json pero el
-    listado de check_template_manifest no lo respetaba)."""
+    """Un .DS_Store en el directorio del manifiesto no debe exigir entrada,
+    pero la exención tiene que ser propia y estrecha —dotfiles—, nunca
+    EXEMPT_PATHS/EXEMPT_SUFFIXES: esos significan "exento del límite de
+    tamaño", y reusarlos aquí dejaba que una línea de skevi-gate.json
+    sacara un archivo real de la exigencia de versionado, en verde y sin
+    aviso (hallazgo HIGH de la tercera ronda, 2026-09-08)."""
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self._orig_root = check_sizes.ROOT
         check_sizes.ROOT = Path(self.tmp.name)
-        check_sizes.EXEMPT_PATHS.add("scripts/.DS_Store")
         self.dir = check_sizes.ROOT / "scripts"
         self.dir.mkdir()
         (self.dir / "check_sizes.py").write_text("# gate\n", encoding="utf-8")
-        (self.dir / ".DS_Store").write_bytes(b"\x00\x01binary")
 
     def tearDown(self):
         check_sizes.ROOT = self._orig_root
-        check_sizes.EXEMPT_PATHS.discard("scripts/.DS_Store")
 
-    def test_exempt_ds_store_does_not_require_manifest_entry(self):
+    def _manifest_failures(self):
         manifest = {
             "schema": check_sizes.SCRIPT_MANIFEST_SCHEMA,
             "version": "gate/v2",
@@ -549,7 +546,70 @@ class ManifestListingRespectsExemptionsTests(unittest.TestCase):
         }
         manifest_path = self.dir / "MANIFEST.json"
         manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
-        failures = check_sizes.check_template_manifest(
+        return check_sizes.check_template_manifest(
             manifest_path, self.dir, expected_schema=check_sizes.SCRIPT_MANIFEST_SCHEMA
         )
-        self.assertEqual(failures, [])
+
+    def test_ds_store_dotfile_does_not_require_manifest_entry(self):
+        (self.dir / ".DS_Store").write_bytes(b"\x00\x01binary")
+        self.assertEqual(self._manifest_failures(), [])
+
+    def test_exempt_paths_cannot_hide_a_real_file_from_the_manifest(self):
+        """EXEMPT_PATHS es config del adoptante (skevi-gate.json); no debe
+        poder silenciar la exigencia de versionado de un archivo real."""
+        (self.dir / "notas.txt").write_text("no debería colarse\n",
+                                             encoding="utf-8")
+        check_sizes.EXEMPT_PATHS.add("scripts/notas.txt")
+        self.addCleanup(check_sizes.EXEMPT_PATHS.discard, "scripts/notas.txt")
+        failures = self._manifest_failures()
+        self.assertTrue(
+            any("notas.txt" in f for f in failures), failures)
+
+    def test_exempt_suffix_cannot_hide_a_real_file_from_the_manifest(self):
+        (self.dir / "notas.md").write_text("no debería colarse\n",
+                                            encoding="utf-8")
+        check_sizes.EXEMPT_SUFFIXES.add(".md")
+        self.addCleanup(check_sizes.EXEMPT_SUFFIXES.discard, ".md")
+        failures = self._manifest_failures()
+        self.assertTrue(any("notas.md" in f for f in failures), failures)
+
+
+class MainBlockIsAtTheEndTests(unittest.TestCase):
+    """Ver test_check_templates.MainBlockIsAtTheEndTests: misma guardia,
+    mismo defecto reaparecido tres veces en la misma sesión."""
+
+    def test_nothing_meaningful_follows_the_main_block(self):
+        # Ancla en columna 0: así no se confunde con el propio literal de
+        # este método, que aparece indentado en el código fuente.
+        texto = Path(__file__).read_text(encoding="utf-8")
+        patron = r'(?m)^if __name__ == "__main__":\n    unittest\.main\(\)\n'
+        match = re.search(patron, texto)
+        self.assertIsNotNone(match, "no se encontró el bloque __main__")
+        self.assertEqual(texto[match.end():].strip(), "",
+                         "hay código después del bloque __main__")
+
+
+
+class CheckSizesNamespaceFailsClosedTests(unittest.TestCase):
+    """check_sizes._check_namespace portaba la comprobación pero no el
+    fail-closed de check_templates.py: un esquema sin namespace registrado
+    pasaba en silencio en vez de fallar (MED, tercera ronda 2026-09-08)."""
+
+    def test_unregistered_schema_fails_closed(self):
+        """_check_namespace devuelve un mensaje de fallo (no None) ante un
+        esquema sin namespace registrado — el patrón del resto de
+        _validate_template_manifest, que acumula strings, no excepciones.
+        Un test que sólo comprobara "no revienta" habría sido vacuo: aquí
+        se exige la señal positiva de fallo."""
+        fallo = check_sizes._check_namespace(
+            "cualquier/cosa", "skevi/tercera-familia/v1", "L")
+        self.assertIsNotNone(fallo)
+        self.assertIn("namespace", fallo)
+
+    def test_every_expected_schema_has_a_namespace(self):
+        self.assertEqual(
+            set(check_sizes.SCHEMA_NAMESPACE),
+            {check_sizes.TEMPLATE_MANIFEST_SCHEMA, check_sizes.SCRIPT_MANIFEST_SCHEMA},
+        )
+if __name__ == "__main__":
+    unittest.main()

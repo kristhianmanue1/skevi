@@ -76,7 +76,7 @@ skevi/
 │   ├── MANIFEST.json          # versión vigente de los 4 scripts (ADR-028)
 │   └── hooks/                 # hooks de Git (pre-push)
 └── tests/                     # suites de scripts/ (check_sizes, check_plans,
-                                #  check_templates)
+                                #  check_reports, check_templates)
 ```
 
 La separación no es estética: cada carpeta tiene una **vida útil distinta**.
