@@ -49,12 +49,15 @@ TAREA R-T2 — AGENTS.md: punteros en vez de reenunciados
         confiables, evidencia y contención de tamaño, conservando la excepción
         local de autoridad, que sí es propia — verificación: cada viñeta
         conservada cita la sección del estándar que la contiene
-  - [ ] NO CUMPLIDO — la ruta de lectura sube, no baja. La compresión de
-        AGENTS.md libera 4 líneas y la política nueva de §3.4 que exige R-T1
-        consume 5: neto +2 sobre la base. Se deja abierto en vez de forzar
-        una compresión que degradaría el texto por un número — verificación:
-        el gate publica la ocupación en su línea OK y la compara con las 982
-        líneas medidas en b563279
+  - [ ] NO CUMPLIDO, con decisión registrada — la ruta sube de 982 a 984: la
+        compresión de AGENTS.md libera 4 líneas y la política que R-T1 añade a
+        §3.4 consume 5. Buscado un segundo candidato el 2026-09-08: el único
+        de tamaño en la ruta es §5.3-5.4 de 04 (63 líneas), que mezcla norma
+        —«cada hallazgo lleva cuatro campos»— con ilustración; separarlas bien
+        es tarea propia y hacerlo deprisa por veinte líneas arriesga perder
+        reglas. Se deja abierto: el trinquete de ADR-025 hace su trabajo con
+        16 líneas de margen — verificación: python3 scripts/check_sizes.py
+        publica la ocupación en su línea OK
   - [x] Gate — verificación: python3 scripts/check_sizes.py sale OK
 
 TAREA R-T3 — Fronteras del manifiesto

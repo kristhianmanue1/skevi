@@ -81,10 +81,10 @@ fronteras_de_confianza:
   - >
     las cesiones de plano de no_ofrece son decisiones de alcance propias, no
     acuerdos: al 2026-09-08 ningún manifiesto de los cinco proyectos citados
-    menciona a Skevi. Que no lo cedan de vuelta no significa que lo ignoren —
-    escrubery y an-kla-memory adoptan Skevi por otra vía, con ADR propio y, en
-    el segundo caso, con su propio skevi-gate.json. La cesión no garantiza que
-    alguien cubra ese plano (ADR-026)
+    menciona a Skevi. Que no lo cedan de vuelta no significa que lo ignoren:
+    tres de los cinco lo adoptan por otra vía, con ADR propio — escrubery
+    ADR-0001, epistates ADR-0002, an-kla-memory ADR-0045. La cesión no
+    garantiza que alguien cubra ese plano (ADR-026)
   # ADR-018: distinguir autodeclaración general de la restricción local.
   - >
     Toda operación destructiva o con efecto fuera del entorno local exige

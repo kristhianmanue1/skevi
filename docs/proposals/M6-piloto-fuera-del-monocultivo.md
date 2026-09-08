@@ -78,7 +78,56 @@ Tampoco respaldaría la frase «mejores estándares de la industria». Esa la
 mide el cotejo de [`../crosswalk-estandares.md`](../crosswalk-estandares.md)
 control por control, no el número de pilotos.
 
-## 4. Qué hacer si nunca aparece el adoptante
+## 4. Primera aplicación del criterio — 2026-09-08
+
+El criterio se ejerció por primera vez el 2026-09-08, contra los tres
+adoptantes reales que salieron a la luz al corregir la evidencia de ADR-026:
+`escrubery` (su ADR-0001), `epistates` (ADR-0002) y `an-kla-memory`
+(ADR-0045). Ninguno se buscó: ya existían y el corpus no lo sabía.
+
+| Variable | `escrubery` | `epistates` | `an-kla-memory` |
+|---|---|---|---|
+| Autoría distinta | no | dos direcciones de correo, identidad no determinable desde el repo | no |
+| CI remoto que corre el gate | workflow sí, gate **no**: su `scripts/check_sizes.py` tiene 67 líneas contra las 690 del copiable, y no hay `skevi-gate.json` | workflow sí, no corre gate | no |
+| Lenguaje compilado | no | no | no |
+| Legado > 10 000 líneas | **sí** (19 125) | **sí** (22 704) | **sí** (41 955) |
+| PR aprobado por otra persona | no | no | no |
+
+**Resultado: ninguno califica.** Los tres rompen «legado grande» y ninguno
+rompe una segunda variable. `escrubery` estuvo cerca y es el caso instructivo:
+tiene CI remoto real con corridas consultables, pero lo que ejecuta no es el
+gate de Skevi — es un script propio, anterior a la adopción, con sus propios
+límites y sin la polaridad cerrada.
+
+### Lo que la primera aplicación reveló del propio criterio
+
+- **La fila de CI era ambigua.** «Existe un workflow que ejecuta el gate» no
+  decía **de quién** es el gate. Un script local de 67 líneas que cuenta
+  líneas no ejerce nada de lo que Skevi norma. Queda precisado: cuenta cuando
+  el workflow ejecuta el gate **copiable** —`check_sizes.py` sin modificar,
+  con su `skevi-gate.json`— conforme a ADR-006.
+- **La fila de autoría no es decidible desde el repositorio.** En `epistates`
+  aparecen dos direcciones; si corresponden a dos personas o a una con dos
+  cuentas no se puede saber leyendo Git. Es `inconclusive` y lo resuelve el
+  humano, no una consulta.
+- **La adopción no es el piloto.** Tres proyectos adoptaron el método sin que
+  ningún registro de Skevi lo supiera: la evidencia de adopción vivía en los
+  ADR de los adoptantes. Adoptar y ejercitar el método bajo observación son
+  cosas distintas, y sólo la segunda produce el piloto que este documento
+  pide.
+
+### Seguimiento concreto, ya no hipotético
+
+1. `escrubery` es el candidato más cercano: bastaría que su CI ejecutara el
+   gate copiable con su `skevi-gate.json` para romper la segunda variable.
+   Eso es una tarea en `escrubery`, no en Skevi, y exige su autorización.
+2. La divergencia de su `check_sizes.py` respecto del copiable es un hallazgo
+   de adopción por derecho propio: ADR-006 dice que el script se copia sin
+   modificar y que las diferencias van en `skevi-gate.json`. Aquí no hay copia
+   ni config: hay otro script. `check_templates.py` (ADR-020) no lo detecta,
+   porque su alcance son `templates/skevi/`, no `scripts/`.
+
+## 5. Qué hacer si nunca aparece el adoptante
 
 Que el piloto no se ejecute es un resultado aceptable y debe registrarse
 como tal, no quedar como pendiente perpetuo. En ese caso lo honesto es

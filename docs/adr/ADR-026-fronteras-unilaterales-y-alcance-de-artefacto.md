@@ -38,8 +38,8 @@ produjo la conclusión contraria a la real.
 
 Lo que sí se sigue: **precisar la línea no requiere coordinación previa**,
 porque ninguna contraparte ha aceptado una frontera que se pudiera
-contradecir. Lo que **no** se sigue: que nadie dependa de Skevi. Dos
-proyectos sí, y uno de ellos cita una versión etiquetada.
+contradecir. Lo que **no** se sigue: que nadie dependa de Skevi. Tres
+proyectos sí, y uno cita la versión etiquetada `v1.0.0`.
 
 Decisión, en tres partes:
 
