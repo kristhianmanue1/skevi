@@ -3,7 +3,7 @@
 Autoriza: [SPEC-AUDIT](../specs/SPEC-AUDIT-2026-09-07-mejoras.md), derivada
 de la instrucción humana del 2026-09-07: persistir el plan detallado e iniciar.
 Clase de tarea: Architectural — crear plan multi-tarea (F0 §2, ADR-013).
-Estado: T00-T09, T05-A y T14 completos; T06 (O0), T07 (O-A), T08 (D1-D3) y T09 (D1-D3) cerrados; siguiente T10.
+Estado: T00-T10, T05-A y T14 completos; T06-T10 cerrados por decisión; siguiente T11.
 Base: `17413f150d08e1e65b72f70a858104505950e751`.
 Rama de retoma: `docs/adopt-authority-consistency`. El plan es dueño de steps/DoD.
 
@@ -230,11 +230,11 @@ TAREA T10
   Consumes: T05/T08/T09; REQ-AUD-06
   Produce: crea `docs/proposals/AUDIT-quality-maintenance-pilot.md`
   Steps:
-  - [ ] Elegir caso y atributos relevantes — verificación: escenarios de
+  - [x] Elegir caso y atributos relevantes — verificación: escenarios de
         adopción/cambio/fallo con estímulo, respuesta, medida y responsable.
-  - [ ] Definir mantenimiento — verificación: dueño, canal de defectos,
+  - [x] Definir mantenimiento — verificación: dueño, canal de defectos,
         triage de seguridad, compatibilidad y retirada según el caso elegido.
-  - [ ] Comparar con F3 existente — verificación: sólo extender carencias
+  - [x] Comparar con F3 existente — verificación: sólo extender carencias
         observadas, sin declarar ausente el trabajo continuo ya documentado.
 TAREA T11
   Consumes: T10; REQ-AUD-06
