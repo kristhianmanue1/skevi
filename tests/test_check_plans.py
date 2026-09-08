@@ -409,5 +409,35 @@ class PlansPathBoundaryTests(unittest.TestCase):
         self.assertNotIn("Traceback", output)
 
 
+class SymlinkTests(unittest.TestCase):
+    """Un plan que sea symlink fuera de la raíz no se lee: la regla E5
+    emitiría cadenas de su contenido (ronda fresca 2026-09-08)."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        (self.root / "planes").mkdir()
+        self.fuera = self.root.parent / f"victima-{self.root.name}.md"
+        self.fuera.write_text("SECRETO-FUERA\n", encoding="utf-8")
+        self.addCleanup(self.fuera.unlink)
+        (self.root / "skevi-gate.json").write_text(
+            json.dumps({"plans": "planes"}), encoding="utf-8")
+        (self.root / "planes" / "real.md").write_text(
+            "```text\nTAREA T1\n  Consumes: x\n  Produce: y\n  Steps:\n"
+            "  - [ ] paso — verificación: comando\n```\n", encoding="utf-8")
+
+    def test_symlink_plan_is_not_read(self):
+        (self.root / "planes" / "enlace.md").symlink_to(self.fuera)
+        check_plans = importlib.import_module("check_plans")
+        importlib.reload(check_plans)
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            code = check_plans.main(["--root", str(self.root)])
+        salida = buf.getvalue()
+        self.assertNotIn("SECRETO-FUERA", salida)
+        self.assertNotIn("enlace.md", salida)
+        self.assertEqual(code, 0, salida)
+
 if __name__ == "__main__":
     unittest.main()

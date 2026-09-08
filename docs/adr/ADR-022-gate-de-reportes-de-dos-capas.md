@@ -96,7 +96,10 @@ añadieron además detección de claves duplicadas —`STATE = BLOCKED` seguido
 de `STATE = OK` pasaba— y exclusión del hash por clave exacta en vez de por
 prefijo.
 
-**Vigencia de la exención** — aclaración de alcance, no decisión nueva: precisa hasta cuándo rige la exención que este mismo ADR ya decidió, sin cambiarla. Una decisión distinta exigiría un ADR propio (`02` §3.2). Las dos exenciones **no caducan**. El
+**Vigencia de la exención** — aclaración de alcance, no decisión nueva:
+precisa hasta cuándo rige la exención que este mismo ADR ya decidió, sin
+cambiarla. Una decisión distinta exigiría un ADR propio (`02` §3.2). Las dos
+exenciones **no caducan**. El
 `report_sha256` de esos registros cubre su propio texto y es permanente:
 mientras existan, corregirlos seguirá invalidando su hash. No hay disparador
 de archivado que las retire —`docs/reviews/` no tiene política de antigüedad,

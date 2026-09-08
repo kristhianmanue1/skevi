@@ -80,52 +80,74 @@ control por control, no el número de pilotos.
 
 ## 4. Primera aplicación del criterio — 2026-09-08
 
-El criterio se ejerció por primera vez el 2026-09-08, contra los tres
-adoptantes reales que salieron a la luz al corregir la evidencia de ADR-026:
-`escrubery` (su ADR-0001), `epistates` (ADR-0002) y `an-kla-memory`
-(ADR-0045). Ninguno se buscó: ya existían y el corpus no lo sabía.
+> **Tercera emisión de esta sección.** Las dos primeras fueron falsas y la
+> lección vale más que el resultado. La primera midió la población equivocada
+> —los cinco proyectos a los que `no_ofrece` **cede plano**, que no son los
+> que **adoptan**— y concluyó «ninguno califica». La segunda corrigió la
+> población pero no la medida: contó `.venv/`, `build/` y `references/` como
+> código de producción, inflando `epistates` de 8 562 a 22 704 líneas y
+> `escrubery` de 12 150 a 19 125. Ambas emisiones dieron un veredicto falso
+> con los cuatro gates y los 180 tests en verde.
 
-| Variable | `escrubery` | `epistates` | `an-kla-memory` |
+### 4.1 Cómo se mide, para que sea reproducible
+
+El criterio de §2 nombraba magnitudes sin fijar cómo obtenerlas. Queda fijado:
+
+- **Líneas de producción:** `git ls-files` sobre las extensiones del proyecto,
+  excluyendo rutas `tests/`, `vendor/`, `node_modules/`, `dist/` y `build/`.
+  **Nunca sobre el árbol de trabajo**, que arrastra dependencias de terceros y
+  salida de build.
+- **CI remoto que ejecuta el gate:** el workflow existe en la rama por defecto
+  **hoy**, tiene disparador automático (`push` o `pull_request`, no sólo
+  `workflow_dispatch`), invoca el gate copiable, y sus corridas son
+  consultables con `gh run list`. Verde no se exige: una corrida en rojo es
+  evidencia igual de válida de que el gate se ejecuta.
+- **Gate copiable:** `check_sizes.py` byte-idéntico a **alguna versión
+  publicada de Skevi**, no necesariamente la última. Sin este ancla la fila
+  sería insatisfacible por todos: ninguna copia del ecosistema coincide hoy
+  con `main`.
+
+### 4.2 Población real y resultado
+
+Adoptantes con `skevi-gate.json` o gate copiado, medidos el 2026-09-08:
+
+| Adoptante | LOC producción | CI que corre el gate | Variables rotas |
 |---|---|---|---|
-| Autoría distinta | no | dos direcciones de correo, identidad no determinable desde el repo | no |
-| CI remoto que corre el gate | workflow sí, gate **no**: su `scripts/check_sizes.py` tiene 67 líneas contra las 690 del copiable, y no hay `skevi-gate.json` | workflow sí, no corre gate | no |
-| Lenguaje compilado | no | no | no |
-| Legado > 10 000 líneas | **sí** (19 125) | **sí** (22 704) | **sí** (41 955) |
-| PR aprobado por otra persona | no | no | no |
+| `orbitaNova` | 22 634 | **sí** — `push`+`pull_request`, `npm run check:sizes`, corridas consultables | **2** |
+| `eduEMD` | 85 967 (PHP) | **lo tuvo** — verde el 2026-09-06 con `check_sizes` y `check_plans`; el workflow ya no está en la rama por defecto | **2 el 06-09; 1 hoy** |
+| `entiendomidiabetes` | 339 651 (PHP) | workflow sí, gate no | 1 |
+| `an-kla-memory` | 23 281 | no | 1 |
+| `escrubery` | 12 150 | sólo `workflow_dispatch` — su `ci.yml` declara el billing agotado y el CI vigente local | 1 |
+| `epistates` | 8 562 | workflow sí, gate no | **0** |
+| `basanos` | 3 171 | no | 0 |
 
-**Resultado: ninguno califica.** Los tres rompen «legado grande» y ninguno
-rompe una segunda variable. `escrubery` estuvo cerca y es el caso instructivo:
-tiene CI remoto real con corridas consultables, pero lo que ejecuta no es el
-gate de Skevi — es un script propio, anterior a la adopción, con sus propios
-límites y sin la polaridad cerrada.
+**`orbitaNova` califica hoy.** Rompe CI remoto con gate y legado grande a la
+vez. Es el primer candidato desde que el criterio se escribió.
 
-### Lo que la primera aplicación reveló del propio criterio
+**`eduEMD` calificó el 2026-09-06** y es el caso más valioso perdido: PHP —otra
+familia de lenguaje—, 85 967 líneas, y una corrida verde ejecutando **dos**
+gates de Skevi con una copia byte-idéntica a `v1.0.0`. El workflow fue retirado
+después; `d31129c`, el commit de esa corrida, sigue siendo ancestro de su HEAD.
+Recuperarlo es una decisión de ese proyecto.
 
-- **La fila de CI era ambigua.** «Existe un workflow que ejecuta el gate» no
-  decía **de quién** es el gate. Un script local de 67 líneas que cuenta
-  líneas no ejerce nada de lo que Skevi norma. Queda precisado: cuenta cuando
-  el workflow ejecuta el gate **copiable** —`check_sizes.py` sin modificar,
-  con su `skevi-gate.json`— conforme a ADR-006.
-- **La fila de autoría no es decidible desde el repositorio.** En `epistates`
-  aparecen dos direcciones; si corresponden a dos personas o a una con dos
-  cuentas no se puede saber leyendo Git. Es `inconclusive` y lo resuelve el
-  humano, no una consulta.
-- **La adopción no es el piloto.** Tres proyectos adoptaron el método sin que
-  ningún registro de Skevi lo supiera: la evidencia de adopción vivía en los
-  ADR de los adoptantes. Adoptar y ejercitar el método bajo observación son
-  cosas distintas, y sólo la segunda produce el piloto que este documento
-  pide.
+### 4.3 Lo que la aplicación reveló del propio criterio
 
-### Seguimiento concreto, ya no hipotético
+- **La fila de CI no anclaba versión.** «El gate copiable sin modificar» es
+  insatisfacible si significa «igual a `main`»: ninguna copia lo está.
+  Anclado a «alguna versión publicada» en §4.1.
+- **La fila de autoría era decidible y la declaré `inconclusive`.** En
+  `epistates` hay dos correos con **el mismo nombre de persona**: es la misma
+  persona con dos cuentas, no dos autores. Alta confianza desde Git.
+- **La magnitud sin comando es una invitación a medir mal.** Tres cifras de
+  siete estaban infladas por no fijar cómo contarlas.
 
-1. `escrubery` es el candidato más cercano: bastaría que su CI ejecutara el
-   gate copiable con su `skevi-gate.json` para romper la segunda variable.
-   Eso es una tarea en `escrubery`, no en Skevi, y exige su autorización.
-2. La divergencia de su `check_sizes.py` respecto del copiable es un hallazgo
-   de adopción por derecho propio: ADR-006 dice que el script se copia sin
-   modificar y que las diferencias van en `skevi-gate.json`. Aquí no hay copia
-   ni config: hay otro script. `check_templates.py` (ADR-020) no lo detecta,
-   porque su alcance son `templates/skevi/`, no `scripts/`.
+### 4.4 Seguimiento
+
+1. `orbitaNova` es el piloto viable, con la salvedad de la §6 de
+   [la deriva del gate](M6-deriva-del-gate-copiable.md): ejecuta una copia de
+   377 líneas contra las 690 vigentes.
+2. `eduEMD` es el candidato de mayor valor si su CI vuelve. Es decisión suya.
+3. Ambos exigen autorización del adoptante: Skevi no muta proyectos ajenos.
 
 ## 5. Qué hacer si nunca aparece el adoptante
 

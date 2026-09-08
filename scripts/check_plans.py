@@ -234,7 +234,12 @@ def planes_declarados(root: Path) -> list[Path] | None:
         raise ValueError(
             f"{CONFIG_NAME}: plans declarado pero el directorio no existe: {plans_dir}"
         )
-    archivos = sorted(directorio.glob("*.md"))
+    # Los symlinks no se siguen: la frontera de raíz vale también para el
+    # listado, igual que en check_sizes.py. Un plan enlazado fuera del repo
+    # se leería y la regla E5 emitiría cadenas de su contenido.
+    archivos = sorted(
+        p for p in directorio.glob("*.md") if not p.is_symlink()
+    )
     if not archivos:
         raise ValueError(
             f"{CONFIG_NAME}: plans declarado pero sin planes en {plans_dir}"

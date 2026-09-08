@@ -247,7 +247,11 @@ def reportes_declarados(root: Path) -> tuple[list[Path], set[str]] | None:
         raise _ConfigError(
             f"{CONFIG_NAME}: «{CONFIG_KEY}.exempt» debe ser una lista de rutas"
         )
-    return sorted(destino.glob("*.md")), set(exentos)
+    # Symlinks fuera: misma frontera que check_sizes.py aplica al listado.
+    archivos = sorted(
+        p for p in destino.glob("*.md") if not p.is_symlink()
+    )
+    return archivos, set(exentos)
 
 
 def main(argv: list[str] | None = None) -> int:

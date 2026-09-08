@@ -38,8 +38,11 @@ produjo la conclusión contraria a la real.
 
 Lo que sí se sigue: **precisar la línea no requiere coordinación previa**,
 porque ninguna contraparte ha aceptado una frontera que se pudiera
-contradecir. Lo que **no** se sigue: que nadie dependa de Skevi. Tres
-proyectos sí, y uno cita la versión etiquetada `v1.0.0`.
+contradecir. Lo que **no** se sigue: que nadie dependa de Skevi. Tres de
+estos cinco sí, y dos citan la versión etiquetada `v1.0.0` —`escrubery` en su
+ADR-0001 y `an-kla-memory` en su `.skevi/usage-guide.md`—. Un barrido posterior
+sobre todo el ecosistema, y no sólo sobre estos cinco, encontró 18 repositorios
+que citan a Skevi: ver [la deriva del gate](../proposals/M6-deriva-del-gate-copiable.md) §1.
 
 Decisión, en tres partes:
 
@@ -81,8 +84,10 @@ Alternativas descartadas:
 
 Consecuencias: `no_ofrece` gana precisión donde generaba contradicción y gana
 una frontera donde había hueco. El cotejo de estándares deja de tener
-controles «sin dueño»: pasan a estar declarados fuera de alcance, que es
-información distinta y verificable. Un adoptante que necesite firma de
+controles «sin dueño» **una vez actualizadas sus seis celdas**, cosa que la
+primera emisión de este ADR dio por hecha sin hacerla (corregido el
+2026-09-08): pasan a estar declarados fuera de alcance, que es información
+distinta y verificable. Un adoptante que necesite firma de
 releases o defensa contra envenenamiento sabe, por el manifiesto, que no la
 va a encontrar aquí. Las cesiones siguen siendo unilaterales y ahora lo dicen.
 

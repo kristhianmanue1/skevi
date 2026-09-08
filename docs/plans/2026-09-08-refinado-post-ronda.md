@@ -55,8 +55,8 @@ TAREA R-T2 — AGENTS.md: punteros en vez de reenunciados
         de tamaño en la ruta es §5.3-5.4 de 04 (63 líneas), que mezcla norma
         —«cada hallazgo lleva cuatro campos»— con ilustración; separarlas bien
         es tarea propia y hacerlo deprisa por veinte líneas arriesga perder
-        reglas. Se deja abierto: el trinquete de ADR-025 hace su trabajo con
-        16 líneas de margen — verificación: python3 scripts/check_sizes.py
+        reglas. Se deja abierto: el trinquete de ADR-025 hace su trabajo y
+        el gate publica el margen vigente — verificación: python3 scripts/check_sizes.py
         publica la ocupación en su línea OK
   - [x] Gate — verificación: python3 scripts/check_sizes.py sale OK
 

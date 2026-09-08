@@ -6,35 +6,36 @@ Rama: `fix/refinado-post-ronda-m6`. Base: `b563279`.
 ## Capa técnica
 
 ```text
-id = SKV-R1-20260908-01
+id = SKV-R1-20260908-02
 date = 2026-09-08
-time_utc = 04:40:29Z
-head_sha = b563279791c37041f47ef998c075596d17fdd1ef
+time_utc = 09:35:19Z
+head_sha = 52bca34ce11e02d158c1e0838edf24f8b097dab4
 model = Claude Opus 5 (self-declared)
-STATE = OK (five refinements applied; fresh-context round executed by file, all findings closed)
-GATE = Plan R1 R-T1..R-T6 closed with evidence, except R-T2 step 2 which is explicitly marked unmet.
+STATE = PARTIAL (second fresh round closed one BLOCKER and four HIGH; its own corrections are unreviewed)
+GATE = Plan R1 closed except R-T2 step 2; second fresh-context round executed, all its findings closed.
 EVIDENCE
-- python3 scripts/check_sizes.py -> OK, 111 text files, ruta de lectura 984/1000 -> pass
+- python3 scripts/check_sizes.py -> OK, 113 text files, ruta de lectura 984/1000 -> pass
 - python3 scripts/check_plans.py -> OK, 4 plans verified -> pass
 - python3 scripts/check_reports.py -> OK, reports verified, 2 exempt -> pass
-- python3 -m unittest discover -s tests -> Ran 180 tests, OK -> pass
-- git diff --check -> no output -> pass
-- Fresh reviewer verified 9 prior closures by file, not by commit range -> 8 closed, 1 closed only halfway -> pass
-- BLOCKER check_plans plans key unvalidated -> reproduced as traceback leaking host paths, then fixed -> pass
-- Re-attack with absolute and with ../ escape -> controlled BLOQ both, no host paths -> pass
-- HIGH ADR-025 broke its own rule 4 -> it quoted live occupancy figures including one already stale -> fail
-- HIGH norm delegated occupancy to a gate that never printed it -> gate now prints it on the OK line -> pass
-- HIGH non-reciprocity claim was inverted -> escrubery and an-kla-memory adopt Skevi by ADR; the latter installs skevi-gate.json -> fail
-- HIGH SECURITY.md claimed no releases -> git ls-remote --tags origin returns v1.0.0 and v1.1.0 -> fail
-- Occupancy after all changes -> 984 of 1000, up from 982 at base -> fail
-- Long prose lines outside table rows in touched files -> none remain -> pass
-- Occupancy figures copied into normative documents -> none remain -> pass
-PENDING = Corrections made after this round were not themselves reviewed in fresh context; R-T2 step 2 unmet and left open; PREGUNTA-M6-2 external pilot; push, PR and merge unauthorised for this change.
-DECISION = proceed
-OPERATIONS = commit on branch fix/refinado-post-ronda-m6; no push, merge, PR, tag or release
-AUTHORITY = Human authorised the refined recommendations and the fresh reviewer; the M6 authorisation for push, PR and merge does not extend to this change (04 section 7)
-RISK = Three of the four HIGH findings were false statements written by this executor into normative documents, and one inverted the meaning of its own evidence by measuring the wrong artefact. The same failure mode may persist in claims this round did not test.
-report_sha256 = 088095e56f9711f3d8ee99572514161a97af0967c52789e638c554274bfbcc0a
+- python3 -m unittest discover -s tests -> Ran 182 tests, OK -> pass
+- BLOCKER pilot verdict was false -> eduEMD ran both gates green on 2026-09-06 with a copy byte-identical to v1.0.0 -> fail
+- Production line counts in the first table -> inflated by counting .venv, build and references; epistates 8562 not 22704 -> fail
+- escrubery characterised as having real remote CI -> its ci.yml is workflow_dispatch only, billing exhausted -> fail
+- ADR-026 prose contradicted its own evidence table and decision -> fail
+- Crosswalk still carried six cells reading owner-nobody after ADR-026 declared them out of scope -> fail
+- check_plans and check_reports followed symlinks out of the root -> reproduced, then filtered -> pass
+- Re-attack of symlink escape after fix -> content outside the root never reaches stdout -> pass
+- Previous emission claimed 111 files at commit 37f6b13 -> the real count there is 112 -> fail
+- Long prose line of 262 columns introduced while closing one of 126 -> fail
+- Ecosystem sweep for adopters -> 18 repositories cite Skevi; 11 carry a copied gate; none current -> pass
+- Copies at 380 lines -> byte-identical to each other and to Skevi commit 7bfd759c of 2026-08-20 -> pass
+- Stale gate on an unreadable file -> OK exit 0; current gate on the same fixture -> BLOQ exit 1 -> pass
+PENDING = Corrections to this round are themselves unreviewed; R-T2 step 2 open; gate drift proposal undecided; push, PR and merge unauthorised.
+DECISION = escalate
+OPERATIONS = commits on branch fix/refinado-post-ronda-m6; no push, merge, PR, tag or release
+AUTHORITY = Human authorised the refined recommendations, the pending items and both fresh reviewers; nothing beyond that
+RISK = Five consecutive emissions of the same failure mode: measuring the wrong population or the wrong artefact and stating the conclusion as verified. Gates and tests passed on every one of them. The mode is not contained by the current process.
+report_sha256 = 60ca4d6ad9f4035f86610c1c5032ac5fe45ada775726bec394a6a7e8dcac4236
 ```
 
 Hash: UTF-8, LF, sin newline final, excluyendo la línea `report_sha256`.
