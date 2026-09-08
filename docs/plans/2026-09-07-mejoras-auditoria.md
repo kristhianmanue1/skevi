@@ -3,7 +3,7 @@
 Autoriza: [SPEC-AUDIT](../specs/SPEC-AUDIT-2026-09-07-mejoras.md), derivada
 de la instrucción humana del 2026-09-07: persistir el plan detallado e iniciar.
 Clase de tarea: Architectural — crear plan multi-tarea (F0 §2, ADR-013).
-Estado: T00-T11, T05-A y T14 completos; T06-T11 cerrados por decisión; siguiente T12 (P5, cierre del programa).
+Estado: T00-T12, T05-A y T14 completos; T06-T11 cerrados por decisión; T12 cerrado (closeout con revisión fresca proceed); T13 condicional, sólo si se solicita publicación.
 Base: `17413f150d08e1e65b72f70a858104505950e751`.
 Rama de retoma: `docs/adopt-authority-consistency`. El plan es dueño de steps/DoD.
 
@@ -82,7 +82,7 @@ TAREA T01
   Produce: plan completo y SPEC-AUD-01 con F0/F1 de entrada
   Steps:
   - [x] Definir requisitos, no objetivos y casos — verificación: SPEC-AUDIT
-        identifica seis REQ, casos C1-C6 y ausencia de preguntas para P1.
+        identifica 7 REQ vigentes (REQ-AUD-07 llegó con T14), casos C1-C6.
   - [x] Comprobar estructura y tamaño — verificación: ambos gates OK;
         este plan <=300 líneas y cada tarea cumple E1-E5.
 ```
@@ -257,11 +257,11 @@ TAREA T12
   Consumes: incrementos aceptados de T05-T11; REQ-AUD-06
   Produce: crea `docs/reviews/AUDIT-program-closeout.md`
   Steps:
-  - [ ] Conciliar entregables y pendientes — verificación: cada tarea tiene
+  - [x] Conciliar entregables y pendientes — verificación: cada tarea tiene
         evidencia, decisión o descarte; ningún piloto equivale a regla aceptada.
-  - [ ] Preparar transferencia — verificación: mantenedor, limitaciones,
+  - [x] Preparar transferencia — verificación: mantenedor, limitaciones,
         seguimiento, notas de compatibilidad y comandos locales reproducibles.
-  - [ ] Revisión fresca del conjunto — verificación: no contradicciones
+  - [x] Revisión fresca del conjunto — verificación: no contradicciones
         HIGH abiertas, gates verdes, links reales y autoridad intacta.
 TAREA T13
   Consumes: T12; REQ-AUD-05; estándar §4.3
