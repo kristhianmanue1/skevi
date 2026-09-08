@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import io
 import json
@@ -118,6 +119,23 @@ class MainIntegrationTests(unittest.TestCase):
             path = self.root / relative
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(f"# {relative}\n", encoding="utf-8")
+        # MANIFEST válido: con templates/skevi/ presente, el gate valida
+        # esquema, listado exacto y digests (#28 D1 + ADR-020).
+        skevi_dir = self.root / "templates" / "skevi"
+        data = {
+            "schema": check_sizes.TEMPLATE_MANIFEST_SCHEMA,
+            "version": "plantillas/v1",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": {
+                p.name: "sha256:" + hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in sorted(skevi_dir.iterdir())
+                if p.is_file() and p.name != "MANIFEST.json"
+            },
+            "history": [],
+        }
+        (skevi_dir / "MANIFEST.json").write_text(
+            json.dumps(data, indent=2) + "\n", encoding="utf-8"
+        )
 
     def _run_main(self):
         buf = io.StringIO()

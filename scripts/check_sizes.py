@@ -12,6 +12,7 @@ canónicos, límites o exenciones difiere de la de Skevi, declara
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -75,6 +76,20 @@ LIMITS = {
 DEFAULT_LIMIT = 800
 TEMPLATE_PREFIX = "templates/"
 TEMPLATE_LIMIT = 300
+
+# Manifiesto de plantillas (#28 D1 + enmiendas T09, ADR-020): esquema
+# cerrado, listado exacto de templates/skevi/ y digests vigentes. Condicional
+# a la existencia del MANIFEST: un adoptante sin templates/skevi/ — o con un
+# templates/skevi/ previo a este cambio — no se ve afectado; la exigencia
+# canónica de Skevi sobre sí mismo vive en su `skevi-gate.json` (`required`),
+# no en estos valores por defecto.
+TEMPLATE_MANIFEST_NAME = "MANIFEST.json"
+TEMPLATE_MANIFEST_SCHEMA = "skevi/template-manifest/v1"
+TEMPLATE_MANIFEST_KEYS = {"schema", "version", "generated_at", "files",
+                          "history"}
+TEMPLATE_HISTORY_KEYS = {"from", "to", "breaking", "changes"}
+DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
+TEMPLATE_VERSION_RE = re.compile(r"^plantillas/v\d+(\.\d+)*$")
 
 # Instantánea de los valores de Skevi, congelada al importar el módulo, antes
 # de que ninguna configuración de proyecto pueda tocarlos. `main()` restaura
@@ -310,6 +325,136 @@ def check_registry_block(relative: Path, text: str) -> list[str]:
     return failures
 
 
+def _validate_template_manifest(data, label: str) -> list[str]:
+    """Esquema cerrado del MANIFEST (formato de ADR-020). Falla por campo,
+    con motivo fijo, sin volcar contenido."""
+    failures: list[str] = []
+    if not isinstance(data, dict):
+        return [f"{label}: la raíz debe ser un objeto"]
+    if data.get("schema") != TEMPLATE_MANIFEST_SCHEMA:
+        failures.append(
+            f"{label}: schema desconocido (se espera {TEMPLATE_MANIFEST_SCHEMA})"
+        )
+    unknown = sorted(set(data) - TEMPLATE_MANIFEST_KEYS)
+    if unknown:
+        failures.append(
+            f"{label}: campo desconocido: {', '.join(unknown)}"
+        )
+        return failures
+    if not isinstance(data["version"], str) \
+            or not TEMPLATE_VERSION_RE.match(data["version"]):
+        failures.append(f"{label}: version no coincide con plantillas/v<n>")
+    if not isinstance(data["generated_at"], str) or not data["generated_at"]:
+        failures.append(f"{label}: generated_at debe ser texto con fecha")
+    if not isinstance(data["files"], dict) or not data["files"]:
+        failures.append(
+            f"{label}: files debe ser un objeto con entradas"
+        )
+        return failures
+    for name, digest in data["files"].items():
+        if not isinstance(digest, str) or not DIGEST_RE.match(digest):
+            failures.append(
+                f"{label}: files.{name} no es un digest con formato "
+                "sha256:<hex>"
+            )
+    if not isinstance(data["history"], list):
+        failures.append(f"{label}: history debe ser una lista")
+        return failures
+    for index, jump in enumerate(data["history"]):
+        where = f"{label}: history[{index}]"
+        if not isinstance(jump, dict) or set(jump) != TEMPLATE_HISTORY_KEYS:
+            failures.append(
+                f"{where} debe tener exactamente from/to/breaking/changes"
+            )
+            continue
+        if jump["from"] is not None and (
+            not isinstance(jump["from"], str)
+            or not TEMPLATE_VERSION_RE.match(jump["from"])
+        ):
+            failures.append(f"{where}.from no es una versión válida")
+        if not isinstance(jump["to"], str) \
+                or not TEMPLATE_VERSION_RE.match(jump["to"]):
+            failures.append(f"{where}.to no es una versión válida")
+        if not isinstance(jump["breaking"], bool):
+            failures.append(f"{where}.breaking debe ser booleano")
+        if not isinstance(jump["changes"], dict):
+            failures.append(f"{where}.changes debe ser un objeto")
+            continue
+        for name, summary in jump["changes"].items():
+            if not isinstance(summary, str):
+                failures.append(f"{where}.changes.{name} debe ser texto")
+    return failures
+
+
+def check_template_manifest(manifest_path: Path, templates_dir: Path) -> list[str]:
+    """Valida el MANIFEST de plantillas (#28 D1 + T09): esquema cerrado,
+    listado exacto de templates/skevi/ (sin el MANIFEST mismo) y digests
+    vigentes sobre los bytes reales. Fail-closed, sin tracebacks."""
+    label = f"templates/skevi/{TEMPLATE_MANIFEST_NAME}"
+    try:
+        data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except UnicodeDecodeError:
+        return [f"{label}: contenido no válido como UTF-8"]
+    except OSError:
+        return [f"{label}: no se pudo leer el archivo"]
+    except json.JSONDecodeError as exc:
+        return [
+            f"{label}: JSON inválido (línea {exc.lineno}, columna {exc.colno})"
+        ]
+    except RecursionError:
+        return [f"{label}: JSON inválido o demasiado anidado"]
+    failures = _validate_template_manifest(data, label)
+    if failures:
+        return failures
+    try:
+        entries = sorted(templates_dir.iterdir(), key=lambda path: path.name)
+    except OSError:
+        return [f"{label}: no se pudo leer el directorio de plantillas"]
+    on_disk = []
+    for path in entries:
+        if not path.is_file():
+            continue
+        if path.name == TEMPLATE_MANIFEST_NAME:
+            continue
+        if path.is_symlink():
+            # Los symlinks no se siguen: la frontera de raíz vale también
+            # para el listado de plantillas (ronda adversarial, LOW).
+            failures.append(
+                f"{label}: symlink no permitido en templates/skevi/: "
+                f"{path.name}"
+            )
+            continue
+        on_disk.append(path.name)
+    listed = sorted(data["files"])
+    if listed != on_disk:
+        missing = sorted(set(on_disk) - set(listed))
+        extra = sorted(set(listed) - set(on_disk))
+        if missing:
+            failures.append(
+                f"{label}: archivos sin entrada en el manifiesto: "
+                + ", ".join(missing)
+            )
+        if extra:
+            failures.append(
+                f"{label}: entradas sin archivo real: " + ", ".join(extra)
+            )
+        return failures
+    for name, digest in data["files"].items():
+        try:
+            actual = "sha256:" + hashlib.sha256(
+                (templates_dir / name).read_bytes()
+            ).hexdigest()
+        except OSError:
+            failures.append(f"{label}: no se pudo leer {name}")
+            continue
+        if digest != actual:
+            failures.append(
+                f"{label}: digest desactualizado para {name} "
+                "(¿cambió la plantilla sin bump?)"
+            )
+    return failures
+
+
 def discover() -> list[Path]:
     paths: list[Path] = []
     for path in ROOT.rglob("*"):
@@ -364,6 +509,12 @@ def main() -> int:
     for relative in sorted(REQUIRED):
         if not (ROOT / relative).is_file():
             failures.append(f"falta archivo requerido: {relative}")
+
+    manifest_path = ROOT / "templates" / "skevi" / TEMPLATE_MANIFEST_NAME
+    if manifest_path.is_file():
+        failures.extend(
+            check_template_manifest(manifest_path, manifest_path.parent)
+        )
 
     unexpected_markdown = sorted(
         path.name
