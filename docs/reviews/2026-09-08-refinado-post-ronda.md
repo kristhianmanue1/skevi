@@ -6,18 +6,18 @@ Rama: `fix/refinado-post-ronda-m6`. Base: `b563279`.
 ## Capa técnica
 
 ```text
-id = SKV-R1-20260908-02
+id = SKV-R1-20260908-03
 date = 2026-09-08
-time_utc = 09:35:19Z
-head_sha = 52bca34ce11e02d158c1e0838edf24f8b097dab4
+time_utc = 10:40:00Z
+head_sha = 7c85c7c33bafa70e0d22a1be9d1a152513cdc04b
 model = Claude Opus 5 (self-declared)
-STATE = PARTIAL (second fresh round closed one BLOCKER and four HIGH; its own corrections are unreviewed)
+STATE = PARTIAL (third fresh round closed two BLOCKER and five HIGH; its own corrections are unreviewed)
 GATE = Plan R1 closed except R-T2 step 2; second fresh-context round executed, all its findings closed.
 EVIDENCE
-- python3 scripts/check_sizes.py -> OK, 113 text files, ruta de lectura 984/1000 -> pass
+- python3 scripts/check_sizes.py -> OK, 115 text files, ruta de lectura 984/1000 -> pass
 - python3 scripts/check_plans.py -> OK, 4 plans verified -> pass
 - python3 scripts/check_reports.py -> OK, reports verified, 2 exempt -> pass
-- python3 -m unittest discover -s tests -> Ran 182 tests, OK -> pass
+- python3 -m unittest discover -s tests -> Ran 194 tests, OK -> pass
 - BLOCKER pilot verdict was false -> eduEMD ran both gates green on 2026-09-06 with a copy byte-identical to v1.0.0 -> fail
 - Production line counts in the first table -> inflated by counting .venv, build and references; epistates 8562 not 22704 -> fail
 - escrubery characterised as having real remote CI -> its ci.yml is workflow_dispatch only, billing exhausted -> fail
@@ -27,6 +27,11 @@ EVIDENCE
 - Re-attack of symlink escape after fix -> content outside the root never reaches stdout -> pass
 - Previous emission claimed 111 files at commit 37f6b13 -> the real count there is 112 -> fail
 - Long prose line of 262 columns introduced while closing one of 126 -> fail
+- ADR-027 copy partition -> claimed nine and two; the real split is seven, two and two forks -> fail
+- ADR-027 promised identity on OK and BLOQ -> code printed it only on OK, then fixed -> fail
+- check_sizes discover() followed file symlinks and measured files outside the root -> reproduced, then filtered -> fail
+- check_reports symlink test -> vacuous, passed with and without the fix; fixture corrected and RED verified -> fail
+- Staleness threshold -> test read the constant and survived mutation; anchored to a literal -> fail
 - Ecosystem sweep for adopters -> 18 repositories cite Skevi; 11 carry a copied gate; none current -> pass
 - Copies at 380 lines -> byte-identical to each other and to Skevi commit 7bfd759c of 2026-08-20 -> pass
 - Stale gate on an unreadable file -> OK exit 0; current gate on the same fixture -> BLOQ exit 1 -> pass
@@ -34,8 +39,8 @@ PENDING = Corrections to this round are themselves unreviewed; R-T2 step 2 open;
 DECISION = escalate
 OPERATIONS = commits on branch fix/refinado-post-ronda-m6; no push, merge, PR, tag or release
 AUTHORITY = Human authorised the refined recommendations, the pending items and both fresh reviewers; nothing beyond that
-RISK = Five consecutive emissions of the same failure mode: measuring the wrong population or the wrong artefact and stating the conclusion as verified. Gates and tests passed on every one of them. The mode is not contained by the current process.
-report_sha256 = 60ca4d6ad9f4035f86610c1c5032ac5fe45ada775726bec394a6a7e8dcac4236
+RISK = Six consecutive emissions of the same failure mode: measuring the wrong population or the wrong artefact and stating the conclusion as verified. Gates and tests passed on every one of them. The mode is not contained by the current process.
+report_sha256 = a526fe10f315d780c45fd50213278c420cca8f7f1639140b9524b03abbe506c5
 ```
 
 Hash: UTF-8, LF, sin newline final, excluyendo la línea `report_sha256`.
