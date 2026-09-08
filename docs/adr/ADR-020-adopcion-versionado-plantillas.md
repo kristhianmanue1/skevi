@@ -1,6 +1,6 @@
 # ADR-020: Adopción del versionado de plantillas (PROP-006@#28) con enmiendas T09
 
-Estado: aceptado
+Estado: aceptado — implementado en `0be3f05` (PR #35, merge 2026-09-08)
 
 Contexto: las plantillas de adopción (`templates/skevi/`) se copian a mano
 y sin versión: relleno legítimo, customización y obsolescencia eran
