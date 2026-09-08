@@ -341,9 +341,6 @@ class DriftCheckTests(unittest.TestCase):
         self.assertNotIn("cambia en la cadena", out)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class ScriptManifestFamilyTests(unittest.TestCase):
     """Extensión de ADR-020 a scripts/ (ADR-028): el mecanismo de MANIFEST +
@@ -490,3 +487,18 @@ class ScriptManifestFamilyTests(unittest.TestCase):
         code, output = self._run()
         self.assertEqual(code, 1, output)
         self.assertTrue(output.startswith("BLOQ"))
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class SchemaNamespaceCompletenessTests(unittest.TestCase):
+    """Ancla que SCHEMA_NAMESPACE cubre exactamente los esquemas reconocidos
+    —si alguien añade una familia a MANIFEST_SCHEMAS/INSTALL_SCHEMAS sin
+    registrar su namespace, este test lo dice antes que un adoptante."""
+
+    def test_every_recognized_schema_has_a_namespace(self):
+        self.assertEqual(
+            set(check_templates.SCHEMA_NAMESPACE),
+            check_templates.MANIFEST_SCHEMAS | check_templates.INSTALL_SCHEMAS,
+        )

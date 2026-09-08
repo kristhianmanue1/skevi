@@ -101,16 +101,21 @@ TEMPLATE_LIMIT = 300
 # no en estos valores por defecto.
 TEMPLATE_MANIFEST_NAME = "MANIFEST.json"
 TEMPLATE_MANIFEST_SCHEMA = "skevi/template-manifest/v1"
-# Segunda familia de MANIFEST (ADR-028): mismo mecanismo de check_template_manifest,
-# aplicado a scripts/ en vez de templates/skevi/. Validación estricta por
-# artefacto — cada directorio se valida sólo contra su propio esquema.
+# Segunda familia (ADR-028): mismo check_template_manifest, sobre scripts/
+# en vez de templates/skevi/, validación estricta por directorio.
 SCRIPT_MANIFEST_SCHEMA = "skevi/script-manifest/v1"
+# Namespace por esquema (ADR-028), simétrico con check_templates.py: sin
+# esto, Skevi aceptaba internamente un manifiesto con namespace ajeno a su
+# propio esquema, que el comparador del adoptante sí rechazaba.
+SCHEMA_NAMESPACE = {
+    TEMPLATE_MANIFEST_SCHEMA: "plantillas",
+    SCRIPT_MANIFEST_SCHEMA: "gate",
+}
 TEMPLATE_MANIFEST_KEYS = {"schema", "version", "generated_at", "files",
                           "history"}
 TEMPLATE_HISTORY_KEYS = {"from", "to", "breaking", "changes"}
 DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
-# Namespace en minúsculas + /vN: cubre "plantillas/v1" (ADR-020) y
-# "gate/v2" (ADR-028) con la misma expresión.
+# Cubre "plantillas/v1" (ADR-020) y "gate/v2" (ADR-028) con una expresión.
 MANIFEST_VERSION_RE = re.compile(r"^[a-z]+/v\d+(\.\d+)*$")
 
 # Instantánea de los valores de Skevi, congelada al importar el módulo, antes
@@ -402,6 +407,16 @@ def check_registry_block(relative: Path, text: str) -> list[str]:
     return failures
 
 
+def _check_namespace(version, expected_schema: str, where: str) -> str | None:
+    esperado = SCHEMA_NAMESPACE.get(expected_schema)
+    if esperado is None or not isinstance(version, str):
+        return None
+    if version.startswith(esperado + "/"):
+        return None
+    return (f"{where}: version «{version}» no corresponde al espacio de "
+            f"nombres de {expected_schema} (se espera {esperado}/vN)")
+
+
 def _validate_template_manifest(
     data, label: str, expected_schema: str = TEMPLATE_MANIFEST_SCHEMA
 ) -> list[str]:
@@ -426,6 +441,10 @@ def _validate_template_manifest(
     if not isinstance(data["version"], str) \
             or not MANIFEST_VERSION_RE.match(data["version"]):
         failures.append(f"{label}: version no coincide con <namespace>/v<n>")
+    else:
+        ns_fallo = _check_namespace(data["version"], expected_schema, label)
+        if ns_fallo:
+            failures.append(ns_fallo)
     if not isinstance(data["generated_at"], str) or not data["generated_at"]:
         failures.append(f"{label}: generated_at debe ser texto con fecha")
     if not isinstance(data["files"], dict) or not data["files"]:
@@ -449,14 +468,16 @@ def _validate_template_manifest(
                 f"{where} debe tener exactamente from/to/breaking/changes"
             )
             continue
-        if jump["from"] is not None and (
-            not isinstance(jump["from"], str)
-            or not MANIFEST_VERSION_RE.match(jump["from"])
-        ):
-            failures.append(f"{where}.from no es una versión válida")
-        if not isinstance(jump["to"], str) \
-                or not MANIFEST_VERSION_RE.match(jump["to"]):
-            failures.append(f"{where}.to no es una versión válida")
+        for extremo in ("from", "to"):
+            valor = jump[extremo]
+            if extremo == "from" and valor is None:
+                continue
+            if not isinstance(valor, str) or not MANIFEST_VERSION_RE.match(valor):
+                failures.append(f"{where}.{extremo} no es una versión válida")
+                continue
+            ns_fallo = _check_namespace(valor, expected_schema, f"{where}.{extremo}")
+            if ns_fallo:
+                failures.append(ns_fallo)
         if not isinstance(jump["breaking"], bool):
             failures.append(f"{where}.breaking debe ser booleano")
         if not isinstance(jump["changes"], dict):
@@ -475,12 +496,9 @@ def check_template_manifest(
 ) -> list[str]:
     """Valida un MANIFEST fuente de Skevi (#28 D1 + T09; familias ADR-028):
     esquema cerrado, listado exacto del directorio (sin el MANIFEST mismo) y
-    digests vigentes sobre los bytes reales. Fail-closed, sin tracebacks.
-    Genérico por directorio: se usa igual para templates/skevi/ y scripts/."""
-    # Bajo ROOT (uso real): la etiqueta refleja la ruta real, "scripts/..." o
-    # "templates/skevi/...". Fuera de ROOT (tests con directorios propios):
-    # se degrada al nombre del directorio — sin relative_to no hay ambigüedad
-    # que resolver, y ningún llamador de producción está fuera de ROOT.
+    digests vigentes. Fail-closed, sin tracebacks; genérico por directorio."""
+    # Bajo ROOT: etiqueta real ("scripts/..."). Fuera de ROOT (tests): se
+    # degrada al nombre del directorio.
     try:
         dir_label = templates_dir.relative_to(ROOT).as_posix()
     except ValueError:
@@ -504,7 +522,7 @@ def check_template_manifest(
     try:
         entries = sorted(templates_dir.iterdir(), key=lambda path: path.name)
     except OSError:
-        return [f"{label}: no se pudo leer el directorio de plantillas"]
+        return [f"{label}: no se pudo leer {dir_label}/"]
     on_disk = []
     for path in entries:
         if not path.is_file():
@@ -517,6 +535,14 @@ def check_template_manifest(
             failures.append(
                 f"{label}: symlink no permitido en {dir_label}/: {path.name}"
             )
+            continue
+        # Mismas exenciones que discover() (p.ej. .DS_Store de Finder).
+        try:
+            relative = path.relative_to(ROOT).as_posix()
+        except ValueError:
+            relative = None
+        if (relative is not None and relative in EXEMPT_PATHS) \
+                or path.suffix.lower() in EXEMPT_SUFFIXES:
             continue
         on_disk.append(path.name)
     listed = sorted(data["files"])
@@ -702,12 +728,9 @@ def main() -> int:
 
     scripts_manifest_path = ROOT / "scripts" / TEMPLATE_MANIFEST_NAME
     if scripts_manifest_path.is_file():
-        failures.extend(
-            check_template_manifest(
-                scripts_manifest_path, scripts_manifest_path.parent,
-                expected_schema=SCRIPT_MANIFEST_SCHEMA,
-            )
-        )
+        failures.extend(check_template_manifest(
+            scripts_manifest_path, scripts_manifest_path.parent,
+            expected_schema=SCRIPT_MANIFEST_SCHEMA))
 
     unexpected_markdown = sorted(
         path.name

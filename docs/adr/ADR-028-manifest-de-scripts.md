@@ -142,8 +142,11 @@ Verificación: `python3 scripts/check_sizes.py` → `OK`, valida
 `scripts/MANIFEST.json` contra los cuatro archivos reales;
 `python3 scripts/check_templates.py --manifest scripts/MANIFEST.json --installed <registro>`
 funciona con el mismo binario que ya se distribuye;
-`python3 -m unittest discover -s tests` → 208 tests, con RED antes de cada
-generalización.
+`python3 -m unittest discover -s tests`: el total lo reporta la suite, no
+este texto — copiar una cifra aquí es exactamente lo que ADR-025 punto 4
+prohíbe. Cada tanda de generalización tuvo su RED antes del código,
+incluida una segunda ronda que ató el namespace de versión también dentro
+de `check_sizes.py`, simétrico con `check_templates.py`.
 
 Procedencia: [ADR-020](ADR-020-adopcion-versionado-plantillas.md) (el
 mecanismo que se extiende); [ADR-027](ADR-027-identidad-y-caducidad-del-gate-copiable.md)

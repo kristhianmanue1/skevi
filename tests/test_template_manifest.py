@@ -241,9 +241,6 @@ class TemplateManifestIntegrationTests(unittest.TestCase):
         self.assertTrue(out.startswith("OK —"))
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class ScriptManifestGateTests(unittest.TestCase):
     """Extensión de ADR-020 a scripts/ (ADR-028): mismo comprobador, distinto
@@ -440,11 +437,119 @@ class ScriptsInstalledTemplateTests(unittest.TestCase):
             installed_path = Path(tmp) / "scripts-installed.json"
             installed_path.write_text(json.dumps(plantilla), encoding="utf-8")
             buf = io.StringIO()
-            import importlib
-            check_templates = importlib.import_module("check_templates")
+            ct_spec = importlib.util.spec_from_file_location(
+                "check_templates_from_manifest_test",
+                SCRIPTS_DIR / "check_templates.py")
+            check_templates = importlib.util.module_from_spec(ct_spec)
+            ct_spec.loader.exec_module(check_templates)
             with redirect_stdout(buf):
                 code = check_templates.main([
                     "--manifest", str(root / "scripts" / "MANIFEST.json"),
                     "--installed", str(installed_path),
                 ])
         self.assertEqual(code, 0, buf.getvalue())
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class CheckSizesEnforcesNamespaceTests(unittest.TestCase):
+    """HIGH de la segunda ronda (2026-09-08): check_templates.py ataba
+    version al namespace de su schema; check_sizes.py —la autoverificación
+    de Skevi sobre sí misma— no. Un scripts/MANIFEST.json con schema de
+    scripts pero version de plantillas pasaba la autoverificación de Skevi
+    y luego el adoptante lo rechazaba: el defecto opuesto al BLOCKER
+    original, detectable sólo por el gate equivocado."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.dir = Path(self.tmp.name) / "scripts"
+        self.dir.mkdir(parents=True)
+        (self.dir / "check_sizes.py").write_text("# gate\n", encoding="utf-8")
+
+    def test_wrong_namespace_for_script_schema_is_rejected(self):
+        manifest = {
+            "schema": check_sizes.SCRIPT_MANIFEST_SCHEMA,
+            "version": "plantillas/v2",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": {"check_sizes.py": digest_of(self.dir / "check_sizes.py")},
+            "history": [],
+        }
+        manifest_path = self.dir / "MANIFEST.json"
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        failures = check_sizes.check_template_manifest(
+            manifest_path, self.dir, expected_schema=check_sizes.SCRIPT_MANIFEST_SCHEMA
+        )
+        self.assertTrue(failures)
+        self.assertIn("espacio de nombres", failures[0])
+
+    def test_wrong_namespace_for_template_schema_is_rejected(self):
+        (self.dir / "usage-guide.md").write_text("x\n", encoding="utf-8")
+        (self.dir / "check_sizes.py").unlink()
+        manifest = {
+            "schema": check_sizes.TEMPLATE_MANIFEST_SCHEMA,
+            "version": "gate/v2",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": {"usage-guide.md": digest_of(self.dir / "usage-guide.md")},
+            "history": [],
+        }
+        manifest_path = self.dir / "MANIFEST.json"
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        failures = check_sizes.check_template_manifest(manifest_path, self.dir)
+        self.assertTrue(failures)
+        self.assertIn("espacio de nombres", failures[0])
+
+    def test_history_jump_namespace_is_rejected(self):
+        manifest = {
+            "schema": check_sizes.SCRIPT_MANIFEST_SCHEMA,
+            "version": "gate/v2",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": {"check_sizes.py": digest_of(self.dir / "check_sizes.py")},
+            "history": [{"from": "plantillas/v1", "to": "gate/v2",
+                        "breaking": False, "changes": {}}],
+        }
+        manifest_path = self.dir / "MANIFEST.json"
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        failures = check_sizes.check_template_manifest(
+            manifest_path, self.dir, expected_schema=check_sizes.SCRIPT_MANIFEST_SCHEMA
+        )
+        self.assertTrue(failures)
+        self.assertIn("espacio de nombres", failures[0])
+
+
+class ManifestListingRespectsExemptionsTests(unittest.TestCase):
+    """Un .DS_Store en el directorio del manifiesto no debe exigir entrada:
+    mismas exenciones que discover() ya aplica al resto del árbol (ronda
+    adversarial, LOW — el gate exime .DS_Store en skevi-gate.json pero el
+    listado de check_template_manifest no lo respetaba)."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self._orig_root = check_sizes.ROOT
+        check_sizes.ROOT = Path(self.tmp.name)
+        check_sizes.EXEMPT_PATHS.add("scripts/.DS_Store")
+        self.dir = check_sizes.ROOT / "scripts"
+        self.dir.mkdir()
+        (self.dir / "check_sizes.py").write_text("# gate\n", encoding="utf-8")
+        (self.dir / ".DS_Store").write_bytes(b"\x00\x01binary")
+
+    def tearDown(self):
+        check_sizes.ROOT = self._orig_root
+        check_sizes.EXEMPT_PATHS.discard("scripts/.DS_Store")
+
+    def test_exempt_ds_store_does_not_require_manifest_entry(self):
+        manifest = {
+            "schema": check_sizes.SCRIPT_MANIFEST_SCHEMA,
+            "version": "gate/v2",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": {"check_sizes.py": digest_of(self.dir / "check_sizes.py")},
+            "history": [],
+        }
+        manifest_path = self.dir / "MANIFEST.json"
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        failures = check_sizes.check_template_manifest(
+            manifest_path, self.dir, expected_schema=check_sizes.SCRIPT_MANIFEST_SCHEMA
+        )
+        self.assertEqual(failures, [])

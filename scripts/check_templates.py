@@ -35,8 +35,11 @@ import sys
 from pathlib import Path
 
 # Dos familias de esquema reconocidas (ADR-020, ADR-028). Añadir una tercera
-# —otro artefacto versionado de Skevi— es extender estos dos conjuntos, no
-# tocar la lógica de comparación: main()/_chain() son agnósticos a la familia.
+# —otro artefacto versionado de Skevi— es extender estos tres conjuntos
+# —MANIFEST_SCHEMAS, INSTALL_SCHEMAS y SCHEMA_NAMESPACE—, no tocar la lógica
+# de comparación: main()/_chain() son agnósticos a la familia. Olvidar
+# SCHEMA_NAMESPACE no es un error silencioso: _check_namespace falla
+# cerrado ante un esquema sin namespace registrado (ronda adversarial, MED).
 MANIFEST_SCHEMAS = {"skevi/template-manifest/v1", "skevi/script-manifest/v1"}
 INSTALL_SCHEMAS = {"skevi/template-install/v1", "skevi/script-install/v1"}
 # Cada esquema exige su propio espacio de nombres de versión. Sin esto, un
@@ -82,8 +85,11 @@ def _check_namespace(version, schema, where):
     if version is None:
         return
     esperado = SCHEMA_NAMESPACE.get(schema)
-    if esperado is None:
-        return
+    # Fail-closed: un esquema válido sin namespace registrado es un olvido
+    # de mantenimiento, no una razón para omitir la comprobación.
+    _require(esperado is not None,
+             f"{where}: {schema} no tiene namespace de versión registrado "
+             "(SCHEMA_NAMESPACE desactualizado)")
     _require(version.startswith(esperado + "/"),
              f"{where}: version «{version}» no corresponde al espacio de "
              f"nombres de {schema} (se espera {esperado}/vN)")
@@ -217,12 +223,17 @@ def _chain(history, start: str, current: str):
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
-        description="Chequeo de drift de plantillas (#28 D3 + T09)."
+        description=(
+            "Chequeo de drift de un artefacto versionado de Skevi: "
+            "plantillas de adopción (ADR-020) o scripts de gate (ADR-028)."
+        )
     )
     parser.add_argument("--manifest", required=True,
-                        help="MANIFEST fuente (skevi/template-manifest/v1)")
+                        help="MANIFEST fuente (skevi/template-manifest/v1 "
+                        "o skevi/script-manifest/v1)")
     parser.add_argument("--installed", required=True,
-                        help="registro del consumidor (template-install/v1)")
+                        help="registro del consumidor "
+                        "(template-install/v1 o script-install/v1)")
     args = parser.parse_args(argv)
 
     try:
