@@ -607,6 +607,23 @@ class ReadingPathTests(unittest.TestCase):
         self.assertIn("ruta de lectura obligatoria: 601 líneas > límite 600",
                       output)
 
+    def test_ok_line_reports_the_occupancy(self):
+        """La norma delega la cifra vigente al gate; el gate debe emitirla
+        también cuando pasa, o el trinquete no es auditable sin un script
+        ad-hoc (hallazgo de la ronda fresca del 2026-09-08)."""
+        self._write_lines("docs/uno.md", 400)
+        self._write_config(
+            {"reading_path": {"limit": 600, "files": ["docs/uno.md"]}}
+        )
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 0, output)
+        self.assertIn("ruta de lectura 400/600", output)
+
+    def test_ok_line_omits_occupancy_when_inactive(self):
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 0)
+        self.assertNotIn("ruta de lectura", output)
+
     def test_sum_at_limit_passes(self):
         self._write_lines("docs/uno.md", 400)
         self._write_lines("docs/dos.md", 200)

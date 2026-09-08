@@ -589,6 +589,11 @@ def check_reading_path() -> list[str]:
         failures.append(
             f"ruta de lectura obligatoria: {total} líneas > límite {limit}"
         )
+    else:
+        # La norma (§3.4 y ADR-025) delega en el gate la cifra vigente; si
+        # sólo se emitiera al fallar, el trinquete no sería auditable sin un
+        # script ad-hoc. Se publica para que main() la muestre al pasar.
+        READING_PATH["_observado"] = total
     return failures
 
 
@@ -667,10 +672,16 @@ def main() -> int:
             print(f"- {failure}")
         return 1
 
+    observado = READING_PATH.get("_observado")
+    ruta = (
+        f"; ruta de lectura {observado}/{READING_PATH['limit']}"
+        if observado is not None
+        else ""
+    )
     print(
         "OK — "
         f"{len(rows)} archivos de texto dentro de límites; "
-        "estructura y hogares canónicos verificados"
+        f"estructura y hogares canónicos verificados{ruta}"
     )
     return 0
 

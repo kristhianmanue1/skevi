@@ -366,5 +366,48 @@ class RootBoundaryTests(unittest.TestCase):
         self.assertNotEqual(code, 0)
         self.assertNotIn("Traceback", output)
 
+class PlansPathBoundaryTests(unittest.TestCase):
+    """La clave `plans` es entrada no confiable: misma frontera que
+    `reading_path` en check_sizes y `reports.dir` en check_reports.
+
+    Hallazgo BLOCKER de la ronda fresca del 2026-09-08: era la única de las
+    tres claves de directorio sin validar, y `.github/SECURITY.md` tipifica
+    justo eso como vulnerabilidad de este repositorio."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        (self.root / "inner").mkdir()
+        (self.root / "fuera").mkdir()
+        (self.root / "fuera" / "p.md").write_text("# plan", encoding="utf-8")
+
+    def _run(self, plans_valor):
+        (self.root / "inner" / "skevi-gate.json").write_text(
+            json.dumps({"plans": plans_valor}), encoding="utf-8")
+        check_plans = importlib.import_module("check_plans")
+        importlib.reload(check_plans)
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            code = check_plans.main(["--root", str(self.root / "inner")])
+        return code, buf.getvalue()
+
+    def test_absolute_plans_dir_is_rejected_without_traceback(self):
+        code, output = self._run(str(self.root / "fuera"))
+        self.assertEqual(code, 1)
+        self.assertNotIn("Traceback", output)
+        self.assertNotIn(str(self.root), output)
+
+    def test_plans_dir_escaping_root_is_rejected(self):
+        code, output = self._run("../fuera")
+        self.assertEqual(code, 1)
+        self.assertNotIn("p.md", output)
+
+    def test_home_plans_dir_is_rejected(self):
+        code, output = self._run("~/planes")
+        self.assertEqual(code, 1)
+        self.assertNotIn("Traceback", output)
+
+
 if __name__ == "__main__":
     unittest.main()
