@@ -419,8 +419,7 @@ class ScriptManifestFamilyTests(unittest.TestCase):
 
     def test_mismatched_families_fail_closed_via_missing_chain(self):
         """Comparar un manifiesto de scripts contra un registro de plantillas
-        no encuentra cadena de versión y falla cerrado — sin necesidad de un
-        chequeo de familia explícito."""
+        no encuentra cadena de versión y falla cerrado."""
         write_json(self.manifest_path, {
             "schema": "skevi/script-manifest/v1",
             "version": "gate/v2",
@@ -432,3 +431,62 @@ class ScriptManifestFamilyTests(unittest.TestCase):
         code, output = self._run()
         self.assertEqual(code, 1)
         self.assertIn("sin cadena hasta la vigente", output)
+
+    def test_manifest_version_must_match_its_own_schema_namespace(self):
+        """Hallazgo HIGH de la ronda 2026-09-08: sin esto, un manifiesto de
+        scripts con version «plantillas/v2» comparado contra un registro de
+        plantillas en «plantillas/v2» daba OK falso — coincidencia de
+        namespace entre familias, no protección real."""
+        write_json(self.manifest_path, {
+            "schema": "skevi/script-manifest/v1",
+            "version": "plantillas/v2",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": files_for(["x.py"]),
+            "history": [],
+        })
+        write_json(self.installed_path, {
+            "schema": "skevi/template-install/v1",
+            "version": "plantillas/v2",
+            "files": files_for(["x.py"]),
+            "installed_at": "2026-09-08T00:00:00Z",
+            "source": "x",
+            "customized": [],
+        })
+        code, output = self._run()
+        self.assertEqual(code, 1, output)
+        self.assertTrue(output.startswith("BLOQ"))
+
+    def test_installed_version_must_match_its_own_schema_namespace(self):
+        write_json(self.manifest_path, manifest_data(version="plantillas/v1"))
+        write_json(self.installed_path, {
+            "schema": "skevi/script-install/v1",
+            "version": "plantillas/v1",
+            "files": files_for(["usage-guide.md"]),
+            "installed_at": "2026-09-08T00:00:00Z",
+            "source": "x",
+            "customized": [],
+        })
+        code, output = self._run()
+        self.assertEqual(code, 1, output)
+        self.assertTrue(output.startswith("BLOQ"))
+
+    def test_history_jump_version_must_match_manifest_schema_namespace(self):
+        write_json(self.manifest_path, {
+            "schema": "skevi/script-manifest/v1",
+            "version": "gate/v2",
+            "generated_at": "2026-09-08T00:00:00Z",
+            "files": files_for(["x.py"]),
+            "history": [{"from": "plantillas/v1", "to": "gate/v2",
+                        "breaking": False, "changes": {}}],
+        })
+        write_json(self.installed_path, {
+            "schema": "skevi/script-install/v1",
+            "version": "plantillas/v1",
+            "files": files_for(["x.py"]),
+            "installed_at": "2026-09-08T00:00:00Z",
+            "source": "x",
+            "customized": [],
+        })
+        code, output = self._run()
+        self.assertEqual(code, 1, output)
+        self.assertTrue(output.startswith("BLOQ"))

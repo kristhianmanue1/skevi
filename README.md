@@ -169,9 +169,9 @@ tener que ejecutar nada aparte.
 python3 -m unittest discover -s tests
 ```
 
-Corre las suites de `tests/` sobre los scripts del proyecto — sus tres
-artefactos ejecutables: `check_sizes.py`, `check_plans.py` (ADR-014) y
-`check_templates.py` (ADR-020).
+Corre las suites de `tests/` sobre los scripts del proyecto — sus cuatro
+artefactos ejecutables: `check_sizes.py`, `check_plans.py` (ADR-014),
+`check_reports.py` (ADR-022) y `check_templates.py` (ADR-020, ADR-028).
 
 **Gate local, no GitHub Actions.** La cuenta que aloja este repositorio tiene
 minutos de CI limitados (se agotan rápido y se reinician mensualmente). Por

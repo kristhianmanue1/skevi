@@ -39,6 +39,17 @@ from pathlib import Path
 # tocar la lógica de comparación: main()/_chain() son agnósticos a la familia.
 MANIFEST_SCHEMAS = {"skevi/template-manifest/v1", "skevi/script-manifest/v1"}
 INSTALL_SCHEMAS = {"skevi/template-install/v1", "skevi/script-install/v1"}
+# Cada esquema exige su propio espacio de nombres de versión. Sin esto, un
+# manifiesto de la familia equivocada con un namespace de versión que
+# coincida por accidente con el del otro documento producía OK falso: cada
+# familia es válida "en su conjunto" de esquemas, pero eso no basta para
+# saber que ambos documentos hablan de lo mismo (hallazgo HIGH, 2026-09-08).
+SCHEMA_NAMESPACE = {
+    "skevi/template-manifest/v1": "plantillas",
+    "skevi/template-install/v1": "plantillas",
+    "skevi/script-manifest/v1": "gate",
+    "skevi/script-install/v1": "gate",
+}
 MANIFEST_KEYS = {"schema", "version", "generated_at", "files", "history"}
 INSTALL_KEYS = {"schema", "version", "files", "installed_at", "source",
                 "customized"}
@@ -62,6 +73,20 @@ def _require(condition, message):
 def _check_digest(value, where):
     _require(isinstance(value, str) and DIGEST_RE.match(value),
              f"{where} no es un digest con formato sha256:<hex>")
+
+
+def _check_namespace(version, schema, where):
+    """La versión debe llevar el espacio de nombres que su propio esquema
+    declara — "gate/vN" para las familias de scripts, "plantillas/vN" para
+    las de plantillas — nunca el del otro documento."""
+    if version is None:
+        return
+    esperado = SCHEMA_NAMESPACE.get(schema)
+    if esperado is None:
+        return
+    _require(version.startswith(esperado + "/"),
+             f"{where}: version «{version}» no corresponde al espacio de "
+             f"nombres de {schema} (se espera {esperado}/vN)")
 
 
 def _check_common(data, schemas, keys, label):
@@ -93,7 +118,8 @@ def _load_manifest(path: Path) -> dict:
     _check_common(data, MANIFEST_SCHEMAS, MANIFEST_KEYS, label)
     _require(isinstance(data["version"], str)
              and VERSION_RE.match(data["version"]),
-             f"{label}: version no coincide con plantillas/v<n>")
+             f"{label}: version no coincide con <namespace>/v<n>")
+    _check_namespace(data["version"], data["schema"], label)
     _require(isinstance(data["generated_at"], str) and data["generated_at"],
              f"{label}: generated_at debe ser texto con fecha")
     _require(isinstance(data["files"], dict) and data["files"],
@@ -111,9 +137,13 @@ def _load_manifest(path: Path) -> dict:
                  or (isinstance(jump["from"], str)
                      and VERSION_RE.match(jump["from"])),
                  f"{where}.from no es una versión válida")
+        if isinstance(jump.get("from"), str):
+            _check_namespace(jump["from"], data["schema"], f"{where}.from")
         _require(isinstance(jump["to"], str)
                  and VERSION_RE.match(jump["to"]),
                  f"{where}.to no es una versión válida")
+        if isinstance(jump.get("to"), str):
+            _check_namespace(jump["to"], data["schema"], f"{where}.to")
         _require(isinstance(jump["breaking"], bool),
                  f"{where}.breaking debe ser booleano")
         _require(isinstance(jump["changes"], dict),
@@ -143,7 +173,8 @@ def _load_install(path: Path) -> dict:
     _check_common(data, INSTALL_SCHEMAS, INSTALL_KEYS, label)
     _require(isinstance(data["version"], str)
              and VERSION_RE.match(data["version"]),
-             f"{label}: version no coincide con plantillas/v<n>")
+             f"{label}: version no coincide con <namespace>/v<n>")
+    _check_namespace(data["version"], data["schema"], label)
     _require(isinstance(data["files"], dict) and data["files"],
              f"{label}: files debe ser un objeto con entradas")
     for name, digest in data["files"].items():
@@ -205,7 +236,7 @@ def main(argv=None) -> int:
     start = installed["version"]
     customized = set(installed["customized"])
     if start == current:
-        print(f"OK — plantillas al día: versión vigente {current}")
+        print(f"OK — al día: versión vigente {current}")
         return 0
 
     jumps, error = _chain(manifest["history"], start, current)

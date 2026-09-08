@@ -407,3 +407,44 @@ class ScriptManifestMatchesGateVersionTests(unittest.TestCase):
             encoding="utf-8"))
         for name, digest in data["files"].items():
             self.assertEqual(digest_of(root / "scripts" / name), digest, name)
+
+
+class ScriptsInstalledTemplateTests(unittest.TestCase):
+    """La plantilla copiable de scripts-installed.json debe coincidir con la
+    versión vigente del manifiesto fuente al momento de publicarse: si no,
+    un adoptante nuevo que sólo llena los placeholders documentados recibe
+    BLOQ en su primera ejecución (hallazgo BLOCKER de la ronda 2026-09-08)."""
+
+    def test_template_version_matches_source_manifest(self):
+        root = Path(__file__).resolve().parent.parent
+        plantilla = json.loads(
+            (root / "templates" / "skevi" / "scripts-installed.json")
+            .read_text(encoding="utf-8"))
+        fuente = json.loads(
+            (root / "scripts" / "MANIFEST.json").read_text(encoding="utf-8"))
+        self.assertEqual(plantilla["version"], fuente["version"])
+
+    def test_a_freshly_filled_template_passes_the_gate(self):
+        """Simula un adoptante que llena sólo los placeholders documentados
+        —digests, installed_at, source— y corre el comparador tal cual."""
+        root = Path(__file__).resolve().parent.parent
+        plantilla = json.loads(
+            (root / "templates" / "skevi" / "scripts-installed.json")
+            .read_text(encoding="utf-8"))
+        fuente = json.loads(
+            (root / "scripts" / "MANIFEST.json").read_text(encoding="utf-8"))
+        plantilla["files"] = dict(fuente["files"])
+        plantilla["installed_at"] = "2026-09-08T00:00:00Z"
+        plantilla["source"] = "skevi/scripts"
+        with tempfile.TemporaryDirectory() as tmp:
+            installed_path = Path(tmp) / "scripts-installed.json"
+            installed_path.write_text(json.dumps(plantilla), encoding="utf-8")
+            buf = io.StringIO()
+            import importlib
+            check_templates = importlib.import_module("check_templates")
+            with redirect_stdout(buf):
+                code = check_templates.main([
+                    "--manifest", str(root / "scripts" / "MANIFEST.json"),
+                    "--installed", str(installed_path),
+                ])
+        self.assertEqual(code, 0, buf.getvalue())

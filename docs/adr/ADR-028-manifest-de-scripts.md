@@ -31,7 +31,10 @@ Entrada (MANIFEST fuente, scripts/MANIFEST.json):
                 no por código compartido
   generated_at: texto con fecha [obligatorio]
   files:        objeto {nombre: "sha256:<hex>"} [obligatorio] — exactamente
-                los .py de scripts/, sin symlinks, sin el MANIFEST mismo
+                todo archivo regular de scripts/, sin symlinks, sin el
+                MANIFEST mismo — mismo criterio que templates/skevi/, sin
+                filtro de extensión: hoy son los 4 .py, y un archivo no-.py
+                que se añada exige entrar al manifiesto igual que los demás
   history:      lista de {from, to, breaking, changes} [obligatorio]
 Entrada (registro del consumidor, .skevi/scripts-installed.json):
   schema:       "skevi/script-install/v1" [obligatorio]
@@ -43,8 +46,12 @@ Errores: los de ADR-020 (esquema, versión sin cadena, digest inválido),
 Invariantes:
   - el comparador (main()/_chain()) es agnóstico a la familia: una
     versión sin cadena hasta la vigente falla cerrado igual que una
-    plantilla obsoleta — comparar un manifiesto de una familia contra un
-    registro de la otra falla por esa misma vía, sin chequeo adicional
+    plantilla obsoleta — y comparar un manifiesto de una familia contra un
+    registro de la otra falla porque cada `version` —del documento raíz y
+    de cada salto de `history`— debe llevar el namespace que su propio
+    `schema` implica (`SCHEMA_NAMESPACE`); sin esa atadura, un namespace
+    mal declarado podía coincidir por accidente entre familias y dar `OK`
+    falso (ronda adversarial, hallazgo HIGH, corregido antes de mergear)
   - la validación interna de check_sizes.py es estricta por artefacto:
     scripts/MANIFEST.json sólo es válido con schema
     "skevi/script-manifest/v1", nunca con el de plantillas
@@ -65,11 +72,21 @@ Compatibilidad:
 —`plantillas`, `gate`—, no el regex. `plantillas/v1` sigue siendo válido
 sin cambio.
 
+**El namespace de versión está atado al esquema, no sólo reconocido.**
+Cada `version` —del documento raíz y de cada salto de `history`— debe
+empezar por el namespace que implica su propio `schema`: `plantillas/`
+para la familia de ADR-020, `gate/` para la de este ADR. Sin esa atadura,
+pertenecer «al conjunto de esquemas reconocidos» no bastaba para saber
+que dos documentos hablaban de la misma familia — es el hallazgo HIGH de
+la ronda adversarial, corregido antes de mergear.
+
 **Validación estricta por artefacto, laxa entre familias.**
 `check_templates.py` (el comparador que corre el consumidor) acepta
 cualquiera de las dos familias reconocidas en cualquiera de los dos
-argumentos: es agnóstico por diseño, y mezclar familias falla solo por la
-vía natural de "sin cadena de versión". `check_sizes.py` (la
+argumentos: es agnóstico por diseño, y mezclar familias falla por la
+atadura de namespace de arriba, o por "sin cadena de versión" si el
+namespace era correcto pero la versión no existe en la historia.
+`check_sizes.py` (la
 autoverificación de Skevi sobre sí misma) es estricta: cada llamada a
 `check_template_manifest` declara su `expected_schema` y sólo acepta ése.
 Son responsabilidades distintas — el primero compara dos documentos que le
@@ -97,10 +114,16 @@ Alternativas descartadas:
   una plantilla, y `check_sizes.py`'s validación interna necesita poder
   rechazar un manifiesto de la familia equivocada en el directorio
   equivocado — imposible si comparten un único esquema.
-- **Un chequeo explícito de familia cruzada en `check_templates.py`.**
-  Innecesario: la ausencia de cadena de versión entre `plantillas/vN` y
-  `gate/vN` ya produce el mismo `BLOQ` fail-closed, sin código adicional
-  que mantener (regla 3, mínimo necesario).
+- **Confiar sólo en la ausencia de cadena entre `plantillas/vN` y
+  `gate/vN`, sin atar la versión a su esquema.** Es lo que la primera
+  versión de este ADR proponía. Una ronda adversarial la refutó: un
+  manifiesto con `schema` de una familia y `version` en el namespace de
+  la otra pasaba la validación de esquema —está en el conjunto
+  reconocido— y, si ese namespace coincidía con el del documento
+  comparado, el resultado era `OK` falso en vez de `BLOQ`. La versión
+  adoptada ata cada versión a su propio esquema (`SCHEMA_NAMESPACE`), lo
+  que cierra el hueco sin necesitar un chequeo de "misma familia"
+  separado y adicional al de esquema.
 - **Versionar los cuatro scripts por separado.** `check_plans.py` y
   `check_reports.py` ya comparten configuración cerrada con
   `check_sizes.py` (ADR-014, ADR-022) y el pre-push hook los corre juntos;

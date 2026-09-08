@@ -425,7 +425,7 @@ def _validate_template_manifest(
         return failures
     if not isinstance(data["version"], str) \
             or not MANIFEST_VERSION_RE.match(data["version"]):
-        failures.append(f"{label}: version no coincide con plantillas/v<n>")
+        failures.append(f"{label}: version no coincide con <namespace>/v<n>")
     if not isinstance(data["generated_at"], str) or not data["generated_at"]:
         failures.append(f"{label}: generated_at debe ser texto con fecha")
     if not isinstance(data["files"], dict) or not data["files"]:
