@@ -21,6 +21,7 @@
 | ADR-017 | Autoridad Git graduada (Z1-Z3) con gate delegable | Aceptado | estándar §6.2/§6.6/§4.3, `project-manifest.yaml` | PROP-007 | 2026-09-07 |
 | [ADR-018](ADR-018-coherencia-de-autoridad.md) | Coherencia de autoridad general y restricción local | Aceptado | `29243f1` | [T05, opción A](../history/AUDIT-authority-consistency.md) | 2026-09-07 |
 | [ADR-019](ADR-019-integracion-ankla-por-contrato.md) | Integración skevi↔AN-KLA por contrato condicional | Aceptado | `05` §6, `04` §7 | [PROP-008](../history/PROP-008-integracion-ankla-por-contrato.md) | 2026-09-07 |
+| [ADR-020](ADR-020-adopcion-versionado-plantillas.md) | Adopción del versionado de plantillas (PROP-006@#28 + T09) | Aceptado | `templates/skevi/MANIFEST.json`, `scripts/check_templates.py`, gate local | [PROP-006@#28](https://github.com/kristhianmanue1/skevi/issues/28), [T09](../proposals/AUDIT-template-provenance.md) | 2026-09-08 |
 
 **Reglas de este índice**
 

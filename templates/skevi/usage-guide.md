@@ -5,7 +5,10 @@
 
 **Proyecto:** <nombre>
 **Fase actual:** <F0 | F1 | F2 | F3>
-**Fuente del método:** <ruta o repo de donde se copió el estándar y la guía>
+**Procedencia de las plantillas:** registrada en `installed.json`
+(esquema `skevi/template-install/v1`), en este mismo directorio (`.skevi/`)
+una vez copiado — única fuente de verdad de qué se copió, de dónde y con
+qué versión; no la dupliques aquí.
 
 ## Qué leer primero
 

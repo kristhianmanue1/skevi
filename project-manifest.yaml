@@ -17,6 +17,8 @@ ofrece:
   - plantillas de adopción instalables como `.skevi/` en el proyecto consumidor
   - clasificación de tarea (spike/bounded/architectural) por disparadores observables, para entrar a repos existentes
   - plantilla de plan de implementación multi-tarea, subordinada al contrato de tarea
+  - versionado de plantillas de adopción con manifiesto fuente y registro de instalación del consumidor (ADR-020)
+  - chequeo local de drift de plantillas, manual, sin red y fail-closed ante incompatibilidad (ADR-020)
   - registro histórico de pilotos con procedencia de cada regla
 
 no_ofrece:

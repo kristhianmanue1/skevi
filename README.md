@@ -60,12 +60,16 @@ skevi/
 │   ├── plan-de-implementacion.md
 │   └── skevi/
 │       ├── usage-guide.md
-│       └── architecture-overview.md
+│       ├── architecture-overview.md
+│       ├── MANIFEST.json     # versión vigente + historial de saltos (ADR-020)
+│       └── installed.json    # plantilla del registro del consumidor
 ├── scripts/
 │   ├── check_sizes.py         # gate de estructura y tamaños
 │   ├── check_plans.py         # gate estructural de planes (ADR-014)
+│   ├── check_templates.py     # drift de plantillas de adopción (ADR-020)
 │   └── hooks/                 # hooks de Git (pre-push)
-└── tests/                     # suites de scripts/ (check_sizes, check_plans)
+└── tests/                     # suites de scripts/ (check_sizes, check_plans,
+                                #  check_templates)
 ```
 
 La separación no es estética: cada carpeta tiene una **vida útil distinta**.
@@ -91,6 +95,25 @@ guía o plantillas, o ninguno de ellos —, declara `skevi-gate.json` en su raí
 en vez de editar `scripts/check_sizes.py`: el script se copia sin
 modificación (ADR-006).
 
+**Las plantillas de adopción están versionadas** (ADR-020): el
+`templates/skevi/MANIFEST.json` declara la versión vigente y el historial de
+saltos, cada uno con su bandera de breaking. Al copiar, el consumidor crea
+`.skevi/installed.json` (a partir de la plantilla del mismo directorio)
+declarando qué instaló, de dónde y qué personalizó. Para comprobar si una
+copia quedó obsoleta:
+
+```bash
+python3 <ruta-a-skevi>/scripts/check_templates.py \
+  --manifest <ruta-a-skevi>/templates/skevi/MANIFEST.json \
+  --installed .skevi/installed.json
+```
+
+Copia antigua pero compatible → aviso; incompatible → fallo; archivos
+declarados en `customized` → re-copia bajo responsabilidad del consumidor.
+Sin registro de instalación no hay efecto alguno. Migración de copias
+previas: crear el registro una vez, a mano, con la guía del propio
+registro.
+
 ## Verificación
 
 ```bash
@@ -110,8 +133,9 @@ nada. `OK` o `BLOQ` con código de salida distinto de cero.
 python3 -m unittest discover -s tests
 ```
 
-Corre las suites de `tests/` sobre los scripts del proyecto — sus dos
-artefactos ejecutables: `check_sizes.py` y `check_plans.py` (ADR-014).
+Corre las suites de `tests/` sobre los scripts del proyecto — sus tres
+artefactos ejecutables: `check_sizes.py`, `check_plans.py` (ADR-014) y
+`check_templates.py` (ADR-020).
 
 **Gate local, no GitHub Actions.** La cuenta que aloja este repositorio tiene
 minutos de CI limitados (se agotan rápido y se reinician mensualmente). Por
