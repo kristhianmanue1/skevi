@@ -93,10 +93,19 @@ control por control, no el número de pilotos.
 
 El criterio de §2 nombraba magnitudes sin fijar cómo obtenerlas. Queda fijado:
 
-- **Líneas de producción:** `git ls-files` sobre las extensiones del proyecto,
-  excluyendo rutas `tests/`, `vendor/`, `node_modules/`, `dist/` y `build/`.
-  **Nunca sobre el árbol de trabajo**, que arrastra dependencias de terceros y
-  salida de build.
+- **Líneas de producción:** este comando exacto, no «las extensiones del
+  proyecto» —esa vaguedad es la que produjo la segunda tanda de cifras
+  falsas—:
+
+  ```bash
+  git -C "$REPO" ls-files -- '*.php' '*.py' '*.js' '*.mjs' '*.ts' '*.tsx' \
+      '*.go' '*.rs' \
+    | grep -viE '(^|/)(tests?|vendor|node_modules|dist|build)/' \
+    | tr '\n' '\0' | xargs -0 cat | wc -l
+  ```
+
+  **Nunca sobre el árbol de trabajo**, que arrastra `.venv/`, `build/` y
+  dependencias de terceros.
 - **CI remoto que ejecuta el gate:** el workflow existe en la rama por defecto
   **hoy**, tiene disparador automático (`push` o `pull_request`, no sólo
   `workflow_dispatch`), invoca el gate copiable, y sus corridas son
@@ -113,11 +122,11 @@ Adoptantes con `skevi-gate.json` o gate copiado, medidos el 2026-09-08:
 
 | Adoptante | LOC producción | CI que corre el gate | Variables rotas |
 |---|---|---|---|
-| `orbitaNova` | 22 634 | **sí** — `push`+`pull_request`, `npm run check:sizes`, corridas consultables | **2** |
-| `eduEMD` | 85 967 (PHP) | **lo tuvo** — verde el 2026-09-06 con `check_sizes` y `check_plans`; el workflow ya no está en la rama por defecto | **2 el 06-09; 1 hoy** |
-| `entiendomidiabetes` | 339 651 (PHP) | workflow sí, gate no | 1 |
+| `orbitaNova` | 23 190 | **sí** — `push`+`pull_request`, `npm run check:sizes`, corridas consultables | **2** |
+| `eduEMD` | 86 148 (PHP) | **lo tuvo** — verde el 2026-09-06 con `check_sizes` y `check_plans`; el workflow ya no está en la rama por defecto | **2 el 06-09; 1 hoy** |
+| `entiendomidiabetes` | 344 488 (PHP) | workflow sí, gate no | 1 |
 | `an-kla-memory` | 23 281 | no | 1 |
-| `escrubery` | 12 150 | sólo `workflow_dispatch` — su `ci.yml` declara el billing agotado y el CI vigente local | 1 |
+| `escrubery` | 12 338 | sólo `workflow_dispatch` — su `ci.yml` declara el billing agotado y el CI vigente local | 1 |
 | `epistates` | 8 562 | workflow sí, gate no | **0** |
 | `basanos` | 3 171 | no | 0 |
 
@@ -125,7 +134,7 @@ Adoptantes con `skevi-gate.json` o gate copiado, medidos el 2026-09-08:
 vez. Es el primer candidato desde que el criterio se escribió.
 
 **`eduEMD` calificó el 2026-09-06** y es el caso más valioso perdido: PHP —otra
-familia de lenguaje—, 85 967 líneas, y una corrida verde ejecutando **dos**
+familia de lenguaje—, 86 148 líneas, y una corrida verde ejecutando **dos**
 gates de Skevi con una copia byte-idéntica a `v1.0.0`. El workflow fue retirado
 después; `d31129c`, el commit de esa corrida, sigue siendo ancestro de su HEAD.
 Recuperarlo es una decisión de ese proyecto.
@@ -145,7 +154,7 @@ Recuperarlo es una decisión de ese proyecto.
 
 1. `orbitaNova` es el piloto viable, con la salvedad de la §6 de
    [la deriva del gate](M6-deriva-del-gate-copiable.md): ejecuta una copia de
-   377 líneas contra las 690 vigentes.
+   377 líneas contra las 730 vigentes al 2026-09-08.
 2. `eduEMD` es el candidato de mayor valor si su CI vuelve. Es decisión suya.
 3. Ambos exigen autorización del adoptante: Skevi no muta proyectos ajenos.
 

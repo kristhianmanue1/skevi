@@ -403,6 +403,17 @@ class PlansPathBoundaryTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertNotIn("p.md", output)
 
+    def test_helper_rejects_escapes_directly(self):
+        """Cobertura propia de `_dir_contenido`: borrarla dejaba la suite en
+        verde porque el `relative_to` protegido absorbía el caso."""
+        check_plans = importlib.import_module("check_plans")
+        importlib.reload(check_plans)
+        for valor in ("/etc", "~/x", "../fuera", "planes/../../fuera"):
+            self.assertIsNone(
+                check_plans._dir_contenido(self.root, valor), valor)
+        (self.root / "planes").mkdir(exist_ok=True)
+        self.assertIsNotNone(check_plans._dir_contenido(self.root, "planes"))
+
     def test_home_plans_dir_is_rejected(self):
         code, output = self._run("~/planes")
         self.assertEqual(code, 1)

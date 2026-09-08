@@ -94,6 +94,25 @@ TAREA R-T5 — Exención de registros sin caducidad inventada
         verificación: grep -rn sobre el repo no muestra política de archivado
         de docs/reviews que respalde una caducidad
 
+TAREA R-T7 — Identidad y autocaducidad del gate copiable
+  Consumes: `docs/proposals/M6-deriva-del-gate-copiable.md`; ADR-006; ADR-020
+  Produce:  crea ADR-027; amplía `scripts/check_sizes.py`
+  Steps:
+  - [x] RED de identidad y umbral antes del código — verificación: los tests
+        de identidad fallan por constantes inexistentes, y el de la línea BLOQ
+        falla contra la primera implementación, que sólo la imprimía en OK
+  - [x] GATE_VERSION y GATE_GENERATED_AT en las dos líneas de salida —
+        verificación: python3 scripts/check_sizes.py muestra la identidad al
+        pasar y al fallar
+  - [x] Aviso de edad que no afirme la existencia de una versión nueva, sin
+        red y sin alterar el código de salida — verificación: test dedicado
+        que falla si el texto del aviso lo insinúa
+  - [x] Umbral anclado en su frontera y constante mal editada tolerada —
+        verificación: mutar GATE_STALE_AFTER_DAYS rompe la suite
+  - [x] ADR-027 con alternativas y checklist de cierre — verificación:
+        `docs/adr/00-INDICE.md`, `project-manifest.yaml` y `README.md`
+        actualizados
+
 TAREA R-T6 — Ronda fresca por archivo y cierre
   Consumes: salidas de R-T1..R-T5
   Produce:  crea `docs/reviews/2026-09-08-refinado-post-ronda.md`
@@ -105,7 +124,8 @@ TAREA R-T6 — Ronda fresca por archivo y cierre
   - [x] BLOCKER y HIGH corregidos; MED corregido o justificado — verificación:
         cada hallazgo con estado cerrado, abierto o aceptado
   - [x] Gates y suite completos — verificación: check_sizes, check_plans,
-        check_reports y python3 -m unittest discover -s tests, los cuatro OK
+        check_reports y python3 -m unittest discover -s tests, los cuatro OK.
+        check_templates queda fuera: exige --manifest y --installed
   - [x] Reglas del método saltadas, declaradas — verificación: sección propia
         en el reporte o la frase ninguna con su razón
 ```
@@ -113,6 +133,8 @@ TAREA R-T6 — Ronda fresca por archivo y cierre
 ## DoD del plan
 
 - R-T1..R-T6 ejecutadas o descartadas por decisión trazable.
-- Los cuatro gates y la suite en verde al cierre.
+- `check_sizes`, `check_plans` y `check_reports` en verde, más la suite.
+  `check_templates` exige `--manifest` y `--installed` y no se ejecuta sin
+  argumentos: no forma parte del gate por omisión (ADR-020).
 - Ronda fresca con decisión `proceed` o `escalate`.
 - Cero operaciones de autoridad separada sin autorización nueva y específica.

@@ -32,8 +32,8 @@ piezas mínimas y sin red:
    la línea de salida, en `OK` y en `BLOQ`. No informan de que exista algo
    nuevo; hacen que lo viejo sea **visible** en cada log de CI. Quien compare
    dos repos lo nota sin herramienta.
-2. **Autocaducidad.** Pasados `GATE_STALE_AFTER_DAYS` desde
-   `GATE_GENERATED_AT`, el gate añade un aviso con su edad en días. Dice
+2. **Autocaducidad.** Cumplidos `GATE_STALE_AFTER_DAYS` desde
+   `GATE_GENERATED_AT` —el día 90, no el 91—, el gate añade un aviso con su edad en días. Dice
    «soy vieja», nunca «existe una nueva»: lo segundo exigiría observar el
    origen, y `project-manifest.yaml` §`no_ofrece` cede ese plano —«no
    instala, **no observa** y no muta un proyecto»—.
@@ -67,8 +67,7 @@ Alternativas descartadas:
   `00-INDICE.md`: mínimo necesario).
 
 Consecuencias: cada corrida de CI de un adoptante deja constancia de con qué
-versión validó. Un adoptante que copie hoy y no vuelva recibirá, a los noventa
-días, un aviso en su propia salida sin que Skevi haya mirado su repositorio.
+versión validó. Un adoptante que copie hoy y no vuelva recibirá, al cumplirse los noventa días, un aviso en su propia salida sin que Skevi haya mirado su repositorio.
 Al cambiar el comportamiento del gate hay que subir `GATE_VERSION` y poner la
 fecha: es una obligación nueva del mantenedor, y su olvido produce una copia
 que miente sobre su edad — riesgo aceptado, porque la alternativa es no tener
@@ -78,10 +77,14 @@ identidad ninguna.
 si la copia fue modificada, y no compara contra el origen. Para eso está el
 trabajo siguiente sobre el manifiesto.
 
-Verificación: `python3 scripts/check_sizes.py` → la línea `OK` incluye
-`gate/v2 (2026-09-08)`; `python3 -m unittest discover -s tests` → 188 tests,
-seis nuevos que cubren identidad, umbral, reloj anterior a la generación y que
-el aviso **no** afirme la existencia de una versión más nueva.
+Verificación: `python3 scripts/check_sizes.py` → la identidad aparece en la
+línea `OK` **y en la de `BLOQ`**, ambas con test; la primera emisión sólo la
+imprimía en `OK`, que es el log que nadie lee cuando todo va bien. Los tests
+de identidad viven en `tests/test_reading_path.py` y cubren el umbral en su
+frontera exacta —89 días sin aviso, 90 con él—, reloj anterior a la
+generación, constante mal editada de cualquier tipo (formato roto o comillas
+borradas), y que el aviso **no** afirme la existencia de una versión más
+nueva. El total vigente de la suite lo reporta la suite.
 
 Procedencia: [`M6-deriva-del-gate-copiable`](../proposals/M6-deriva-del-gate-copiable.md)
 (el barrido, los hashes y el fixture); [ADR-020](ADR-020-adopcion-versionado-plantillas.md)

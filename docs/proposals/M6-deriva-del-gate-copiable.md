@@ -28,17 +28,35 @@ recibir una cesión de plano son cosas distintas.
 
 ## 2. Once adoptantes copiaron el gate; ninguno está al día
 
-De los 18, once tienen `scripts/check_sizes.py` copiado:
+Clasificación reproducible —una copia es derivada de Skevi si contiene su
+cadena de salida `archivos de texto dentro de límites`—:
 
-| Adoptante | Líneas | Atraso vs 690 | `skevi-gate.json` |
+```bash
+for f in ~/www/*/scripts/check_sizes.py ~/www/aria/*/scripts/check_sizes.py; do
+  grep -q "archivos de texto dentro de límites" "$f" \
+    && echo "DERIVADA $f" || echo "propio $f"
+done
+```
+
+**Once repos tienen copia derivada** (excluido el propio Skevi): `alubia`,
+`an-kla-memory`, `basanos`, `cagf-dashboard`, `eduEMD`, `explotumarca`,
+`glosomata`, `kratos`, `orbitaNova`, `pinax`, `skopos`. Otros cuatro tienen un
+`check_sizes.py` **propio**, no derivado —`escrubery`, `codigocerebro`,
+`backupkairos-controller`, `expertoGobernanza`—: no son copias y no sufren
+esta deriva. La primera emisión de esta tabla acertó el total por casualidad y
+erró el conjunto: incluía `escrubery` y omitía `kratos`.
+
+| Huella | Líneas | Corresponde a | Repos |
 |---|---|---|---|
-| `orbitaNova`, `glosomata` | 377 | 313 | sí |
-| `basanos`, `explotumarca`, `eduEMD`, `cagf-dashboard`, `pinax`, `an-kla-memory`, `skopos` | 380 | 310 | sí (salvo donde se indique) |
-| `alubia` | 319 | 371 | no |
-| `escrubery` | 67 | 623 | no — es otro script, no una copia |
+| `f136b7fd` | 380 | `7bfd759c`, 2026-08-20 | 7 |
+| `14c66a48` | 377 | `38095fd3`, 2026-08-17 | 2 |
+| `92561c09` | 319 | ningún commit de Skevi | `alubia` |
+| `4619b730` | 150 | ningún commit de Skevi | `kratos` |
 
-**Cero adoptantes ejecutan el gate vigente.** Nueve están ~45% por detrás y
-ninguna copia reconoce las claves `reading_path` ni `reports`.
+**Cero adoptantes ejecutan el gate vigente**, que al 2026-09-08 tiene 730
+líneas. Nueve están congeladas en agosto; dos han bifurcado sin registro
+—`alubia` añade búsqueda de llaves privadas que Skevi nunca tuvo—. Ninguna
+copia reconoce las claves `reading_path` ni `reports`.
 
 ## 3. La consecuencia, verificada
 
@@ -53,7 +71,7 @@ gate de los adoptantes (377-380 líneas):
   OK — 4 archivos de texto dentro de límites; estructura y hogares
   canónicos verificados                                        exit 0
 
-gate vigente de Skevi (690 líneas):
+gate vigente de Skevi (730 líneas al 2026-09-08):
   BLOQ — check_sizes encontró incumplimientos
   - docs/roto.md: contenido no válido como UTF-8                exit 1
 ```
@@ -80,9 +98,11 @@ lee y se dejó sin versionar lo que se ejecuta.
 
 Tres piezas, en orden de valor sobre coste:
 
-**Estado 2026-09-08:** las piezas 1 y 2 están **implementadas** en
-[ADR-027](../adr/ADR-027-identidad-y-caducidad-del-gate-copiable.md); la 3
-queda como trabajo siguiente con su propio ADR.
+**Estado 2026-09-08:** implementadas la pieza 1 —identidad visible— y la
+pieza 3 —aviso sin bloqueo, aquí como autocaducidad—, en
+[ADR-027](../adr/ADR-027-identidad-y-caducidad-del-gate-copiable.md). La
+**pieza 2** —extender el manifiesto de ADR-020 a `scripts/`— queda como
+trabajo siguiente con su propio ADR.
 
 1. **Versión en el propio script.** Una constante `GATE_VERSION` que
    `check_sizes.py` imprima en su línea de salida. Un adoptante ve en su log
@@ -105,16 +125,24 @@ proyecto»— y exigiría autorización de cada uno.
 
 Dos adoptantes cumplen el criterio de entrada, medidos como fija §4.1 de
 [la propuesta de piloto](M6-piloto-fuera-del-monocultivo.md): `orbitaNova`
-—CI activo con `push` y `pull_request` que ejecuta el gate, 22 634 líneas— y
-`eduEMD`, que lo cumplió el 2026-09-06 con 85 967 líneas de PHP y una corrida
+—CI activo con `push` y `pull_request` que ejecuta el gate, 23 190 líneas— y
+`eduEMD`, que lo cumplió el 2026-09-06 con 86 148 líneas de PHP y una corrida
 verde de dos gates, antes de que su workflow desapareciera de la rama por
 defecto.
 
 Con una salvedad que el propio criterio no anticipaba: **ambos ejecutan
-versiones del gate que Skevi ya no reconoce como suyas** —377 líneas
-`orbitaNova`, 380 `eduEMD`—. Un piloto sobre cualquiera de los dos mediría el
+versiones del gate que Skevi ya no reconoce como suyas** —377 líneas `orbitaNova`,
+380 `eduEMD`—. Un piloto sobre cualquiera de los dos mediría el
 método contra un ejecutor de hace trescientas líneas. Actualizar esa copia es
 condición previa, y es decisión del adoptante.
+
+**Actualizar la copia no es gratuito.** Ejecutar el gate vigente sobre el
+árbol de tres adoptantes que hoy pasan en verde produce `BLOQ`: `orbitaNova`
+por un `.glb` de assets, `eduEMD` por `.docx` y `.mp4` de contenido,
+`explotumarca` por un `.docx` en `docs/history/`. No lo introduce esta
+propuesta —el gate vigente ya se comporta así— pero es consecuencia directa de
+recomendar la actualización, y se resuelve con `exempt_paths` en su
+`skevi-gate.json`, que es decisión de cada adoptante.
 
 Y es la razón de que esta propuesta importe más que el piloto: el criterio
 buscaba un adoptante que ejercitara el método bajo observación, y lo que el

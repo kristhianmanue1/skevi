@@ -456,8 +456,12 @@ class SymlinkTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
         (self.root / "docs" / "reviews").mkdir(parents=True)
+        # El fixture debe declarar capa técnica: sin `report_sha256`, main()
+        # hace `continue` antes de evaluar nada y el test pasaría con y sin el
+        # filtro de symlinks — vacuo. Lo demostró la ronda del 2026-09-08.
         self.fuera = self.root.parent / f"fuera-{self.root.name}.md"
-        self.fuera.write_text("SECRETO-FUERA-DE-LA-RAIZ\n", encoding="utf-8")
+        self.fuera.write_text(
+            render(claves={"STATE": "SECRETO-FUERA-DE-LA-RAIZ"}), encoding="utf-8")
         self.addCleanup(self.fuera.unlink)
         (self.root / check_reports.CONFIG_NAME).write_text(
             json.dumps({"reports": {"dir": "docs/reviews"}}), encoding="utf-8")
@@ -469,6 +473,7 @@ class SymlinkTests(unittest.TestCase):
             code = check_reports.main(["--root", str(self.root)])
         salida = buf.getvalue()
         self.assertNotIn("SECRETO-FUERA-DE-LA-RAIZ", salida)
+        self.assertNotIn("enlace.md", salida)
         self.assertEqual(code, 0, salida)
 
 class SharedConfigKeyTests(unittest.TestCase):

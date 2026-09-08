@@ -142,7 +142,7 @@ dan `OK` o `BLOQ` con código de salida distinto de cero.
 Comprueban **forma**: que un reporte pase no prueba que su evidencia sea
 cierta. Esa verificación sigue fuera del alcance de Skevi.
 
-`check_sizes` imprime además su propia versión y, pasados noventa días
+`check_sizes` imprime además su propia versión y, al cumplirse noventa días
 desde que se generó, avisa de su edad (ADR-027). No consulta la red ni
 observa el repositorio de origen: dice cuántos días tiene, no si existe una
 versión más reciente. Es la señal que un adoptante ve en su log de CI sin

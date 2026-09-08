@@ -83,6 +83,8 @@ EXEMPT_PATHS: set[str] = set()
 # inactivo: §3.4 acota cada archivo por separado, y hasta ADR-021
 # nada acotaba la suma que un ejecutor debe leer antes de actuar.
 READING_PATH: dict = {}
+# Ocupación medida en la última corrida; None si el presupuesto está inactivo.
+READING_PATH_OBSERVED: int | None = None
 LIMITS = {
     "AGENTS.md": 200,
     "README.md": 300,
@@ -527,7 +529,10 @@ def check_template_manifest(manifest_path: Path, templates_dir: Path) -> list[st
 def discover() -> list[Path]:
     paths: list[Path] = []
     for path in ROOT.rglob("*"):
-        if not path.is_file():
+        # Los symlinks no se siguen: la frontera de raíz vale también para el
+        # listado. Sin esto el gate medía y reportaba el tamaño de un archivo
+        # ajeno al repositorio, y el nombre del enlace bastaba para inferirlo.
+        if path.is_symlink() or not path.is_file():
             continue
         relative = path.relative_to(ROOT)
         if any(part in SKIP_DIRS for part in relative.parts[:-1]):
@@ -557,6 +562,8 @@ def check_reading_path() -> list[str]:
     la misma lógica que `count_text_lines` aplica a la exención (ADR-007).
     Nunca vuelca la excepción: puede llevar rutas o datos del host.
     """
+    global READING_PATH_OBSERVED
+    READING_PATH_OBSERVED = None
     if not READING_PATH:
         return []
     failures: list[str] = []
@@ -602,8 +609,10 @@ def check_reading_path() -> list[str]:
     else:
         # La norma (§3.4 y ADR-025) delega en el gate la cifra vigente; si
         # sólo se emitiera al fallar, el trinquete no sería auditable sin un
-        # script ad-hoc. Se publica para que main() la muestre al pasar.
-        READING_PATH["_observado"] = total
+        # script ad-hoc. Se publica aparte, no dentro de READING_PATH: ese
+        # dict modela la configuración del adoptante y no debe llevar estado
+        # de salida.
+        READING_PATH_OBSERVED = total
     return failures
 
 
@@ -618,7 +627,10 @@ def gate_staleness(hoy: date | None = None) -> str | None:
     hoy = hoy or date.today()
     try:
         generado = date.fromisoformat(GATE_GENERATED_AT)
-    except ValueError:  # constante mal editada al copiar: no es motivo de BLOQ
+    except (ValueError, TypeError):
+        # Constante mal editada al copiar —formato roto, comillas borradas—:
+        # la identidad de la copia no es frontera de seguridad y no puede
+        # tumbar el gate de nadie.
         return None
     dias = (hoy - generado).days
     if dias < GATE_STALE_AFTER_DAYS:
@@ -702,14 +714,17 @@ def main() -> int:
     aviso = gate_staleness()
 
     if failures:
-        print("BLOQ — check_sizes encontró incumplimientos")
+        print(
+            "BLOQ — check_sizes encontró incumplimientos "
+            f"({GATE_VERSION}, {GATE_GENERATED_AT})"
+        )
         for failure in failures:
             print(f"- {failure}")
         if aviso:
             print(aviso)
         return 1
 
-    observado = READING_PATH.get("_observado")
+    observado = READING_PATH_OBSERVED
     ruta = (
         f"; ruta de lectura {observado}/{READING_PATH['limit']}"
         if observado is not None
