@@ -85,6 +85,9 @@ Autoridad o Evidencia van a la lista de preguntas abiertas (§5):
    un script.
 7. **Entorno existente:** ¿hay código, repo o convenciones previas? Léelos
    antes de proponer nada.
+8. **Idiomas:** registra las elecciones humanas y excepciones del estándar
+   §3.1 en el contexto de adopción; si existe una fuente local, enlázala
+   sin duplicarla (ADR-029). Distingue idioma de programación de idioma humano.
 
 ## 4. Requerimientos
 

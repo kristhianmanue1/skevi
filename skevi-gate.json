@@ -18,13 +18,15 @@
     "docs/ai-agent-guide/04-ejecucion-y-verificacion.md",
     "scripts/check_sizes.py",
     "scripts/check_reports.py",
+    "scripts/MANIFEST.json",
     "scripts/check_templates.py",
     "templates/registro-contexto.md",
     "templates/plan-de-implementacion.md",
     "templates/skevi/usage-guide.md",
     "templates/skevi/architecture-overview.md",
     "templates/skevi/MANIFEST.json",
-    "templates/skevi/installed.json"
+    "templates/skevi/installed.json",
+    "templates/skevi/scripts-installed.json"
   ],
   "reading_path": {
     "limit": 1000,

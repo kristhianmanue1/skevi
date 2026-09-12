@@ -1,17 +1,29 @@
 #!/usr/bin/env python3
-"""Chequeo de drift de plantillas de adopción (PROP-006@#28 D3 + enmiendas T09).
+"""Chequeo de drift de artefactos versionados de Skevi (PROP-006@#28 D3 +
+enmiendas T09; extendido a scripts/ por ADR-028).
 
-Compara el MANIFEST fuente de Skevi (templates/skevi/MANIFEST.json, esquema
-`skevi/template-manifest/v1`) contra el registro de instalación del
-consumidor (`.skevi/installed.json`, esquema `skevi/template-install/v1`).
+Compara un MANIFEST fuente de Skevi contra el registro de instalación del
+consumidor. El mecanismo es genérico por diseño — no depende de que el
+artefacto sea una plantilla de documentación—: reconoce dos familias de
+esquema, cada una con su propio espacio de nombres de versión:
+
+  - plantillas de adopción: `skevi/template-manifest/v1` +
+    `skevi/template-install/v1`, versión `plantillas/vN` (ADR-020)
+  - scripts de gate:        `skevi/script-manifest/v1` +
+    `skevi/script-install/v1`, versión `gate/vN` (ADR-028)
+
 El señal válido de drift es la versión declarada, nunca el contenido: las
-copias se rellenan por diseño y difieren en bytes de su fuente.
+plantillas se rellenan por diseño y los scripts pueden llevar exenciones
+locales del adoptante en `skevi-gate.json`; ninguno de los dos coincide
+byte a byte con la fuente por diseño.
 
 Clasificación T09: (A) obsoleto pero compatible → aviso; (B) obsoleto
 incompatible → fallo `template_drift_version` (#28 D3.2 resuelta como fallo);
 (C) personalizado → anula A/B por archivo declarado. Versión sin cadena
-hasta la vigente → B (fail-closed). Copiable sin edición: stdlib-only, sin
-red, no muta archivos.
+hasta la vigente → B (fail-closed) — esto también protege contra comparar
+un manifiesto de una familia contra un registro de la otra: sin historia
+compartida, no hay cadena, y el resultado es el mismo BLOQ que una versión
+retirada. Copiable sin edición: stdlib-only, sin red, no muta archivos.
 """
 
 from __future__ import annotations
@@ -22,14 +34,33 @@ import re
 import sys
 from pathlib import Path
 
-MANIFEST_SCHEMA = "skevi/template-manifest/v1"
-INSTALL_SCHEMA = "skevi/template-install/v1"
+# Dos familias de esquema reconocidas (ADR-020, ADR-028). Añadir una tercera
+# —otro artefacto versionado de Skevi— es extender estos tres conjuntos
+# —MANIFEST_SCHEMAS, INSTALL_SCHEMAS y SCHEMA_NAMESPACE—, no tocar la lógica
+# de comparación: main()/_chain() son agnósticos a la familia. Olvidar
+# SCHEMA_NAMESPACE no es un error silencioso: _check_namespace falla
+# cerrado ante un esquema sin namespace registrado (ronda adversarial, MED).
+MANIFEST_SCHEMAS = {"skevi/template-manifest/v1", "skevi/script-manifest/v1"}
+INSTALL_SCHEMAS = {"skevi/template-install/v1", "skevi/script-install/v1"}
+# Cada esquema exige su propio espacio de nombres de versión. Sin esto, un
+# manifiesto de la familia equivocada con un namespace de versión que
+# coincida por accidente con el del otro documento producía OK falso: cada
+# familia es válida "en su conjunto" de esquemas, pero eso no basta para
+# saber que ambos documentos hablan de lo mismo (hallazgo HIGH, 2026-09-08).
+SCHEMA_NAMESPACE = {
+    "skevi/template-manifest/v1": "plantillas",
+    "skevi/template-install/v1": "plantillas",
+    "skevi/script-manifest/v1": "gate",
+    "skevi/script-install/v1": "gate",
+}
 MANIFEST_KEYS = {"schema", "version", "generated_at", "files", "history"}
 INSTALL_KEYS = {"schema", "version", "files", "installed_at", "source",
                 "customized"}
 HISTORY_KEYS = {"from", "to", "breaking", "changes"}
 DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
-VERSION_RE = re.compile(r"^plantillas/v\d+(\.\d+)*$")
+# Namespace en minúsculas + /vN: cubre "plantillas/v1" y "gate/v2" con la
+# misma expresión — el espacio de nombres lo declara la familia, no el regex.
+VERSION_RE = re.compile(r"^[a-z]+/v\d+(\.\d+)*$")
 DRIFT_REASON = "template_drift_version"
 
 
@@ -47,10 +78,31 @@ def _check_digest(value, where):
              f"{where} no es un digest con formato sha256:<hex>")
 
 
-def _check_common(data, schema, keys, label):
+def _check_namespace(version, schema, where):
+    """La versión debe llevar el espacio de nombres que su propio esquema
+    declara — "gate/vN" para las familias de scripts, "plantillas/vN" para
+    las de plantillas — nunca el del otro documento."""
+    if version is None:
+        return
+    expected_namespace = SCHEMA_NAMESPACE.get(schema)
+    # Fail-closed: un esquema válido sin namespace registrado es un olvido
+    # de mantenimiento, no una razón para omitir la comprobación.
+    _require(expected_namespace is not None,
+             f"{where}: {schema} no tiene namespace de versión registrado "
+             "(SCHEMA_NAMESPACE desactualizado)")
+    _require(version.startswith(expected_namespace + "/"),
+             f"{where}: version «{version}» no corresponde al espacio de "
+             f"nombres de {schema} (se espera {expected_namespace}/vN)")
+
+
+def _check_common(data, schemas, keys, label):
     _require(isinstance(data, dict), f"{label}: la raíz debe ser un objeto")
-    _require(data.get("schema") == schema,
-             f"{label}: schema desconocido (se espera {schema})")
+    missing = sorted(keys - set(data))
+    _require(not missing,
+             f"{label}: campos obligatorios ausentes: {', '.join(missing)}")
+    _require(isinstance(data["schema"], str) and data["schema"] in schemas,
+             f"{label}: schema desconocido (se espera uno de "
+             + ", ".join(sorted(schemas)) + ")")
     unknown = sorted(set(data) - keys)
     _require(not unknown,
              f"{label}: campo desconocido: {', '.join(unknown)}")
@@ -72,10 +124,11 @@ def _load_manifest(path: Path) -> dict:
         )
     except RecursionError:
         raise _InputError(f"{label}: JSON inválido o demasiado anidado")
-    _check_common(data, MANIFEST_SCHEMA, MANIFEST_KEYS, label)
+    _check_common(data, MANIFEST_SCHEMAS, MANIFEST_KEYS, label)
     _require(isinstance(data["version"], str)
              and VERSION_RE.match(data["version"]),
-             f"{label}: version no coincide con plantillas/v<n>")
+             f"{label}: version no coincide con <namespace>/v<n>")
+    _check_namespace(data["version"], data["schema"], label)
     _require(isinstance(data["generated_at"], str) and data["generated_at"],
              f"{label}: generated_at debe ser texto con fecha")
     _require(isinstance(data["files"], dict) and data["files"],
@@ -93,9 +146,13 @@ def _load_manifest(path: Path) -> dict:
                  or (isinstance(jump["from"], str)
                      and VERSION_RE.match(jump["from"])),
                  f"{where}.from no es una versión válida")
+        if isinstance(jump.get("from"), str):
+            _check_namespace(jump["from"], data["schema"], f"{where}.from")
         _require(isinstance(jump["to"], str)
                  and VERSION_RE.match(jump["to"]),
                  f"{where}.to no es una versión válida")
+        if isinstance(jump.get("to"), str):
+            _check_namespace(jump["to"], data["schema"], f"{where}.to")
         _require(isinstance(jump["breaking"], bool),
                  f"{where}.breaking debe ser booleano")
         _require(isinstance(jump["changes"], dict),
@@ -122,10 +179,11 @@ def _load_install(path: Path) -> dict:
         )
     except RecursionError:
         raise _InputError(f"{label}: JSON inválido o demasiado anidado")
-    _check_common(data, INSTALL_SCHEMA, INSTALL_KEYS, label)
+    _check_common(data, INSTALL_SCHEMAS, INSTALL_KEYS, label)
     _require(isinstance(data["version"], str)
              and VERSION_RE.match(data["version"]),
-             f"{label}: version no coincide con plantillas/v<n>")
+             f"{label}: version no coincide con <namespace>/v<n>")
+    _check_namespace(data["version"], data["schema"], label)
     _require(isinstance(data["files"], dict) and data["files"],
              f"{label}: files debe ser un objeto con entradas")
     for name, digest in data["files"].items():
@@ -168,12 +226,17 @@ def _chain(history, start: str, current: str):
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
-        description="Chequeo de drift de plantillas (#28 D3 + T09)."
+        description=(
+            "Chequeo de drift de un artefacto versionado de Skevi: "
+            "plantillas de adopción (ADR-020) o scripts de gate (ADR-028)."
+        )
     )
     parser.add_argument("--manifest", required=True,
-                        help="MANIFEST fuente (skevi/template-manifest/v1)")
+                        help="MANIFEST fuente (skevi/template-manifest/v1 "
+                        "o skevi/script-manifest/v1)")
     parser.add_argument("--installed", required=True,
-                        help="registro del consumidor (template-install/v1)")
+                        help="registro del consumidor "
+                        "(template-install/v1 o script-install/v1)")
     args = parser.parse_args(argv)
 
     try:
@@ -187,7 +250,7 @@ def main(argv=None) -> int:
     start = installed["version"]
     customized = set(installed["customized"])
     if start == current:
-        print(f"OK — plantillas al día: versión vigente {current}")
+        print(f"OK — al día: versión vigente {current}")
         return 0
 
     jumps, error = _chain(manifest["history"], start, current)

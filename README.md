@@ -66,15 +66,17 @@ skevi/
 │       ├── usage-guide.md
 │       ├── architecture-overview.md
 │       ├── MANIFEST.json     # versión vigente + historial de saltos (ADR-020)
-│       └── installed.json    # plantilla del registro del consumidor
+│       ├── installed.json    # plantilla del registro del consumidor
+│       └── scripts-installed.json  # ídem, para scripts/ (ADR-028)
 ├── scripts/
 │   ├── check_sizes.py         # gate de estructura y tamaños
 │   ├── check_plans.py         # gate estructural de planes (ADR-014)
 │   ├── check_reports.py       # forma de los reportes de dos capas (ADR-022)
-│   ├── check_templates.py     # drift de plantillas de adopción (ADR-020)
+│   ├── check_templates.py     # drift de artefactos versionados (ADR-020, ADR-028)
+│   ├── MANIFEST.json          # versión vigente de los 4 scripts (ADR-028)
 │   └── hooks/                 # hooks de Git (pre-push)
 └── tests/                     # suites de scripts/ (check_sizes, check_plans,
-                                #  check_templates)
+                                #  check_reports, check_templates)
 ```
 
 La separación no es estética: cada carpeta tiene una **vida útil distinta**.
@@ -119,6 +121,21 @@ Sin registro de instalación no hay efecto alguno. Migración de copias
 previas: crear el registro una vez, a mano, con la guía del propio
 registro.
 
+**El mismo mecanismo cubre `scripts/`** (ADR-028): `scripts/MANIFEST.json`
+declara la versión vigente de los cuatro gates, con el mismo formato y el
+mismo comando, cambiando sólo el par manifest/instalado:
+
+```bash
+python3 <ruta-a-skevi>/scripts/check_templates.py \
+  --manifest <ruta-a-skevi>/scripts/MANIFEST.json \
+  --installed .skevi/scripts-installed.json
+```
+
+La versión de `scripts/MANIFEST.json` (`gate/vN`) es la misma que
+`check_sizes.py` imprime en su propia salida (ADR-027): un adoptante que
+sólo mira su log de CI ya sabe que su copia envejece; quien quiere saber
+**contra qué versión** usa este comando.
+
 ## Verificación
 
 ```bash
@@ -152,9 +169,9 @@ tener que ejecutar nada aparte.
 python3 -m unittest discover -s tests
 ```
 
-Corre las suites de `tests/` sobre los scripts del proyecto — sus tres
-artefactos ejecutables: `check_sizes.py`, `check_plans.py` (ADR-014) y
-`check_templates.py` (ADR-020).
+Corre las suites de `tests/` sobre los scripts del proyecto — sus cuatro
+artefactos ejecutables: `check_sizes.py`, `check_plans.py` (ADR-014),
+`check_reports.py` (ADR-022) y `check_templates.py` (ADR-020, ADR-028).
 
 **Gate local, no GitHub Actions.** La cuenta que aloja este repositorio tiene
 minutos de CI limitados (se agotan rápido y se reinician mensualmente). Por

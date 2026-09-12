@@ -43,6 +43,7 @@ class GateVersionTests(unittest.TestCase):
         self.assertRegex(check_sizes.GATE_GENERATED_AT, r"^\d{4}-\d{2}-\d{2}$")
         self.assertIsInstance(check_sizes.GATE_STALE_AFTER_DAYS, int)
 
+    @patch.object(check_sizes, "GATE_GENERATED_AT", "2026-09-08")
     def test_fresh_copy_reports_version_without_warning(self):
         aviso = check_sizes.gate_staleness(hoy=date(2026, 9, 10))
         self.assertIsNone(aviso)
@@ -68,12 +69,14 @@ class GateVersionTests(unittest.TestCase):
         finally:
             check_sizes.GATE_GENERATED_AT = original
 
+    @patch.object(check_sizes, "GATE_GENERATED_AT", "2026-09-08")
     def test_stale_copy_warns_with_its_age(self):
         aviso = check_sizes.gate_staleness(hoy=date(2027, 1, 1))
         self.assertIsNotNone(aviso)
         self.assertIn("115 días", aviso)
         self.assertIn(check_sizes.GATE_VERSION, aviso)
 
+    @patch.object(check_sizes, "GATE_GENERATED_AT", "2026-09-08")
     def test_warning_never_claims_a_newer_version_exists(self):
         """El gate no observa a nadie: sabe que es viejo, no que haya otro."""
         aviso = check_sizes.gate_staleness(hoy=date(2027, 1, 1))

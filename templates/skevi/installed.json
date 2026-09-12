@@ -1,6 +1,6 @@
 {
   "schema": "skevi/template-install/v1",
-  "version": "plantillas/v1",
+  "version": "plantillas/v3",
   "files": {
     "usage-guide.md": "sha256:<digest-de-usage-guide-en-el-MANIFEST-fuente>",
     "architecture-overview.md": "sha256:<digest-de-architecture-overview-en-el-MANIFEST-fuente>"

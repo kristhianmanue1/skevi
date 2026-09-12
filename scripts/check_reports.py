@@ -71,18 +71,18 @@ class _ConfigError(ValueError):
     """Diagnóstico con campos conocidos, nunca payload del usuario (ADR-007)."""
 
 
-def _es_linea_del_hash(linea: str) -> bool:
+def _is_hash_line(line: str) -> bool:
     """La línea que se excluye del canon es la de la clave exacta, no la de
     cualquier clave con ese prefijo (`report_sha256_prev` no se excluye)."""
-    match = KEY_RE.match(linea)
+    match = KEY_RE.match(line)
     return match is not None and match.group(1) == HASH_KEY
 
 
-def _primer_token(valor: str) -> str:
-    return valor.split("(")[0].split(";")[0].strip().split(" ")[0]
+def _first_token(value: str) -> str:
+    return value.split("(")[0].split(";")[0].strip().split(" ")[0]
 
 
-def comprobar_reporte(relativo: str, texto: str) -> list[str]:
+def check_report(relative: str, text: str) -> list[str]:
     """Fallos de forma de un reporte. Lista vacía = capas técnicas válidas.
 
     Un archivo puede llevar más de una capa técnica (dos emisiones en el
@@ -91,167 +91,167 @@ def comprobar_reporte(relativo: str, texto: str) -> list[str]:
     capa técnica, y se ignora — el gate ancla la capa, no todo bloque
     preformateado.
     """
-    capas = [
-        m.group(1) for m in FENCE_RE.finditer(texto)
+    layers = [
+        m.group(1) for m in FENCE_RE.finditer(text)
         if any(l.startswith(HASH_KEY) for l in m.group(1).split("\n"))
     ]
-    if not capas:
-        return [f"{relativo}: sin capa técnica (ningún bloque declara {HASH_KEY})"]
-    fallos: list[str] = []
-    for capa in capas:
-        fallos.extend(_comprobar_capa(relativo, capa, texto))
-    return fallos
+    if not layers:
+        return [f"{relative}: sin capa técnica (ningún bloque declara {HASH_KEY})"]
+    failures: list[str] = []
+    for layer in layers:
+        failures.extend(_check_layer(relative, layer, text))
+    return failures
 
 
-def _comprobar_capa(relativo: str, capa: str, texto: str) -> list[str]:
-    fallos: list[str] = []
-    lineas = capa.split("\n")
-    claves: dict[str, str] = {}
-    evidencia: list[str] = []
-    en_evidencia = False
-    for linea in lineas:
-        if linea.strip() == "EVIDENCE":
-            en_evidencia = True
+def _check_layer(relative: str, layer: str, text: str) -> list[str]:
+    failures: list[str] = []
+    lines = layer.split("\n")
+    keys: dict[str, str] = {}
+    evidence: list[str] = []
+    in_evidence = False
+    for line in lines:
+        if line.strip() == "EVIDENCE":
+            in_evidence = True
             continue
-        match = KEY_RE.match(linea)
+        match = KEY_RE.match(line)
         if match:
-            en_evidencia = False
-            nombre = match.group(1)
-            if nombre in claves:
+            in_evidence = False
+            name = match.group(1)
+            if name in keys:
                 # Sin esto, la última repetición ganaba en silencio y
                 # `STATE = BLOCKED` seguido de `STATE = OK` pasaba el gate.
-                fallos.append(f"{relativo}: clave duplicada en la capa: {nombre}")
-            claves[nombre] = match.group(2).strip()
-        elif en_evidencia and linea.strip():
-            evidencia.append(linea)
+                failures.append(f"{relative}: clave duplicada en la capa: {name}")
+            keys[name] = match.group(2).strip()
+        elif in_evidence and line.strip():
+            evidence.append(line)
 
-    faltan = sorted(REQUIRED_KEYS - set(claves))
-    for clave in faltan:
-        fallos.append(f"{relativo}: falta la clave obligatoria {clave}")
-    for clave in sorted(set(claves) - REQUIRED_KEYS - OPTIONAL_KEYS):
-        fallos.append(f"{relativo}: clave desconocida en la capa técnica: {clave}")
+    missing = sorted(REQUIRED_KEYS - set(keys))
+    for key in missing:
+        failures.append(f"{relative}: falta la clave obligatoria {key}")
+    for key in sorted(set(keys) - REQUIRED_KEYS - OPTIONAL_KEYS):
+        failures.append(f"{relative}: clave desconocida en la capa técnica: {key}")
 
-    if "STATE" in claves and _primer_token(claves["STATE"]) not in STATES:
-        fallos.append(
-            f"{relativo}: STATE debe empezar por uno de "
+    if "STATE" in keys and _first_token(keys["STATE"]) not in STATES:
+        failures.append(
+            f"{relative}: STATE debe empezar por uno de "
             f"{', '.join(sorted(STATES))}"
         )
-    if "DECISION" in claves and _primer_token(claves["DECISION"]) not in DECISIONS:
-        fallos.append(
-            f"{relativo}: DECISION debe empezar por uno de "
+    if "DECISION" in keys and _first_token(keys["DECISION"]) not in DECISIONS:
+        failures.append(
+            f"{relative}: DECISION debe empezar por uno de "
             f"{', '.join(sorted(DECISIONS))}"
         )
-    if "date" in claves and not DATE_RE.match(claves["date"]):
-        fallos.append(f"{relativo}: date debe ser AAAA-MM-DD")
-    if "time_utc" in claves and not TIME_RE.match(claves["time_utc"]):
-        fallos.append(f"{relativo}: time_utc debe ser HH:MM:SSZ")
-    if "head_sha" in claves and not SHA1_RE.match(claves["head_sha"]):
-        fallos.append(f"{relativo}: head_sha debe ser 40 hexadecimales")
+    if "date" in keys and not DATE_RE.match(keys["date"]):
+        failures.append(f"{relative}: date debe ser AAAA-MM-DD")
+    if "time_utc" in keys and not TIME_RE.match(keys["time_utc"]):
+        failures.append(f"{relative}: time_utc debe ser HH:MM:SSZ")
+    if "head_sha" in keys and not SHA1_RE.match(keys["head_sha"]):
+        failures.append(f"{relative}: head_sha debe ser 40 hexadecimales")
 
-    if not any(l.strip() == "EVIDENCE" for l in lineas):
-        fallos.append(f"{relativo}: sin sección EVIDENCE")
-    elif not evidencia:
-        fallos.append(f"{relativo}: EVIDENCE sin ninguna línea")
-    for linea in evidencia:
-        cuerpo = linea.strip()
-        if not cuerpo.startswith("- "):
-            fallos.append(f"{relativo}: línea de EVIDENCE sin viñeta: {cuerpo[:40]}")
+    if not any(l.strip() == "EVIDENCE" for l in lines):
+        failures.append(f"{relative}: sin sección EVIDENCE")
+    elif not evidence:
+        failures.append(f"{relative}: EVIDENCE sin ninguna línea")
+    for line in evidence:
+        body = line.strip()
+        if not body.startswith("- "):
+            failures.append(f"{relative}: línea de EVIDENCE sin viñeta: {body[:40]}")
             continue
-        if "->" not in cuerpo:
-            fallos.append(
-                f"{relativo}: línea de EVIDENCE sin '->' que separe fuente de "
-                f"resultado: {cuerpo[:40]}"
+        if "->" not in body:
+            failures.append(
+                f"{relative}: línea de EVIDENCE sin '->' que separe fuente de "
+                f"resultado: {body[:40]}"
             )
             continue
-        ultimo = cuerpo.rsplit("->", 1)[1].strip()
-        if ultimo and " " not in ultimo and ultimo not in MARKS:
-            fallos.append(
-                f"{relativo}: marca inválida «{ultimo}»; ADR-005 sólo admite "
+        last = body.rsplit("->", 1)[1].strip()
+        if last and " " not in last and last not in MARKS:
+            failures.append(
+                f"{relative}: marca inválida «{last}»; ADR-005 sólo admite "
                 f"{', '.join(sorted(MARKS))} (o línea sin marca)"
             )
 
-    if "report_sha256" in claves:
-        declarado = claves["report_sha256"]
-        if not SHA256_RE.match(declarado):
-            fallos.append(f"{relativo}: report_sha256 debe ser 64 hexadecimales")
+    if "report_sha256" in keys:
+        declared = keys["report_sha256"]
+        if not SHA256_RE.match(declared):
+            failures.append(f"{relative}: report_sha256 debe ser 64 hexadecimales")
         else:
-            canon = "\n".join(l for l in lineas if not _es_linea_del_hash(l))
-            obtenido = hashlib.sha256(canon.encode("utf-8")).hexdigest()
-            if obtenido != declarado:
-                fallos.append(
-                    f"{relativo}: report_sha256 no reproduce en forma canónica "
+            canonical = "\n".join(l for l in lines if not _is_hash_line(l))
+            actual = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+            if actual != declared:
+                failures.append(
+                    f"{relative}: report_sha256 no reproduce en forma canónica "
                     "(UTF-8, LF, sin newline final, excluida su propia línea)"
                 )
-    return fallos
+    return failures
 
 
-def _ruta_contenida(root: Path, valor: str) -> Path | None:
-    """Resuelve `valor` contra `root`; None si es absoluta, empieza por `~`
+def _contained_path(root: Path, value: str) -> Path | None:
+    """Resuelve `value` contra `root`; None si es absoluta, empieza por `~`
     o escapa de la raíz tras `.resolve()` (cierra también el symlink)."""
-    if valor.startswith("/") or valor.startswith("~"):
+    if value.startswith("/") or value.startswith("~"):
         return None
-    candidato = (root / valor).resolve()
+    candidate = (root / value).resolve()
     try:
-        candidato.relative_to(root.resolve())
+        candidate.relative_to(root.resolve())
     except ValueError:
         return None
-    return candidato
+    return candidate
 
 
-def cargar_config(root: Path) -> dict:
-    ruta = root / CONFIG_NAME
-    if not ruta.is_file():
+def load_config(root: Path) -> dict:
+    path = root / CONFIG_NAME
+    if not path.is_file():
         return {}
-    data = json.loads(ruta.read_text(encoding="utf-8"))
+    data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise _ConfigError(f"{CONFIG_NAME}: la raíz debe ser un objeto")
     return data
 
 
-def reportes_declarados(root: Path) -> tuple[list[Path], set[str]] | None:
+def declared_reports(root: Path) -> tuple[list[Path], set[str]] | None:
     """Archivos a comprobar y rutas exentas. None = inactivo (sin la clave)."""
-    config = cargar_config(root)
+    config = load_config(root)
     if CONFIG_KEY not in config:
         return None
-    valor = config[CONFIG_KEY]
-    if not isinstance(valor, dict):
+    value = config[CONFIG_KEY]
+    if not isinstance(value, dict):
         raise _ConfigError(
             f"{CONFIG_NAME}: «{CONFIG_KEY}» debe ser un objeto con «dir» "
             "y, opcionalmente, «exempt»"
         )
-    desconocidas = sorted(set(valor) - {"dir", "exempt"})
-    if desconocidas:
+    unknown = sorted(set(value) - {"dir", "exempt"})
+    if unknown:
         raise _ConfigError(
             f"{CONFIG_NAME}: «{CONFIG_KEY}» sólo admite «dir» y «exempt»"
         )
-    directorio = valor.get("dir")
-    if not isinstance(directorio, str) or not directorio.strip():
+    directory = value.get("dir")
+    if not isinstance(directory, str) or not directory.strip():
         raise _ConfigError(f"{CONFIG_NAME}: «{CONFIG_KEY}.dir» debe ser texto")
     # `dir` es entrada no confiable: misma frontera que `_safe_relative_paths`
     # en check_sizes.py. Sin esto, una ruta absoluta o un `..` hacían que el
     # gate leyera fuera del repo y reventara con traceback, filtrando rutas
     # del host — justo lo que ADR-007 prohíbe y este script promete no hacer.
-    destino = _ruta_contenida(root, directorio)
-    if destino is None:
+    target = _contained_path(root, directory)
+    if target is None:
         raise _ConfigError(
             f"{CONFIG_NAME}: «{CONFIG_KEY}.dir» debe ser una ruta relativa "
             "contenida en la raíz del proyecto"
         )
-    if not destino.is_dir():
+    if not target.is_dir():
         raise _ConfigError(
             f"{CONFIG_NAME}: «{CONFIG_KEY}.dir» declarado pero el directorio "
-            f"no existe: {directorio}"
+            f"no existe: {directory}"
         )
-    exentos = valor.get("exempt", [])
-    if not isinstance(exentos, list) or not all(isinstance(e, str) for e in exentos):
+    exempt = value.get("exempt", [])
+    if not isinstance(exempt, list) or not all(isinstance(e, str) for e in exempt):
         raise _ConfigError(
             f"{CONFIG_NAME}: «{CONFIG_KEY}.exempt» debe ser una lista de rutas"
         )
     # Symlinks fuera: misma frontera que check_sizes.py aplica al listado.
-    archivos = sorted(
-        p for p in destino.glob("*.md") if not p.is_symlink()
+    files = sorted(
+        p for p in target.glob("*.md") if not p.is_symlink()
     )
-    return archivos, set(exentos)
+    return files, set(exempt)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -273,7 +273,7 @@ def main(argv: list[str] | None = None) -> int:
             return 1
 
     try:
-        declarados = reportes_declarados(root)
+        declared = declared_reports(root)
     except _ConfigError as exc:
         print("BLOQ — check_reports encontró configuración inválida")
         print(f"- {exc}")
@@ -287,48 +287,58 @@ def main(argv: list[str] | None = None) -> int:
         print(f"- {CONFIG_NAME}: no se pudo leer la configuración")
         return 1
 
-    if declarados is None:
+    if declared is None:
         print(f"OK — inactivo: sin clave «{CONFIG_KEY}» en {CONFIG_NAME}")
         return 0
 
-    archivos, exentos = declarados
-    fallos: list[str] = []
-    revisados = 0
-    saltados = 0
-    for archivo in archivos:
-        relativo = archivo.relative_to(root).as_posix()
-        if relativo in exentos:
-            saltados += 1
+    files, exempt = declared
+    failures: list[str] = []
+    checked = 0
+    skipped = 0
+    for file in files:
+        relative = file.relative_to(root).as_posix()
+        if relative in exempt:
+            skipped += 1
             continue
         try:
-            texto = archivo.read_text(encoding="utf-8")
+            text = file.read_text(encoding="utf-8")
         except UnicodeDecodeError:
-            fallos.append(f"{relativo}: contenido no válido como UTF-8")
+            failures.append(f"{relative}: contenido no válido como UTF-8")
             continue
         except OSError:
             # Nunca volcar la excepción: puede llevar rutas del host (ADR-007).
-            fallos.append(f"{relativo}: no se pudo leer el archivo")
+            failures.append(f"{relative}: no se pudo leer el archivo")
             continue
         # docs/reviews/ también aloja prosa de cierre sin capa técnica: sólo
         # se validan los archivos que declaran una, y «declarar una» significa
         # tener `report_sha256`, no tener un fence ```text — un registro
         # trivial puede transcribir salida de comando (00-INDICE: «tarea
         # trivial: capa humana sola»).
-        if HASH_KEY not in texto:
+        if HASH_KEY not in text:
             continue
-        revisados += 1
-        fallos.extend(comprobar_reporte(relativo, texto))
+        checked += 1
+        failures.extend(check_report(relative, text))
 
-    if fallos:
+    if failures:
         print("BLOQ — check_reports encontró incumplimientos")
-        for fallo in fallos:
-            print(f"- {fallo}")
+        for failure in failures:
+            print(f"- {failure}")
         return 1
     print(
-        f"OK — {revisados} reporte(s) con capa técnica verificada"
-        + (f"; {saltados} exento(s)" if saltados else "")
+        f"OK — {checked} reporte(s) con capa técnica verificada"
+        + (f"; {skipped} exento(s)" if skipped else "")
     )
     return 0
+
+
+# Compatibilidad de imports previos (SPEC-LANG REQ-L3): también se conservan
+# los argumentos por nombre de comprobar_reporte. No son nombres nuevos.
+def comprobar_reporte(relativo: str, texto: str) -> list[str]:
+    return check_report(relative=relativo, text=texto)
+
+
+cargar_config = load_config
+reportes_declarados = declared_reports
 
 
 if __name__ == "__main__":

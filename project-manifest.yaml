@@ -37,6 +37,10 @@ ofrece:
     identidad y autocaducidad del gate copiable: la copia declara su versión y
     su edad en la salida que el adoptante ya ejecuta, sin red y sin observar
     el origen (ADR-027)
+  - >
+    comparación autoritativa de los archivos regulares del nivel superior de
+    scripts/ contra su fuente; los subdirectorios, incluido hooks/, quedan
+    fuera de ese MANIFEST (ADR-028)
   - registro histórico de pilotos con procedencia de cada regla
 
 no_ofrece:
