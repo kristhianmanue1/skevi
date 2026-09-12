@@ -1,12 +1,23 @@
 {
   "schema": "skevi/script-manifest/v1",
-  "version": "gate/v2",
-  "generated_at": "2026-09-08T16:00:00Z",
+  "version": "gate/v3",
+  "generated_at": "2026-09-12T12:42:35Z",
   "files": {
-    "check_sizes.py": "sha256:93cfa7a023d30bdae3c990bed59525b1673e8e7d894efa412734a32a08bcb70c",
+    "check_sizes.py": "sha256:ae5cc5d3eb84de64337f7a95f7c6bbd5ad36a48d71525abdcde252491a76826a",
     "check_plans.py": "sha256:e6bff6446f2c5e73315cb4fafec904d5040d70195f67bbefa4a7597f9a14553d",
-    "check_reports.py": "sha256:90a7b9ba5b7c2745492018d166048749a8a0d75b33b90251abae8b3f6b3f9077",
-    "check_templates.py": "sha256:629361eff3bec932344c839fda866b5431be96747ebb0a6f66ce4e0b1c7b4a47"
+    "check_reports.py": "sha256:5663866d6575765be22353f9587c743005f3e612153efd492279b68bf0a0f21c",
+    "check_templates.py": "sha256:45c3b01a41684c27fc2f69fafdc511cd2175e4a788590ce1cba6bd7d70c83f55"
   },
-  "history": []
+  "history": [
+    {
+      "from": "gate/v2",
+      "to": "gate/v3",
+      "breaking": false,
+      "changes": {
+        "check_templates.py": "validación de campos obligatorios y tipos; namespace en inglés",
+        "check_sizes.py": "validación de campos obligatorios y archivos ocultos, identidad gate/v3 y namespace en inglés",
+        "check_reports.py": "nombres internos ingleses con compatibilidad de imports y argumentos previos"
+      }
+    }
+  ]
 }

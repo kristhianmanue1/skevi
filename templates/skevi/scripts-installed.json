@@ -1,6 +1,6 @@
 {
   "schema": "skevi/script-install/v1",
-  "version": "gate/v2",
+  "version": "gate/v3",
   "files": {
     "check_sizes.py": "sha256:<digest-de-check_sizes.py-en-el-MANIFEST-fuente>",
     "check_plans.py": "sha256:<digest-de-check_plans.py-en-el-MANIFEST-fuente>",

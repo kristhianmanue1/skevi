@@ -70,6 +70,15 @@ class ContractShapeTests(unittest.TestCase):
     def test_marks_are_the_three_of_adr_005(self):
         self.assertEqual(check_reports.MARKS, {"pass", "fail", "inconclusive"})
 
+    def test_english_entrypoint_preserves_legacy_keyword_calls(self):
+        for text in (render(), render(hash_valido=False), "sin capa"):
+            self.assertEqual(
+                check_reports.check_report(relative="r.md", text=text),
+                check_reports.comprobar_reporte(relativo="r.md", texto=text),
+            )
+        self.assertIs(check_reports.cargar_config, check_reports.load_config)
+        self.assertIs(check_reports.reportes_declarados, check_reports.declared_reports)
+
     def test_states_are_english_technical_layer(self):
         self.assertEqual(check_reports.STATES, {"OK", "PARTIAL", "BLOCKED"})
 

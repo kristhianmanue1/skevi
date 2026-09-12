@@ -93,6 +93,9 @@ Reglas:
 4. `git status --short` y `git diff --check` coherentes con la tarea;
 5. comentarios/docs actualizados al nuevo comportamiento;
 6. DoD de la tarea cumplido punto por punto.
+7. identificadores nuevos y textos humanos revisados contra el estándar
+   §3.1 y la elección local; excepciones justificadas (ADR-029). Un gate
+   estructural en verde no acredita cumplimiento del idioma.
 
 Si un paso no queda `pass`, deriva el estado como indica `00-INDICE.md`
 § «Formato de reporte de fase»; nunca declares `OK`.

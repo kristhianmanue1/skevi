@@ -31,10 +31,12 @@ Entrada (MANIFEST fuente, scripts/MANIFEST.json):
                 no por código compartido
   generated_at: texto con fecha [obligatorio]
   files:        objeto {nombre: "sha256:<hex>"} [obligatorio] — exactamente
-                todo archivo regular de scripts/, sin symlinks, sin el
-                MANIFEST mismo — mismo criterio que templates/skevi/, sin
-                filtro de extensión: hoy son los 4 .py, y un archivo no-.py
-                que se añada exige entrar al manifiesto igual que los demás
+                todo archivo regular del nivel superior de scripts/, sin
+                symlinks, sin el MANIFEST mismo — mismo criterio que
+                templates/skevi/, sin filtro de extensión: hoy son los 4 .py,
+                y un archivo no-.py u oculto que se añada exige entrar al
+                manifiesto igual que los demás. Los subdirectorios, incluido
+                hooks/, quedan fuera de este contrato.
   history:      lista de {from, to, breaking, changes} [obligatorio]
 Entrada (registro del consumidor, .skevi/scripts-installed.json):
   schema:       "skevi/script-install/v1" [obligatorio]

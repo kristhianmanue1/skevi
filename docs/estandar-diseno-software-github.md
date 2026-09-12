@@ -103,17 +103,23 @@ duda, el principio gana sobre la regla concreta.
 
 - El código nuevo se parece al código que lo rodea: mismas convenciones de
   nombre, densidad de comentarios e idiomas estructurales del proyecto.
-- Convención de idioma: en código nuevo, los identificadores y nombres
-  estructurales —variables, funciones, clases, ramas, claves de
-  configuración— se escriben en inglés; los comentarios siguen el idioma
-  de la prosa del proyecto; el contenido de cara al usuario
-  —documentación, mensajes de interfaz y textos visibles— va en el
-  idioma del proyecto, que puede ser el nativo del equipo. Esta viñeta
-  precisa y gana sobre la lectura genérica de la anterior; renombrar
-  legado es refactorización aparte (§3.3), nunca efecto colateral
-  (procedencia: `docs/adr/ADR-015-convencion-idioma.md`, instrucción
-  directa del humano, 2026-09-07; extiende
-  `docs/adr/ADR-003-directorios-en-ingles.md`).
+- Convención de idioma: los identificadores estructurales nuevos —variables,
+  funciones, clases, ramas y claves— se escriben en inglés (ADR-015; precisa
+  y prevalece sobre la viñeta anterior). Al adoptar, declarar en el contexto
+  del proyecto el idioma humano predeterminado, los idiomas del producto
+  —documentación, interfaz y mensajes— y de comentarios/docstrings; estos
+  últimos heredan la prosa del proyecto salvo elección explícita del equipo.
+  El idioma nativo lo elige el humano: no se deduce de su ubicación. Si falta
+  la elección, preguntar antes de fijar texto persistente; continuar sólo lo
+  que no dependa de ella. La preferencia expresa del interlocutor rige la
+  respuesta, incluida la capa humana de §6.9, sin cambiar la política
+  persistente ni el idioma o formato de contratos técnicos. Preservar nombres
+  exactos exigidos por contratos externos, generadores y términos de dominio
+  o nombres propios con razón documentada. Renombrar legado es refactorización
+  aparte (§3.3). Fuente: `adr/ADR-015-convencion-idioma.md`, que extiende
+  ADR-003; precisión: `adr/ADR-029-eleccion-de-idioma-humano.md`, instrucción
+  humana del 2026-09-12, para registrar una elección aplicable sin confundir
+  conversación y producto. No exige detección automática de idiomas.
 - Funciones pequeñas con un único propósito; nombres que dicen qué hace el
   código sin necesidad de comentario.
 - Tres líneas similares son preferibles a una abstracción prematura.

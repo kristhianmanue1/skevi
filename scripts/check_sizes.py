@@ -24,8 +24,8 @@ from pathlib import Path
 # proyectos ajenos. Lo que sí puede es que la copia diga quién es y cuántos
 # días tiene, en la salida que el adoptante ya ejecuta. Al cambiar el
 # comportamiento del gate se sube GATE_VERSION y se pone la fecha del cambio.
-GATE_VERSION = "gate/v2"
-GATE_GENERATED_AT = "2026-09-08"
+GATE_VERSION = "gate/v3"
+GATE_GENERATED_AT = "2026-09-12"
 GATE_STALE_AFTER_DAYS = 90
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -293,11 +293,8 @@ def apply_config(config: dict) -> None:
     adoptante con otra estructura de directorios — como `an-kla-memory`, que
     usa `docs/architecture/`— declara la suya.
 
-    Toda entrada mal tipada falla con `ValueError`, nunca con la excepción
-    cruda de Python: `main()` sólo sabe convertir `ValueError`/`OSError` en un
-    `BLOQ` legible, y un `TypeError` o `AttributeError` sin atrapar
-    reventaría con un stack trace, justo lo que este gate le reprocha al
-    resto del corpus no hacer.
+    Entradas mal tipadas producen `ValueError`: main las convierte en BLOQ,
+    sin traceback (ADR-007).
     """
     global DEFAULT_LIMIT
     if "limits" in config:
@@ -410,13 +407,13 @@ def _check_namespace(version, expected_schema: str, where: str) -> str | None:
         return None
     # Fail-closed: esquema sin namespace registrado es olvido de
     # mantenimiento, no motivo para omitir la comprobación.
-    esperado = SCHEMA_NAMESPACE.get(expected_schema)
-    if esperado is None:
+    expected_namespace = SCHEMA_NAMESPACE.get(expected_schema)
+    if expected_namespace is None:
         return f"{where}: {expected_schema} no tiene namespace registrado"
-    if version.startswith(esperado + "/"):
+    if version.startswith(expected_namespace + "/"):
         return None
     return (f"{where}: version «{version}» no corresponde al espacio de "
-            f"nombres de {expected_schema} (se espera {esperado}/vN)")
+            f"nombres de {expected_schema} (se espera {expected_namespace}/vN)")
 
 
 def _validate_template_manifest(
@@ -430,6 +427,9 @@ def _validate_template_manifest(
     failures: list[str] = []
     if not isinstance(data, dict):
         return [f"{label}: la raíz debe ser un objeto"]
+    missing = sorted(TEMPLATE_MANIFEST_KEYS - set(data))
+    if missing:
+        return [f"{label}: campos obligatorios ausentes: {', '.join(missing)}"]
     if data.get("schema") != expected_schema:
         failures.append(
             f"{label}: schema desconocido (se espera {expected_schema})"
@@ -537,11 +537,6 @@ def check_template_manifest(
             failures.append(
                 f"{label}: symlink no permitido en {dir_label}/: {path.name}"
             )
-            continue
-        if path.name.startswith("."):
-            # Dotfiles del sistema (.DS_Store), nunca EXEMPT_PATHS/SUFFIXES:
-            # esos son "exento de tamaño" y no deben poder ocultar un
-            # archivo real de la exigencia de versionado (ronda, HIGH).
             continue
         on_disk.append(path.name)
     listed = sorted(data["files"])

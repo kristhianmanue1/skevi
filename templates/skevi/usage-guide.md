@@ -21,6 +21,19 @@ qué versión; no la dupliques aquí.
 
 <lista de límites de tamaño propios, exenciones registradas, o "ninguna">
 
+## Idiomas elegidos
+
+Fuente normativa: estándar §3.1 (ADR-015, precisión ADR-029).
+Completa estas elecciones o enlaza su fuente local existente, sin duplicarla:
+
+- Comunicación humana predeterminada: <idioma elegido por el humano>.
+- Producto: <idiomas de documentación, interfaz y mensajes; o no aplica>.
+- Comentarios/docstrings: <idioma de la prosa del proyecto o elección del equipo>.
+- Excepciones a identificadores nuevos en inglés: <contrato o razón; o ninguna>.
+
+La preferencia de conversación no modifica estas elecciones persistentes.
+Antes de fijar texto persistente, pregunta si falta la elección necesaria.
+
 ## Verificación local
 
 ```bash

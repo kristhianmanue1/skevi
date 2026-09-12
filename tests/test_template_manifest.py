@@ -517,12 +517,12 @@ class CheckSizesEnforcesNamespaceTests(unittest.TestCase):
 
 
 class ManifestListingRespectsExemptionsTests(unittest.TestCase):
-    """Un .DS_Store en el directorio del manifiesto no debe exigir entrada,
-    pero la exención tiene que ser propia y estrecha —dotfiles—, nunca
-    EXEMPT_PATHS/EXEMPT_SUFFIXES: esos significan "exento del límite de
-    tamaño", y reusarlos aquí dejaba que una línea de skevi-gate.json
-    sacara un archivo real de la exigencia de versionado, en verde y sin
-    aviso (hallazgo HIGH de la tercera ronda, 2026-09-08)."""
+    """Las exenciones de tamaño nunca reducen el conjunto versionado.
+
+    ADR-028 exige cada archivo regular, incluidos los ocultos: un dotfile
+    accidental debe bloquear y retirarse o declararse, no desaparecer del
+    cotejo del manifiesto.
+    """
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -550,9 +550,10 @@ class ManifestListingRespectsExemptionsTests(unittest.TestCase):
             manifest_path, self.dir, expected_schema=check_sizes.SCRIPT_MANIFEST_SCHEMA
         )
 
-    def test_ds_store_dotfile_does_not_require_manifest_entry(self):
-        (self.dir / ".DS_Store").write_bytes(b"\x00\x01binary")
-        self.assertEqual(self._manifest_failures(), [])
+    def test_hidden_regular_file_requires_manifest_entry(self):
+        (self.dir / ".hidden-gate").write_text("oculto\n", encoding="utf-8")
+        failures = self._manifest_failures()
+        self.assertTrue(any(".hidden-gate" in f for f in failures), failures)
 
     def test_exempt_paths_cannot_hide_a_real_file_from_the_manifest(self):
         """EXEMPT_PATHS es config del adoptante (skevi-gate.json); no debe

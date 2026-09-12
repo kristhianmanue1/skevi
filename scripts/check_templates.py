@@ -84,20 +84,23 @@ def _check_namespace(version, schema, where):
     las de plantillas — nunca el del otro documento."""
     if version is None:
         return
-    esperado = SCHEMA_NAMESPACE.get(schema)
+    expected_namespace = SCHEMA_NAMESPACE.get(schema)
     # Fail-closed: un esquema válido sin namespace registrado es un olvido
     # de mantenimiento, no una razón para omitir la comprobación.
-    _require(esperado is not None,
+    _require(expected_namespace is not None,
              f"{where}: {schema} no tiene namespace de versión registrado "
              "(SCHEMA_NAMESPACE desactualizado)")
-    _require(version.startswith(esperado + "/"),
+    _require(version.startswith(expected_namespace + "/"),
              f"{where}: version «{version}» no corresponde al espacio de "
-             f"nombres de {schema} (se espera {esperado}/vN)")
+             f"nombres de {schema} (se espera {expected_namespace}/vN)")
 
 
 def _check_common(data, schemas, keys, label):
     _require(isinstance(data, dict), f"{label}: la raíz debe ser un objeto")
-    _require(data.get("schema") in schemas,
+    missing = sorted(keys - set(data))
+    _require(not missing,
+             f"{label}: campos obligatorios ausentes: {', '.join(missing)}")
+    _require(isinstance(data["schema"], str) and data["schema"] in schemas,
              f"{label}: schema desconocido (se espera uno de "
              + ", ".join(sorted(schemas)) + ")")
     unknown = sorted(set(data) - keys)
