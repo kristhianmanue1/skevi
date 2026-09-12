@@ -92,7 +92,7 @@ lleva su test en `tests/` (`check_sizes`, `check_plans`, `check_reports`).
 - Al añadir una regla normativa, declara su procedencia y su razón. Una regla
   sin fuente no es aplicable.
 
-<!-- an-kla:managed-begin {"content_sha256":"sha256:a1478300fbfacfe73edc2409e1340a7f1b909da869ce7fe39c2da5000813e152","id":"agent-context","schema":"an-kla/context-block/v1","version":"0.1.0-beta.21"} -->
+<!-- an-kla:managed-begin {"content_sha256":"sha256:a1478300fbfacfe73edc2409e1340a7f1b909da869ce7fe39c2da5000813e152","id":"agent-context","schema":"an-kla/context-block/v1","version":"0.1.0-beta.26"} -->
 ## AN-KLA Memory
 
 Este proyecto usa memoria local AN-KLA. Para trabajo material o dependiente del
