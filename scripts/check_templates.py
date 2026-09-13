@@ -4,13 +4,15 @@ enmiendas T09; extendido a scripts/ por ADR-028).
 
 Compara un MANIFEST fuente de Skevi contra el registro de instalación del
 consumidor. El mecanismo es genérico por diseño — no depende de que el
-artefacto sea una plantilla de documentación—: reconoce dos familias de
+artefacto sea una plantilla de documentación—: reconoce tres familias de
 esquema, cada una con su propio espacio de nombres de versión:
 
   - plantillas de adopción: `skevi/template-manifest/v1` +
     `skevi/template-install/v1`, versión `plantillas/vN` (ADR-020)
   - scripts de gate:        `skevi/script-manifest/v1` +
     `skevi/script-install/v1`, versión `gate/vN` (ADR-028)
+  - corpus normativo:       `skevi/corpus-manifest/v1` +
+    `skevi/corpus-install/v1`, versión `corpus/vN` (ADR-032)
 
 El señal válido de drift es la versión declarada, nunca el contenido: las
 plantillas se rellenan por diseño y los scripts pueden llevar exenciones
@@ -40,8 +42,10 @@ from pathlib import Path
 # de comparación: main()/_chain() son agnósticos a la familia. Olvidar
 # SCHEMA_NAMESPACE no es un error silencioso: _check_namespace falla
 # cerrado ante un esquema sin namespace registrado (ronda adversarial, MED).
-MANIFEST_SCHEMAS = {"skevi/template-manifest/v1", "skevi/script-manifest/v1"}
-INSTALL_SCHEMAS = {"skevi/template-install/v1", "skevi/script-install/v1"}
+MANIFEST_SCHEMAS = {"skevi/template-manifest/v1", "skevi/script-manifest/v1",
+                    "skevi/corpus-manifest/v1"}
+INSTALL_SCHEMAS = {"skevi/template-install/v1", "skevi/script-install/v1",
+                   "skevi/corpus-install/v1"}
 # Cada esquema exige su propio espacio de nombres de versión. Sin esto, un
 # manifiesto de la familia equivocada con un namespace de versión que
 # coincida por accidente con el del otro documento producía OK falso: cada
@@ -52,6 +56,8 @@ SCHEMA_NAMESPACE = {
     "skevi/template-install/v1": "plantillas",
     "skevi/script-manifest/v1": "gate",
     "skevi/script-install/v1": "gate",
+    "skevi/corpus-manifest/v1": "corpus",
+    "skevi/corpus-install/v1": "corpus",
 }
 MANIFEST_KEYS = {"schema", "version", "generated_at", "files", "history"}
 INSTALL_KEYS = {"schema", "version", "files", "installed_at", "source",

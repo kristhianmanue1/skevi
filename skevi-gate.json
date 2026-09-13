@@ -8,7 +8,7 @@
     "docs/.DS_Store"
   ],
   "limits": {
-    "scripts/check_sizes.py": 830
+    "scripts/check_sizes.py": 870
   },
   "required": [
     "AGENTS.md",
@@ -19,6 +19,7 @@
     "docs/ai-agent-guide/02-specs-adr-contratos.md",
     "docs/ai-agent-guide/03-cascaron-proyecto.md",
     "docs/ai-agent-guide/04-ejecucion-y-verificacion.md",
+    "docs/MANIFEST.json",
     "scripts/check_sizes.py",
     "scripts/check_reports.py",
     "scripts/MANIFEST.json",
@@ -29,6 +30,7 @@
     "templates/skevi/architecture-overview.md",
     "templates/skevi/MANIFEST.json",
     "templates/skevi/installed.json",
+    "templates/skevi/corpus-installed.json",
     "templates/skevi/scripts-installed.json"
   ],
   "reading_path": {

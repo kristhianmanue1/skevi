@@ -1,12 +1,13 @@
 {
   "schema": "skevi/template-manifest/v1",
-  "version": "plantillas/v5",
-  "generated_at": "2026-09-13T12:02:35Z",
+  "version": "plantillas/v6",
+  "generated_at": "2026-09-13T12:25:48Z",
   "files": {
     "architecture-overview.md": "sha256:c7a03679ec978ff609e6216cc63b5043eeb185424895083970b399ac9912b2d3",
-    "installed.json": "sha256:aaf2753e0d3ea83055456c4d97b56bab8b3584d3ad56bbe56aa1ada593171bd2",
-    "scripts-installed.json": "sha256:541642dccc2122132ef7bdba8cdf08587f5a3629865ce856b1f254be770db6ef",
-    "usage-guide.md": "sha256:4450102304a66f504a3076166205bb4155314902cd5abcebe78ad82cf1973427"
+    "corpus-installed.json": "sha256:513b81d22628396e20dd1d7655762b625bfef8aab50a877306fa4aaa543dffe5",
+    "installed.json": "sha256:e96f6a9d8312a63e013bf443a0c10677b39e4bcc99dc84b0ca0d8f3c62c67160",
+    "scripts-installed.json": "sha256:3fc6b38c2ddd32b1d05021c7749f6fea725f1c6b12e5889b263b2a69243ef076",
+    "usage-guide.md": "sha256:eb955a289b863e85b7d9c351b2974caad99a2a7a6e1deff0e767229e543c614c"
   },
   "history": [
     {
@@ -42,6 +43,17 @@
       "changes": {
         "installed.json": "placeholder de source con formato cerrado <origen>@<revisión> (ADR-031); ejemplo a plantillas/v5",
         "scripts-installed.json": "placeholder de source con formato cerrado (ADR-031); ejemplo a gate/v5"
+      }
+    },
+    {
+      "from": "plantillas/v5",
+      "to": "plantillas/v6",
+      "breaking": false,
+      "changes": {
+        "usage-guide.md": "secciones de drift, gate de push y dependencias activas (#42, #41.3)",
+        "corpus-installed.json": "nuevo: registro de instalación del corpus (ADR-032)",
+        "installed.json": "ejemplo de versión alineado con plantillas/v6",
+        "scripts-installed.json": "ejemplo de versión alineado con gate/v6"
       }
     }
   ]

@@ -610,7 +610,63 @@ class CheckSizesNamespaceFailsClosedTests(unittest.TestCase):
     def test_every_expected_schema_has_a_namespace(self):
         self.assertEqual(
             set(check_sizes.SCHEMA_NAMESPACE),
-            {check_sizes.TEMPLATE_MANIFEST_SCHEMA, check_sizes.SCRIPT_MANIFEST_SCHEMA},
+            {check_sizes.TEMPLATE_MANIFEST_SCHEMA,
+             check_sizes.SCRIPT_MANIFEST_SCHEMA,
+             check_sizes.CORPUS_MANIFEST_SCHEMA},
         )
+
+
+class CorpusManifestRealRepoTests(unittest.TestCase):
+    """ADR-032: docs/MANIFEST.json declara el canon (estándar + guía) con
+    digests vigentes; la plantilla corpus-installed.json se llena desde él
+    y pasa el comparador en su primera ejecución."""
+
+    def test_corpus_manifest_digests_match_the_real_files(self):
+        root = Path(__file__).resolve().parent.parent
+        data = json.loads(
+            (root / "docs" / "MANIFEST.json").read_text(encoding="utf-8"))
+        self.assertEqual(data["schema"], "skevi/corpus-manifest/v1")
+        for name, digest in data["files"].items():
+            path = root / "docs" / name
+            self.assertEqual(digest_of(path), digest, name)
+
+    def test_corpus_template_version_matches_source_manifest(self):
+        root = Path(__file__).resolve().parent.parent
+        plantilla = json.loads(
+            (root / "templates" / "skevi" / "corpus-installed.json")
+            .read_text(encoding="utf-8"))
+        fuente = json.loads(
+            (root / "docs" / "MANIFEST.json").read_text(encoding="utf-8"))
+        self.assertEqual(plantilla["version"], fuente["version"])
+
+    def _comparator(self):
+        spec = importlib.util.spec_from_file_location(
+            "check_templates_corpus_test", SCRIPTS_DIR / "check_templates.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_a_freshly_filled_corpus_template_passes_the_gate(self):
+        root = Path(__file__).resolve().parent.parent
+        plantilla = json.loads(
+            (root / "templates" / "skevi" / "corpus-installed.json")
+            .read_text(encoding="utf-8"))
+        fuente = json.loads(
+            (root / "docs" / "MANIFEST.json").read_text(encoding="utf-8"))
+        plantilla["files"] = dict(fuente["files"])
+        plantilla["installed_at"] = "2026-09-13T00:00:00Z"
+        plantilla["source"] = "skevi@0a1b2c3"
+        with tempfile.TemporaryDirectory() as tmp:
+            installed_path = Path(tmp) / "corpus-installed.json"
+            installed_path.write_text(json.dumps(plantilla), encoding="utf-8")
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                code = self._comparator().main([
+                    "--manifest", str(root / "docs" / "MANIFEST.json"),
+                    "--installed", str(installed_path),
+                ])
+        self.assertEqual(code, 0, buf.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

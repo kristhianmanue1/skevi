@@ -102,6 +102,9 @@ Compatibilidad:
   - sin detección positiva, el contrato no existe; activación
     condicional, sin acoplamiento del gate de tamaños (su frontera
     es forma/tamaño; la verificación es el preflight comandado)
+  - la activación absorbe la lectura de este documento y de
+    `AN-KLA.md` en el presupuesto de ruta de lectura del adoptante
+    (ADR-021) y la declara por escrito en su config de gate
   - cambios del contrato -> v2, nunca mutación in situ
 ```
 
