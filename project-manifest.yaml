@@ -41,6 +41,21 @@ ofrece:
     comparación autoritativa de los archivos regulares del nivel superior de
     scripts/ contra su fuente; los subdirectorios, incluido hooks/, quedan
     fuera de ese MANIFEST (ADR-028)
+  - >
+    gate local que mide el disco —lo que el ejecutor lee— con política
+    de ignorados declarada y exención por nombre de archivo; fallos que
+    sugieren la clave que los resuelve (ADR-030)
+  - >
+    procedencia cerrada de las adopciones: el campo source de los
+    registros de instalación exige <origen>@<revisión> (ADR-031)
+  - >
+    canon normativo versionado: manifiesto de corpus con digests y
+    cadena de versiones para estándar + guía, comparable por comando
+    (ADR-032)
+  - >
+    complemento de adopción para árboles congelados —código que no se
+    edita en sitio, sea cual sea su autoría—: baseline por derivación,
+    que aterriza la iniciativa A-2 de PROP-002 (ADR-033)
   - registro histórico de pilotos con procedencia de cada regla
 
 no_ofrece:
