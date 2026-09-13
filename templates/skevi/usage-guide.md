@@ -75,3 +75,9 @@ git config core.hooksPath scripts/hooks
   escrita (ADR-021, ADR-025), p. ej. límite 1400 con `05` y `AN-KLA.md`
   añadidas a `files`.
 - Otras dependencias: <ninguna declarada>.
+
+## Plantilla opcional: árboles congelados
+
+Si tu proyecto tiene código que no se edita en sitio (export de
+generador, entrega de tercero, baseline sellado), copia también
+`frozen-trees.md` a tu `.skevi/` y sigue sus instrucciones (ADR-033).
