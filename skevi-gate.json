@@ -7,6 +7,9 @@
     ".DS_Store",
     "docs/.DS_Store"
   ],
+  "limits": {
+    "scripts/check_sizes.py": 830
+  },
   "required": [
     "AGENTS.md",
     "README.md",

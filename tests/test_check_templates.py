@@ -47,7 +47,7 @@ def installed_data(version="plantillas/v1", customized=None, files=None):
         "version": version,
         "files": files or {"usage-guide.md": "sha256:" + "b" * 64},
         "installed_at": "2026-09-01T00:00:00Z",
-        "source": "skevi/templates/skevi",
+        "source": "skevi/templates/skevi@0a1b2c3",
         "customized": customized or [],
     }
 
@@ -378,7 +378,7 @@ class ScriptManifestFamilyTests(unittest.TestCase):
             "version": "gate/v2",
             "files": files_for(["check_sizes.py"]),
             "installed_at": "2026-09-08T00:00:00Z",
-            "source": "skevi/scripts",
+            "source": "skevi/scripts@0a1b2c3",
             "customized": [],
         })
         code, output = self._run()
@@ -447,7 +447,7 @@ class ScriptManifestFamilyTests(unittest.TestCase):
             "version": "plantillas/v2",
             "files": files_for(["x.py"]),
             "installed_at": "2026-09-08T00:00:00Z",
-            "source": "x",
+            "source": "x@0a1b2c3",
             "customized": [],
         })
         code, output = self._run()
@@ -461,7 +461,7 @@ class ScriptManifestFamilyTests(unittest.TestCase):
             "version": "plantillas/v1",
             "files": files_for(["usage-guide.md"]),
             "installed_at": "2026-09-08T00:00:00Z",
-            "source": "x",
+            "source": "x@0a1b2c3",
             "customized": [],
         })
         code, output = self._run()
@@ -482,12 +482,71 @@ class ScriptManifestFamilyTests(unittest.TestCase):
             "version": "plantillas/v1",
             "files": files_for(["x.py"]),
             "installed_at": "2026-09-08T00:00:00Z",
-            "source": "x",
+            "source": "x@0a1b2c3",
             "customized": [],
         })
         code, output = self._run()
         self.assertEqual(code, 1, output)
         self.assertTrue(output.startswith("BLOQ"))
+
+
+class SourceProvenanceTests(unittest.TestCase):
+    """A-7 de PROP-002, aterrizada por ADR-031: `source` es procedencia
+    cerrada <origen>@<revisión>, no texto libre — la evidencia que su
+    decisión exigía («un agente responde qué versión sigue y qué dejó,
+    leyendo un archivo») no la produce un campo sin ancla."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+
+    def _regex_accepts(self, *values):
+        for value in values:
+            self.assertTrue(
+                check_templates.SOURCE_RE.match(value),
+                f"debería aceptar {value!r}",
+            )
+
+    def _regex_rejects(self, *values):
+        for value in values:
+            self.assertFalse(
+                check_templates.SOURCE_RE.match(value),
+                f"debería rechazar {value!r}",
+            )
+
+    def test_closed_format(self):
+        self._regex_accepts(
+            "https://github.com/org/repo@0a1b2c3",
+            "https://github.com/org/repo@" + "a" * 40,
+            "https://github.com/org/repo@" + "a" * 64,
+            "../espejo-local/skevi@0a1b2c3d",
+        )
+        self._regex_rejects(
+            "skevi/templates/skevi",
+            "repo@ABCDEF0",
+            "repo@0a1b2c",
+            "repo@a@0a1b2c3",
+            "repo@0a1b2c3 extra",
+            "",
+        )
+
+    def test_free_text_source_blocks_end_to_end(self):
+        write_json(self.root / "MANIFEST.json", manifest_data(
+            version="plantillas/v1"))
+        installed = installed_data(version="plantillas/v1")
+        installed["source"] = "la copié de otro proyecto"
+        write_json(self.root / "installed.json", installed)
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            code = check_templates.main(
+                ["--manifest", str(self.root / "MANIFEST.json"),
+                 "--installed", str(self.root / "installed.json")]
+            )
+        output = buf.getvalue()
+        self.assertEqual(code, 1)
+        self.assertTrue(output.startswith("BLOQ"))
+        self.assertIn("<origen>@<revisión>", output)
 
 
 class SchemaNamespaceCompletenessTests(unittest.TestCase):

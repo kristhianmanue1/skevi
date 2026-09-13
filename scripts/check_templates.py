@@ -58,6 +58,11 @@ INSTALL_KEYS = {"schema", "version", "files", "installed_at", "source",
                 "customized"}
 HISTORY_KEYS = {"from", "to", "breaking", "changes"}
 DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
+# Procedencia cerrada del registro de instalación (A-7 de PROP-002,
+# aterrizada por ADR-031): <origen>@<revisión>. El origen es texto sin @
+# ni espacios —URL o ruta relativa—; la revisión es hex minúsculas de 7 a
+# 64 dígitos: sha de Git corto o completo, incluido SHA-256 de repo.
+SOURCE_RE = re.compile(r"^[^@\s]+@[0-9a-f]{7,64}$")
 # Namespace en minúsculas + /vN: cubre "plantillas/v1" y "gate/v2" con la
 # misma expresión — el espacio de nombres lo declara la familia, no el regex.
 VERSION_RE = re.compile(r"^[a-z]+/v\d+(\.\d+)*$")
@@ -190,8 +195,10 @@ def _load_install(path: Path) -> dict:
         _check_digest(digest, f"{label}: files.{name}")
     _require(isinstance(data["installed_at"], str) and data["installed_at"],
              f"{label}: installed_at debe ser texto con fecha")
-    _require(isinstance(data["source"], str) and data["source"],
-             f"{label}: source debe ser texto")
+    _require(isinstance(data["source"], str)
+             and SOURCE_RE.match(data["source"]),
+             f"{label}: source debe ser <origen>@<revisión> "
+             "(p. ej. https://github.com/org/repo@0a1b2c3)")
     _require(isinstance(data["customized"], list)
              and all(isinstance(v, str) for v in data["customized"]),
              f"{label}: customized debe ser una lista de nombres de archivo")

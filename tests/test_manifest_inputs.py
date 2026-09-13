@@ -20,7 +20,8 @@ def documents(family):
         dict(common, schema=f"skevi/{family}-manifest/v1",
              generated_at="2026-09-12T00:00:00Z", history=[]),
         dict(common, schema=f"skevi/{family}-install/v1",
-             installed_at="2026-09-12T00:00:00Z", source="fixture", customized=[]),
+             installed_at="2026-09-12T00:00:00Z",
+             source="fixture@0a1b2c3", customized=[]),
     )
 
 
