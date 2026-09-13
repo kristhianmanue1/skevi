@@ -136,6 +136,15 @@ La versión de `scripts/MANIFEST.json` (`gate/vN`) es la misma que
 sólo mira su log de CI ya sabe que su copia envejece; quien quiere saber
 **contra qué versión** usa este comando.
 
+**Y cubre el corpus normativo** (ADR-032): `docs/MANIFEST.json` declara
+la versión vigente del estándar y de la guía, con la misma mecánica:
+
+```bash
+python3 <ruta-a-skevi>/scripts/check_templates.py \
+  --manifest <ruta-a-skevi>/docs/MANIFEST.json \
+  --installed .skevi/corpus-installed.json
+```
+
 ## Verificación
 
 ```bash

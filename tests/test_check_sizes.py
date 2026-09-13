@@ -38,6 +38,68 @@ class LimitForTests(unittest.TestCase):
         self.assertEqual(check_sizes.limit_for("templates/skevi/x.md"), 300)
 
 
+class CorpusManifestTests(unittest.TestCase):
+    """Familia corpus (ADR-032): docs/MANIFEST.json valida estructura y
+    digests del canon declarado, sin listado de directorio — docs/ anida
+    subdirectorios y el contrato de plantillas es plano por diseño."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self._orig_root = check_sizes.ROOT
+        check_sizes.ROOT = self.root
+        (self.root / "docs" / "ai-agent-guide").mkdir(parents=True)
+        self.canon = self.root / "docs" / "estandar.md"
+        self.canon.write_text("norma\n", encoding="utf-8")
+
+    def tearDown(self):
+        check_sizes.ROOT = self._orig_root
+
+    def _digest_of(self, path):
+        return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+
+    def _manifest(self, files=None, schema=None, version="corpus/v1"):
+        data = {
+            "schema": schema or check_sizes.CORPUS_MANIFEST_SCHEMA,
+            "version": version,
+            "generated_at": "2026-09-13T00:00:00Z",
+            "files": files if files is not None else {
+                "estandar.md": self._digest_of(self.canon),
+            },
+            "history": [],
+        }
+        path = self.root / "docs" / "MANIFEST.json"
+        path.write_text(json.dumps(data), encoding="utf-8")
+        return path
+
+    def test_valid_corpus_manifest_passes(self):
+        self.assertEqual(check_sizes.check_corpus_manifest(self._manifest()), [])
+
+    def test_stale_digest_is_reported_per_file(self):
+        path = self._manifest(files={"estandar.md": "sha256:" + "0" * 64})
+        failures = check_sizes.check_corpus_manifest(path)
+        self.assertEqual(len(failures), 1)
+        self.assertIn("estandar.md", failures[0])
+        self.assertIn("digest desactualizado", failures[0])
+
+    def test_wrong_schema_is_rejected_strictly(self):
+        path = self._manifest(schema=check_sizes.TEMPLATE_MANIFEST_SCHEMA)
+        failures = check_sizes.check_corpus_manifest(path)
+        self.assertTrue(failures)
+
+    def test_path_escaping_root_is_rejected(self):
+        path = self._manifest(files={"../../fuera.md": "sha256:" + "0" * 64})
+        failures = check_sizes.check_corpus_manifest(path)
+        self.assertTrue(any("escapa" in f for f in failures))
+
+    def test_missing_file_is_a_failure_not_a_skip(self):
+        path = self._manifest(files={"ai-agent-guide/00-INDICE.md":
+                                     "sha256:" + "0" * 64})
+        failures = check_sizes.check_corpus_manifest(path)
+        self.assertEqual(len(failures), 1)
+
+
 class RegistryBlockTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -187,6 +249,8 @@ class MainIntegrationTests(unittest.TestCase):
         exit_code, output = self._run_main()
         self.assertEqual(exit_code, 1)
         self.assertIn("Markdown operativo suelto en raíz", output)
+        # ADR-007: el fallo sugiere la clave que lo resuelve (#41.2).
+        self.assertIn("root_markdown", output)
         self.assertIn("NOTAS.md", output)
 
     def test_file_over_default_limit_fails(self):
@@ -268,6 +332,8 @@ class MainIntegrationTests(unittest.TestCase):
         self.assertTrue(result.stdout.startswith("BLOQ"))
         self.assertIn("README.md", result.stdout)
         self.assertIn("UTF-8", result.stdout)
+        # ADR-007: el fallo sugiere la exención que lo resuelve (#41.2).
+        self.assertIn("exempt", result.stdout)
         self.assertEqual(result.stderr, "")
         self.assertNotIn("private-payload", result.stdout)
         self.assertNotIn(str(self.root), result.stdout)

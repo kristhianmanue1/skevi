@@ -43,3 +43,35 @@ Antes de fijar texto persistente, pregunta si falta la elección necesaria.
 ## Dónde están los ADRs y specs de F1
 
 <ruta, p. ej. docs/adr/ — o "pendiente: F1 no se ha ejecutado todavía">
+
+## Drift contra el canon
+
+Compara tus copias versionadas contra los manifiestos fuente de Skevi
+(señal válida: la versión declarada, nunca el contenido). Para el corpus,
+copia también el `docs/MANIFEST.json` del canon junto a estándar y guía:
+es tu referencia de versión:
+
+```bash
+python3 scripts/check_templates.py --manifest templates/skevi/MANIFEST.json --installed .skevi/installed.json
+python3 scripts/check_templates.py --manifest scripts/MANIFEST.json --installed .skevi/scripts-installed.json
+python3 scripts/check_templates.py --manifest docs/MANIFEST.json --installed .skevi/corpus-installed.json
+```
+
+## Gate de push
+
+La activación es config local, no viaja con el clon — un clon fresco
+pierde el gate de push en silencio si no la repites:
+
+```bash
+git config core.hooksPath scripts/hooks
+```
+
+## Dependencias activas del ecosistema
+
+- **AN-KLA Memory:** <instalada | no instalada>. Si lo está, el contrato
+  `skevi/an-kla-integration` (guía `05` §6) hace obligatorias dos
+  lecturas más por sesión material (`05` y `AN-KLA.md`): decláralas en
+  `reading_path` de `skevi-gate.json` y sube el límite por decisión
+  escrita (ADR-021, ADR-025), p. ej. límite 1400 con `05` y `AN-KLA.md`
+  añadidas a `files`.
+- Otras dependencias: <ninguna declarada>.

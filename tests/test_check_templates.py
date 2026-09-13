@@ -385,6 +385,41 @@ class ScriptManifestFamilyTests(unittest.TestCase):
         self.assertEqual(code, 0, output)
         self.assertTrue(output.startswith("OK —"))
 
+    def test_corpus_family_is_accepted(self):
+        """Tercera familia (ADR-032): el manifiesto del canon y el registro
+        del adoptante comparan por versión, como las familias previas."""
+        write_json(self.manifest_path, {
+            "schema": "skevi/corpus-manifest/v1",
+            "version": "corpus/v1",
+            "generated_at": "2026-09-13T00:00:00Z",
+            "files": files_for(["estandar.md"]),
+            "history": [],
+        })
+        write_json(self.installed_path, {
+            "schema": "skevi/corpus-install/v1",
+            "version": "corpus/v1",
+            "files": files_for(["estandar.md"]),
+            "installed_at": "2026-09-13T00:00:00Z",
+            "source": "skevi@0a1b2c3",
+            "customized": [],
+        })
+        code, output = self._run()
+        self.assertEqual(code, 0, output)
+        self.assertTrue(output.startswith("OK —"))
+
+    def test_corpus_version_must_use_corpus_namespace(self):
+        write_json(self.manifest_path, {
+            "schema": "skevi/corpus-manifest/v1",
+            "version": "gate/v2",
+            "generated_at": "2026-09-13T00:00:00Z",
+            "files": files_for(["estandar.md"]),
+            "history": [],
+        })
+        write_json(self.installed_path, installed_data())
+        code, output = self._run()
+        self.assertEqual(code, 1)
+        self.assertTrue(output.startswith("BLOQ"))
+
     def test_gate_version_format_is_accepted(self):
         """El formato de versión no queda anclado a «plantillas»: cualquier
         espacio de nombres en minúsculas con /vN es válido."""

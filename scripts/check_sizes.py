@@ -24,7 +24,7 @@ from pathlib import Path
 # proyectos ajenos. Lo que sí puede es que la copia diga quién es y cuántos
 # días tiene, en la salida que el adoptante ya ejecuta. Al cambiar el
 # comportamiento del gate se sube GATE_VERSION y se pone la fecha del cambio.
-GATE_VERSION = "gate/v5"
+GATE_VERSION = "gate/v6"
 GATE_GENERATED_AT = "2026-09-13"
 GATE_STALE_AFTER_DAYS = 90
 
@@ -107,10 +107,15 @@ TEMPLATE_MANIFEST_SCHEMA = "skevi/template-manifest/v1"
 # Segunda familia (ADR-028): mismo check_template_manifest, sobre scripts/
 # en vez de templates/skevi/, validación estricta por directorio.
 SCRIPT_MANIFEST_SCHEMA = "skevi/script-manifest/v1"
+# Tercera familia (ADR-032): el canon normativo (estándar + guía) con
+# digests en docs/MANIFEST.json; sin listado de directorio, porque docs/
+# anida subdirectorios y el contrato de ADR-020 es plano por diseño.
+CORPUS_MANIFEST_SCHEMA = "skevi/corpus-manifest/v1"
 # Namespace por esquema (ADR-028), simétrico con check_templates.py.
 SCHEMA_NAMESPACE = {
     TEMPLATE_MANIFEST_SCHEMA: "plantillas",
     SCRIPT_MANIFEST_SCHEMA: "gate",
+    CORPUS_MANIFEST_SCHEMA: "corpus",
 }
 TEMPLATE_MANIFEST_KEYS = {"schema", "version", "generated_at", "files",
                           "history"}
@@ -514,10 +519,11 @@ def check_template_manifest(
     manifest_path: Path,
     templates_dir: Path,
     expected_schema: str = TEMPLATE_MANIFEST_SCHEMA,
+    verify_listing: bool = True,
 ) -> list[str]:
-    """Valida un MANIFEST fuente de Skevi (#28 D1 + T09; familias ADR-028):
-    esquema cerrado, listado exacto del directorio (sin el MANIFEST mismo) y
-    digests vigentes. Fail-closed, sin tracebacks; genérico por directorio."""
+    """Valida un MANIFEST fuente de Skevi (#28 D1 + T09; familias ADR-028 y
+    ADR-032): esquema cerrado, digests vigentes y —para las familias planas—
+    listado exacto del directorio. Fail-closed, sin tracebacks."""
     # Bajo ROOT: etiqueta real ("scripts/..."). Fuera de ROOT (tests): se
     # degrada al nombre del directorio.
     try:
@@ -539,6 +545,32 @@ def check_template_manifest(
         return [f"{label}: JSON inválido o demasiado anidado"]
     failures = _validate_template_manifest(data, label, expected_schema)
     if failures:
+        return failures
+    if not verify_listing:
+        # Familia corpus (ADR-032): se verifica el digest de cada archivo
+        # declarado, con ruta relativa al directorio del manifiesto y sin
+        # escapar de la raíz. Un archivo ausente es fallo, nunca omisión.
+        for name, digest in data["files"].items():
+            candidate = manifest_path.parent / name
+            try:
+                candidate.resolve().relative_to(ROOT.resolve())
+            except ValueError:
+                failures.append(
+                    f"{label}: files.{name} escapa de la raíz del proyecto"
+                )
+                continue
+            try:
+                observed = "sha256:" + hashlib.sha256(
+                    candidate.read_bytes()
+                ).hexdigest()
+            except OSError:
+                failures.append(f"{label}: no se pudo leer {name}")
+                continue
+            if observed != digest:
+                failures.append(
+                    f"{label}: digest desactualizado para {name} "
+                    "(¿cambió el canon sin bump?)"
+                )
         return failures
     try:
         entries = sorted(templates_dir.iterdir(), key=lambda path: path.name)
@@ -617,6 +649,16 @@ def count_text_lines(relative: Path) -> int | None:
         return None
     text = (ROOT / relative).read_text(encoding="utf-8")
     return len(text.splitlines())
+
+
+def check_corpus_manifest(manifest_path: Path) -> list[str]:
+    """Familia corpus (ADR-032): docs/MANIFEST.json declara el canon
+    (estándar + guía) y aquí se verifica su estructura y sus digests, sin
+    listado de directorio — docs/ anida subdirectorios y el contrato de
+    ADR-020 es plano por diseño."""
+    return check_template_manifest(
+        manifest_path, manifest_path.parent,
+        expected_schema=CORPUS_MANIFEST_SCHEMA, verify_listing=False)
 
 
 def check_reading_path() -> list[str]:
@@ -747,6 +789,10 @@ def main() -> int:
             scripts_manifest_path, scripts_manifest_path.parent,
             expected_schema=SCRIPT_MANIFEST_SCHEMA))
 
+    corpus_manifest_path = ROOT / "docs" / TEMPLATE_MANIFEST_NAME
+    if corpus_manifest_path.is_file():
+        failures.extend(check_corpus_manifest(corpus_manifest_path))
+
     unexpected_markdown = sorted(
         path.name
         for path in ROOT.glob("*.md")
@@ -754,7 +800,9 @@ def main() -> int:
     )
     if unexpected_markdown:
         failures.append(
-            "Markdown operativo suelto en raíz: " + ", ".join(unexpected_markdown)
+            "Markdown operativo suelto en raíz: "
+            + ", ".join(unexpected_markdown)
+            + " (decláralo en «root_markdown» de " + CONFIG_NAME + ")"
         )
 
     failures.extend(check_reading_path())
@@ -770,7 +818,11 @@ def main() -> int:
                 text = (ROOT / relative).read_text(encoding="utf-8")
                 failures.extend(check_registry_block(relative, text))
         except UnicodeDecodeError:
-            failures.append(f"{name}: contenido no válido como UTF-8")
+            failures.append(
+                f"{name}: contenido no válido como UTF-8 "
+                "(si es binario, exéntalo con «exempt_paths» o "
+                f"«exempt_names» en {CONFIG_NAME})"
+            )
             continue
         except OSError:
             # No volcar la excepción: puede contener rutas o datos del host.

@@ -14,7 +14,8 @@ import check_templates
 
 
 def documents(family):
-    namespace = "gate" if family == "script" else "plantillas"
+    namespace = {"template": "plantillas", "script": "gate",
+                 "corpus": "corpus"}[family]
     common = {"version": f"{namespace}/v1", "files": {"x": "sha256:" + "a" * 64}}
     return (
         dict(common, schema=f"skevi/{family}-manifest/v1",
@@ -47,7 +48,7 @@ class ManifestInputTests(unittest.TestCase):
         self.assertNotIn("Traceback", output)
 
     def test_comparator_missing_fields_in_both_documents_and_families(self):
-        for family in ("template", "script"):
+        for family in ("template", "script", "corpus"):
             for side in (0, 1):
                 for field in documents(family)[side]:
                     with self.subTest(family=family, side=side, field=field):
@@ -56,7 +57,7 @@ class ManifestInputTests(unittest.TestCase):
                         self.assert_blocked(manifest, installed, field)
 
     def test_comparator_invalid_schema_types_in_both_documents_and_families(self):
-        for family in ("template", "script"):
+        for family in ("template", "script", "corpus"):
             for side in (0, 1):
                 for value in ([], {}, None, 42, True):
                     with self.subTest(family=family, side=side, value=value):
@@ -65,7 +66,7 @@ class ManifestInputTests(unittest.TestCase):
                         self.assert_blocked(manifest, installed, "schema")
 
     def test_size_gate_missing_fields_in_both_families(self):
-        for family in ("template", "script"):
+        for family in ("template", "script", "corpus"):
             for field in documents(family)[0]:
                 with self.subTest(family=family, field=field):
                     manifest, _ = documents(family)
@@ -77,7 +78,7 @@ class ManifestInputTests(unittest.TestCase):
                     self.assertTrue(any(field in error for error in errors), errors)
 
     def test_size_gate_invalid_schema_types_in_both_families(self):
-        for family in ("template", "script"):
+        for family in ("template", "script", "corpus"):
             for value in ([], {}, None, 42, True):
                 with self.subTest(family=family, value=value):
                     manifest, _ = documents(family)
@@ -88,7 +89,7 @@ class ManifestInputTests(unittest.TestCase):
                     self.assertTrue(any("schema" in error for error in errors))
 
     def test_valid_documents_still_pass_in_both_families(self):
-        for family in ("template", "script"):
+        for family in ("template", "script", "corpus"):
             with self.subTest(family=family):
                 manifest, installed = documents(family)
                 code, output = self.run_comparator(manifest, installed)
