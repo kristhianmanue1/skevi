@@ -24,8 +24,8 @@ from pathlib import Path
 # proyectos ajenos. Lo que sí puede es que la copia diga quién es y cuántos
 # días tiene, en la salida que el adoptante ya ejecuta. Al cambiar el
 # comportamiento del gate se sube GATE_VERSION y se pone la fecha del cambio.
-GATE_VERSION = "gate/v3"
-GATE_GENERATED_AT = "2026-09-12"
+GATE_VERSION = "gate/v4"
+GATE_GENERATED_AT = "2026-09-13"
 GATE_STALE_AFTER_DAYS = 90
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -79,6 +79,9 @@ EXEMPT_SUFFIXES = {
     ".zip",
 }
 EXEMPT_PATHS: set[str] = set()
+# Exención por nombre exacto de archivo (ADR-030): basura que Git no
+# versiona, sin declarar su ruta una a una.
+EXEMPT_NAMES: set[str] = set()
 # Presupuesto de la ruta de lectura obligatoria (ADR-021). Vacío =
 # inactivo: §3.4 acota cada archivo por separado, y hasta ADR-021
 # nada acotaba la suma que un ejecutor debe leer antes de actuar.
@@ -126,6 +129,7 @@ _SKEVI_DEFAULTS = {
     "REQUIRED": frozenset(REQUIRED),
     "SKIP_DIRS": frozenset(SKIP_DIRS),
     "EXEMPT_PATHS": frozenset(EXEMPT_PATHS),
+    "EXEMPT_NAMES": frozenset(EXEMPT_NAMES),
     "READING_PATH": dict(READING_PATH),
     "LIMITS": dict(LIMITS),
     "DEFAULT_LIMIT": DEFAULT_LIMIT,
@@ -144,6 +148,8 @@ def reset_to_skevi_defaults() -> None:
     SKIP_DIRS.update(_SKEVI_DEFAULTS["SKIP_DIRS"])
     EXEMPT_PATHS.clear()
     EXEMPT_PATHS.update(_SKEVI_DEFAULTS["EXEMPT_PATHS"])
+    EXEMPT_NAMES.clear()
+    EXEMPT_NAMES.update(_SKEVI_DEFAULTS["EXEMPT_NAMES"])
     READING_PATH.clear()
     READING_PATH.update(_SKEVI_DEFAULTS["READING_PATH"])
     LIMITS.clear()
@@ -157,8 +163,8 @@ def reset_to_skevi_defaults() -> None:
 # decidirlo es aceptable, cambiarlo en silencio no lo es.
 CONFIG_NAME = "skevi-gate.json"
 CONFIG_KEYS = {
-    "limits", "default_limit", "exempt_paths", "required", "skip_dirs",
-    "root_markdown", "plans", "reading_path", "reports",
+    "limits", "default_limit", "exempt_paths", "exempt_names", "required",
+    "skip_dirs", "root_markdown", "plans", "reading_path", "reports",
 }
 # "plans" la consume scripts/check_plans.py (gate estructural de planes,
 # ADR-014) y "reports" scripts/check_reports.py (gate de reportes de dos
@@ -210,6 +216,17 @@ def _string_list(field: str, values: object) -> list[str]:
     if not isinstance(values, list) or not all(isinstance(v, str) for v in values):
         raise _ConfigError(f"{CONFIG_NAME}: «{field}» debe ser una lista de texto")
     return values
+
+
+def _exempt_names(field: str, values: object) -> list[str]:
+    """Nombre de archivo sin ruta (ADR-030); para rutas, «exempt_paths»."""
+    names = _string_list(field, values)
+    if any(not n or n in {".", ".."} or "/" in n or "\\" in n for n in names):
+        raise _ConfigError(
+            f"{CONFIG_NAME}: «{field}» sólo admite nombres de archivo sin "
+            "ruta; para exentar una ruta usa «exempt_paths»"
+        )
+    return names
 
 
 def _reading_path(values: object) -> dict:
@@ -314,6 +331,8 @@ def apply_config(config: dict) -> None:
         DEFAULT_LIMIT = value
     if "exempt_paths" in config:
         EXEMPT_PATHS.update(_safe_relative_paths("exempt_paths", config["exempt_paths"]))
+    if "exempt_names" in config:
+        EXEMPT_NAMES.update(_exempt_names("exempt_names", config["exempt_names"]))
     if "required" in config:
         REQUIRED.clear()
         REQUIRED.update(_safe_relative_paths("required", config["required"]))
@@ -591,6 +610,8 @@ def count_text_lines(relative: Path) -> int | None:
     tamaño ni permite omitir el archivo como si estuviera exento.
     """
     if relative.as_posix() in EXEMPT_PATHS:
+        return None
+    if relative.name in EXEMPT_NAMES:
         return None
     if relative.suffix.lower() in EXEMPT_SUFFIXES:
         return None

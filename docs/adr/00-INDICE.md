@@ -31,6 +31,7 @@
 | [ADR-027](ADR-027-identidad-y-caducidad-del-gate-copiable.md) | Identidad y autocaducidad del gate copiable | Aceptado | `scripts/check_sizes.py` (`GATE_VERSION`, `gate_staleness`) | Barrido de adoptantes (documento de origen retirado, ver ADR) | 2026-09-08 |
 | [ADR-028](ADR-028-manifest-de-scripts.md) | Extensión del versionado de MANIFEST a scripts/ | Aceptado | `scripts/MANIFEST.json`, `templates/skevi/scripts-installed.json`, `check_templates.py` (segunda familia de esquema) | Instrucción directa | 2026-09-08 |
 | [ADR-029](ADR-029-eleccion-de-idioma-humano.md) | Elección explícita del idioma humano | Aceptado | Estándar §3.1, F0/F3 y plantilla usage-guide; incremento local sin commit | Instrucción directa | 2026-09-12 |
+| [ADR-030](ADR-030-gate-mide-disco.md) | El gate mide el disco, no el índice de Git | Aceptado | `scripts/check_sizes.py` (gate/v4), clave `exempt_names` | [Issue #41](https://github.com/kristhianmanue1/skevi/issues/41); instrucción directa | 2026-09-13 |
 
 **Reglas de este índice**
 

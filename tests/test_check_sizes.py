@@ -296,6 +296,12 @@ class MainIntegrationTests(unittest.TestCase):
         )
         self._assert_exempt_file_is_not_read("docs/exempt.md")
 
+    def test_exempt_name_is_not_read(self):
+        (self.root / check_sizes.CONFIG_NAME).write_text(
+            json.dumps({"exempt_names": [".DS_Store"]}), encoding="utf-8"
+        )
+        self._assert_exempt_file_is_not_read("docs/.DS_Store")
+
 
 class ConfigTests(unittest.TestCase):
     """`skevi-gate.json` — gate configurable por proyecto adoptante (A-6)."""
@@ -312,6 +318,7 @@ class ConfigTests(unittest.TestCase):
         self._orig_limits = dict(check_sizes.LIMITS)
         self._orig_default_limit = check_sizes.DEFAULT_LIMIT
         self._orig_exempt_paths = set(check_sizes.EXEMPT_PATHS)
+        self._orig_exempt_names = set(check_sizes.EXEMPT_NAMES)
         self._orig_required = set(check_sizes.REQUIRED)
         self._orig_skip_dirs = set(check_sizes.SKIP_DIRS)
         self._orig_root_markdown = set(check_sizes.ROOT_MARKDOWN)
@@ -323,6 +330,8 @@ class ConfigTests(unittest.TestCase):
         check_sizes.DEFAULT_LIMIT = self._orig_default_limit
         check_sizes.EXEMPT_PATHS.clear()
         check_sizes.EXEMPT_PATHS.update(self._orig_exempt_paths)
+        check_sizes.EXEMPT_NAMES.clear()
+        check_sizes.EXEMPT_NAMES.update(self._orig_exempt_names)
         check_sizes.REQUIRED.clear()
         check_sizes.REQUIRED.update(self._orig_required)
         check_sizes.SKIP_DIRS.clear()
@@ -416,6 +425,39 @@ class ConfigTests(unittest.TestCase):
         self.assertIsNone(
             check_sizes.count_text_lines(Path("docs/congelado.md"))
         )
+
+    # --- exención por nombre de archivo (ADR-030) -------------------------
+
+    def test_exempt_names_merge(self):
+        check_sizes.apply_config({"exempt_names": [".DS_Store"]})
+        (self.root / "docs").mkdir()
+        (self.root / "docs" / "nota.md").write_text("x\n", encoding="utf-8")
+        self.assertIsNone(
+            check_sizes.count_text_lines(Path("docs/.DS_Store"))
+        )
+        # Sólo exenta por nombre exacto: otro archivo se mide igual.
+        self.assertEqual(check_sizes.count_text_lines(Path("docs/nota.md")), 1)
+
+    def test_exempt_names_rejects_a_path(self):
+        """Un nombre con separadores es un error de escritura, no una
+        exención de ruta: para eso existe «exempt_paths» (ADR-030)."""
+        with self.assertRaisesRegex(ValueError, "exempt_paths"):
+            check_sizes.apply_config({"exempt_names": ["docs/x.md"]})
+
+    def test_exempt_names_rejects_dot_entries(self):
+        with self.assertRaises(ValueError):
+            check_sizes.apply_config({"exempt_names": ["."]})
+        with self.assertRaises(ValueError):
+            check_sizes.apply_config({"exempt_names": [".."]})
+
+    def test_exempt_names_rejects_empty_name(self):
+        with self.assertRaises(ValueError):
+            check_sizes.apply_config({"exempt_names": [""]})
+
+    def test_reset_to_skevi_defaults_restores_exempt_names(self):
+        check_sizes.apply_config({"exempt_names": [".DS_Store"]})
+        check_sizes.reset_to_skevi_defaults()
+        self.assertEqual(check_sizes.EXEMPT_NAMES, set())
 
     def test_required_replaces_skevi_list(self):
         """Un adoptante con otra estructura no hereda los archivos de Skevi."""

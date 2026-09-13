@@ -1,11 +1,11 @@
 {
   "schema": "skevi/template-manifest/v1",
-  "version": "plantillas/v3",
-  "generated_at": "2026-09-12T12:42:35Z",
+  "version": "plantillas/v4",
+  "generated_at": "2026-09-13T12:01:36Z",
   "files": {
     "architecture-overview.md": "sha256:c7a03679ec978ff609e6216cc63b5043eeb185424895083970b399ac9912b2d3",
     "installed.json": "sha256:b8f49e81f197cfcab744fa15de63a806ab458fd01aa0b5b64ac4fc91de5e03fc",
-    "scripts-installed.json": "sha256:7b4818bde0fa071ba537b404449066b9800f085cf28e77e82b959eddc5482e5d",
+    "scripts-installed.json": "sha256:12b3124c81f00389d436397aae9553ded6744060e2ba9951488de81ba5722e1e",
     "usage-guide.md": "sha256:4450102304a66f504a3076166205bb4155314902cd5abcebe78ad82cf1973427"
   },
   "history": [
@@ -25,6 +25,14 @@
         "usage-guide.md": "elecciones explícitas de idiomas conforme a ADR-029",
         "installed.json": "versión de ejemplo alineada con la plantilla vigente",
         "scripts-installed.json": "versión de ejemplo alineada con gate/v3"
+      }
+    },
+    {
+      "from": "plantillas/v3",
+      "to": "plantillas/v4",
+      "breaking": false,
+      "changes": {
+        "scripts-installed.json": "ejemplo de versión alineado con gate/v4 (ADR-030)"
       }
     }
   ]
