@@ -1,8 +1,9 @@
-# PROP-009 — Complemento de adopción para código generado congelado
+# PROP-009 — Complemento de adopción para árboles congelados
 
-> **Estado:** en deliberación. Nada de este documento modifica norma;
-> su aceptación produce el ADR de aterrizaje de A-2 y el artefacto que
-> aquí se proponga.
+> **Estado:** ACEPTADA con corrección de encuadre (instrucción directa
+> del humano, 2026-09-13). Aterrizada en
+> [ADR-033](../adr/ADR-033-arboles-congelados.md) y la plantilla
+> `templates/skevi/frozen-trees.md` (plantillas/v7).
 > **Origen:** [issue #43](https://github.com/kristhianmanue1/skevi/issues/43)
 > (adopción flutterFlow @ `2e0f9cf`, 2026-09-12, ronda adversarial de
 > contexto fresco) + iniciativa **A-2 de PROP-002**, aceptada el
@@ -10,16 +11,30 @@
 > desde dos lados; este documento la cierra desde uno.
 > **Fecha:** 2026-09-13.
 
+## 0. Corrección de encuadre de la aceptación
+
+La primera versión de esta propuesta enmarcaba el hueco como «§3.1
+presupone código escrito por el equipo». El humano la corrige al
+aceptarla: **Skevi no asume que el código está escrito por humanos** —
+la mayor parte de los proyectos que Skevi lleva está escrita por
+agentes de IA. El eje normativo no es la autoría (humano, agente de IA
+o herramienta generadora) sino el **régimen del árbol**: editable
+—donde §3.1 aplica por igual a quien lo escriba— frente a
+congelado/sellado —donde la regla correcta es la opuesta—. Todo el
+artefacto aterrizado usa este encuadre.
+
 ## 1. El hueco
 
 La regla «el código nuevo se parece al código que lo rodea» (§3.1)
-presupone código escrito por el equipo. En un workspace de código
-**generado** —FlutterFlow, y el perfil crece: eduEMD, orbitaNova,
-flutterFlow ya adoptaron— la regla correcta es la opuesta: el código
-vecino no debe imitarse ni tocarse sin re-sellar. Para documentos
-congelados §3.4 sí da norma («un documento histórico congelado se
-exenta»); para código congelado no hay nada: ni ADR, ni guía, ni
-mención.
+aplica por igual a código escrito por humanos o por agentes de IA — en
+los proyectos que Skevi lleva, la mayoría lo escriben agentes. Lo que
+§3.1 no contempla es el **régimen del árbol**: en un workspace con
+árboles **congelados o sellados** —un export de herramienta generadora
+como FlutterFlow, una entrega de tercero, un baseline de release— la
+regla correcta es la opuesta: el código vecino no debe imitarse ni
+tocarse sin re-sellar. Para documentos congelados §3.4 sí da norma («un
+documento histórico congelado se exenta»); para código congelado no hay
+nada: ni ADR, ni guía, ni mención.
 
 Lo que el tercer adoptante tuvo que inventar sin respaldo normativo:
 
@@ -54,9 +69,11 @@ generado lo copia; el que no, no lo ve. Tres piezas:
    materialización del mecanismo que A-2 aceptó y que este documento
    aterriza en su escala mínima: la de un adoptante, no la de un
    pipeline institucional.
-2. **Convivencia con §3.1.** El código generado queda fuera de «el
-   código nuevo se parece al vecino»: no se imita, no se edita en el
-   export; los parches viven en la copia canónica y se reaplican tras
+2. **Convivencia con §3.1: régimen, no autoría.** En árboles editables,
+   la regla §3.1 sigue valiendo para cualquiera que escriba el código
+   nuevo — humano o agente de IA. En el árbol congelado la regla es la
+   opuesta: no se imita, no se edita en el export; los parches viven en
+   la copia canónica y se reaplican tras
    cada re-export (patrón «parche frágil», documentado).
 3. **Convivencia con el gate skevi.** `skip_dirs` sobre las apps
    generadas —su contención de tamaño no significa nada— más el gate
@@ -108,16 +125,19 @@ aceptación del contenido.
 - `grep cuarentena|default deny` sobre estándar y guía: cero
   resultados; A-2 `accepted` en
   [`PROP-002-decision-2026-08-15.md` §1](../history/PROP-002-decision-2026-08-15.md)
-  → la deuda existe y no está cubierta por ninguna propuesta en trámie
+  → la deuda existe y no está cubierta por ninguna propuesta en trámite
   (seis documentos en `docs/proposals/`, revisados).
 - Los tres adoptantes citados provienen del issue #43; no se
   re-verificaron sus repos — se citan como evidencia declarada por el
   issue, no como medición propia.
 
-## 6. Próximos pasos
+## 6. Decisión y aterrizaje
 
-1. Decisión del humano sobre el contenido y la forma (§2.1).
-2. Si acepta: ADR de aterrizaje de A-2 + plantilla/complemento con su
-   bump de MANIFEST (opción A) en un cambio con RED propio.
-3. Si difiere: ADR de diferimiento con la condición de reevaluación —
-   lo que A-2 no puede seguir siendo es aceptada y sin dueño.
+1. El humano aceptó contenido y forma el 2026-09-13 — opción A
+   (plantilla copiable) — con una corrección de encuadre: el eje es el
+   **régimen del árbol** (editable vs congelado), no la autoría del
+   código; Skevi no asume que el código está escrito por humanos, pues
+   la mayor parte de los proyectos que lleva la escriben agentes de IA
+   (§0).
+2. Aterrizada en [ADR-033](../adr/ADR-033-arboles-congelados.md) y la
+   plantilla `templates/skevi/frozen-trees.md` (plantillas/v7).

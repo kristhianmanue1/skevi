@@ -28,6 +28,7 @@
     "templates/plan-de-implementacion.md",
     "templates/skevi/usage-guide.md",
     "templates/skevi/architecture-overview.md",
+    "templates/skevi/frozen-trees.md",
     "templates/skevi/MANIFEST.json",
     "templates/skevi/installed.json",
     "templates/skevi/corpus-installed.json",
