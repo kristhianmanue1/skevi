@@ -1,12 +1,12 @@
 {
   "schema": "skevi/script-manifest/v1",
-  "version": "gate/v4",
-  "generated_at": "2026-09-13T12:01:03Z",
+  "version": "gate/v5",
+  "generated_at": "2026-09-13T12:02:50Z",
   "files": {
-    "check_sizes.py": "sha256:6c245b72c42f6c8b9a8ad1c4995abc0a9574dc03ec662225dc8cc2d2412f1938",
+    "check_sizes.py": "sha256:29e13ac9ef97b761e0070bb256ef9ad95edd092d3a0f7c7392bcfb5b3e8eee3a",
     "check_plans.py": "sha256:e6bff6446f2c5e73315cb4fafec904d5040d70195f67bbefa4a7597f9a14553d",
     "check_reports.py": "sha256:5663866d6575765be22353f9587c743005f3e612153efd492279b68bf0a0f21c",
-    "check_templates.py": "sha256:45c3b01a41684c27fc2f69fafdc511cd2175e4a788590ce1cba6bd7d70c83f55"
+    "check_templates.py": "sha256:3d348d952f69d5d0efb53da04eb006326fce1fe4a25a732fc4182d1140df187b"
   },
   "history": [
     {
@@ -25,6 +25,14 @@
       "breaking": false,
       "changes": {
         "check_sizes.py": "clave exempt_names: exención por nombre de archivo; el gate mide el disco por diseño (ADR-030)"
+      }
+    },
+    {
+      "from": "gate/v4",
+      "to": "gate/v5",
+      "breaking": false,
+      "changes": {
+        "check_templates.py": "source con formato cerrado <origen>@<revisión> (ADR-031)"
       }
     }
   ]

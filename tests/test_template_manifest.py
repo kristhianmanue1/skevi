@@ -433,7 +433,7 @@ class ScriptsInstalledTemplateTests(unittest.TestCase):
             (root / "scripts" / "MANIFEST.json").read_text(encoding="utf-8"))
         plantilla["files"] = dict(fuente["files"])
         plantilla["installed_at"] = "2026-09-08T00:00:00Z"
-        plantilla["source"] = "skevi/scripts"
+        plantilla["source"] = "skevi/scripts@0a1b2c3"
         with tempfile.TemporaryDirectory() as tmp:
             installed_path = Path(tmp) / "scripts-installed.json"
             installed_path.write_text(json.dumps(plantilla), encoding="utf-8")

@@ -24,7 +24,7 @@ from pathlib import Path
 # proyectos ajenos. Lo que sí puede es que la copia diga quién es y cuántos
 # días tiene, en la salida que el adoptante ya ejecuta. Al cambiar el
 # comportamiento del gate se sube GATE_VERSION y se pone la fecha del cambio.
-GATE_VERSION = "gate/v4"
+GATE_VERSION = "gate/v5"
 GATE_GENERATED_AT = "2026-09-13"
 GATE_STALE_AFTER_DAYS = 90
 
