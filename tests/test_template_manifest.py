@@ -451,6 +451,56 @@ class ScriptsInstalledTemplateTests(unittest.TestCase):
         self.assertEqual(code, 0, buf.getvalue())
 
 
+class TemplateInstalledTemplateTests(unittest.TestCase):
+    """La plantilla copiable de templates/skevi/installed.json debe coincidir
+    con la versión vigente de templates/skevi/MANIFEST.json al momento de
+    publicarse: mismo defecto que ScriptsInstalledTemplateTests y
+    CorpusManifestRealRepoTests ya cubren para sus artefactos, pero para el
+    tercero (plantillas) no existía ningún test — encontrado en la ronda
+    adversarial sobre PR #54 tras corregir precisamente un desfase real
+    (installed.json en plantillas/v6 con el manifest ya en plantillas/v7)."""
+
+    def test_template_version_matches_source_manifest(self):
+        root = Path(__file__).resolve().parent.parent
+        plantilla = json.loads(
+            (root / "templates" / "skevi" / "installed.json")
+            .read_text(encoding="utf-8"))
+        fuente = json.loads(
+            (root / "templates" / "skevi" / "MANIFEST.json")
+            .read_text(encoding="utf-8"))
+        self.assertEqual(plantilla["version"], fuente["version"])
+
+    def test_a_freshly_filled_template_passes_the_gate(self):
+        """Simula un adoptante que llena sólo los placeholders documentados
+        —digests, installed_at, source— y corre el comparador tal cual."""
+        root = Path(__file__).resolve().parent.parent
+        plantilla = json.loads(
+            (root / "templates" / "skevi" / "installed.json")
+            .read_text(encoding="utf-8"))
+        fuente = json.loads(
+            (root / "templates" / "skevi" / "MANIFEST.json")
+            .read_text(encoding="utf-8"))
+        plantilla["files"] = dict(fuente["files"])
+        plantilla["installed_at"] = "2026-09-17T00:00:00Z"
+        plantilla["source"] = "skevi/templates@0a1b2c3"
+        with tempfile.TemporaryDirectory() as tmp:
+            installed_path = Path(tmp) / "installed.json"
+            installed_path.write_text(json.dumps(plantilla), encoding="utf-8")
+            buf = io.StringIO()
+            ct_spec = importlib.util.spec_from_file_location(
+                "check_templates_from_manifest_test_plantillas",
+                SCRIPTS_DIR / "check_templates.py")
+            check_templates = importlib.util.module_from_spec(ct_spec)
+            ct_spec.loader.exec_module(check_templates)
+            with redirect_stdout(buf):
+                code = check_templates.main([
+                    "--manifest",
+                    str(root / "templates" / "skevi" / "MANIFEST.json"),
+                    "--installed", str(installed_path),
+                ])
+        self.assertEqual(code, 0, buf.getvalue())
+
+
 class CheckSizesEnforcesNamespaceTests(unittest.TestCase):
     """HIGH de la segunda ronda (2026-09-08): check_templates.py ataba
     version al namespace de su schema; check_sizes.py —la autoverificación
