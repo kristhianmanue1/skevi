@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # Gate local de Skevi. Se instala con: git config core.hooksPath scripts/hooks
-# Sustituye a CI remoto (GitHub Actions) por límite de minutos de la cuenta.
+# Verificación rápida previa al push; el gate autoritativo es el CI (ADR-034).
 set -e
 
 repo_root="$(git rev-parse --show-toplevel)"

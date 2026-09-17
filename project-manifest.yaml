@@ -12,7 +12,9 @@ ofrece:
   - ciclo F0→F3 completo validado sobre un proyecto real con evidencia verificada (piloto infosalud, 2026-09-01)
   - reglas de rigor derivadas de disparadores observables, no de calificadores subjetivos
   - contención de tamaño de archivos con polaridad cerrada y exenciones declaradas
-  - gate local en Python estándar, sin dependencias ni CI remoto
+  - >
+    gate en Python estándar sin dependencias: autoritativo en CI del
+    repositorio fuente y ejecutable como hook local; el adoptante elige (ADR-034)
   - gate opcional de planes de implementación con chequeo estructural (E1-E5), fail-closed, copiable sin edición
   - plantillas de adopción instalables como `.skevi/` en el proyecto consumidor
   - clasificación de tarea (spike/bounded/architectural) por disparadores observables, para entrar a repos existentes

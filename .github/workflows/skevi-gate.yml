@@ -1,0 +1,43 @@
+# Gate autoritativo de Skevi (ADR-034). El hook local scripts/hooks/pre-push
+# ejecuta los mismos comandos como verificación rápida antes del push.
+name: skevi-gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: skevi-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: gate (${{ matrix.python }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Python version
+        run: python --version
+      - name: check_sizes
+        run: python scripts/check_sizes.py
+      - name: check_plans
+        run: python scripts/check_plans.py
+      - name: check_reports
+        run: python scripts/check_reports.py
+      - name: unittest
+        run: python -m unittest discover -s tests
