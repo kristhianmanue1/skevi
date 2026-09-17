@@ -52,10 +52,15 @@ copia también el `docs/MANIFEST.json` del canon junto a estándar y guía:
 es tu referencia de versión:
 
 ```bash
-python3 scripts/check_templates.py --manifest templates/skevi/MANIFEST.json --installed .skevi/installed.json
-python3 scripts/check_templates.py --manifest scripts/MANIFEST.json --installed .skevi/scripts-installed.json
-python3 scripts/check_templates.py --manifest docs/MANIFEST.json --installed .skevi/corpus-installed.json
+python3 <ruta-a-skevi>/scripts/check_templates.py --manifest <ruta-a-skevi>/templates/skevi/MANIFEST.json --installed .skevi/installed.json
+python3 <ruta-a-skevi>/scripts/check_templates.py --manifest <ruta-a-skevi>/scripts/MANIFEST.json --installed .skevi/scripts-installed.json
+python3 <ruta-a-skevi>/scripts/check_templates.py --manifest <ruta-a-skevi>/docs/MANIFEST.json --installed .skevi/corpus-installed.json
 ```
+
+`<ruta-a-skevi>` es tu checkout local del origen (mismo uso que en la
+sección "Verificación" del README de Skevi) — estos tres comandos viven
+en el script de Skevi, no en tu proyecto; `.skevi/installed.json` y sus
+pares sí son de tu proyecto.
 
 **Qué significa `OK`.** El resultado compara tu registro contra la copia
 **local** del manifest fuente que trajiste al `.skevi/` de este proyecto —
@@ -78,12 +83,20 @@ Si tu proyecto usa GitHub Actions (u otro CI), puedes exigir el mismo gate
 ahí en vez de depender sólo del hook local, que un `--no-verify` o un clon
 sin configurar puede saltarse en silencio. El origen de Skevi hace esto
 consigo mismo (ADR-034 en su propio repositorio, si tu origen es Skevi):
-`.github/workflows/skevi-gate.yml` es un ejemplo real y copiable — adapta
-la rama principal, la versión de tu runtime y los comandos de verificación
-de tu proyecto (los mismos de la sección "Verificación local" de este
-documento). Un `push`/`pull_request` a tu rama principal, permisos de
-sólo lectura (`contents: read`) y acciones fijadas por SHA bastan como
-punto de partida.
+`.github/workflows/skevi-gate.yml` es un ejemplo real y copiable, pero no
+copiable literal — fija Ubuntu 24.04 y una matriz de dos versiones de
+Python sin paso de instalación de dependencias (asume stdlib, como los
+gates de Skevi). Al adaptarlo:
+
+- cambia la rama principal, el runner/SO si tu proyecto lo necesita, y los
+  comandos por los de tu sección "Verificación local";
+- si tu verificación sí tiene dependencias, añade el paso de instalación
+  correspondiente — el ejemplo de Skevi no lo necesita porque sus gates
+  son stdlib puro;
+- decide explícitamente si vas a exigir **cada** job de la matriz por
+  separado (uno por versión) o un solo **check agregado**; la protección
+  de rama exige nombres de check concretos, y "gate en CI" sin esa
+  decisión queda ambiguo.
 
 **Copiar el workflow no exige nada por sí solo.** El check corre, pero
 nadie está obligado a esperarlo hasta que:
