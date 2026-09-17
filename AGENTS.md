@@ -84,7 +84,8 @@ lleva su test en `tests/` (`check_sizes`, `check_plans`, `check_reports`).
 
 ## Convenciones de edición
 
-- Markdown, español, líneas de ancho razonable (~80 columnas).
+- Markdown, ~80 columnas. Idiomas (ADR-029): español en prosa, mensajes y
+  comentarios; inglés en identificadores, claves, ramas y archivos de código.
 - Un documento = un propósito y una vida útil. La norma atemporal, el
   procedimiento operativo y la evidencia histórica no comparten archivo.
 - Las referencias entre documentos son rutas relativas reales; verifícalas

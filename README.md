@@ -20,64 +20,26 @@ hospedaje tipo GitHub.
 
 ## Estructura
 
-```text
-skevi/
-├── AGENTS.md                  # punto de entrada para ejecutores automatizados
-├── README.md
-├── project-manifest.yaml      # qué ofrece y qué NO ofrece, frente al ecosistema
-├── docs/
-│   ├── adr/                                  # decisiones estructurales inmutables
-│   ├── estandar-diseno-software-github.md   # capa normativa transversal
-│   ├── crosswalk-estandares.md              # cotejo con NIST SSDF y OWASP LLM
-│   ├── ai-agent-guide/                     # pipeline F0→F3 para agentes
-│   │   ├── 00-INDICE.md
-│   │   ├── 01-analisis-y-requerimientos.md
-│   │   ├── 02-specs-adr-contratos.md
-│   │   ├── 03-cascaron-proyecto.md
-│   │   ├── 04-ejecucion-y-verificacion.md
-│   │   ├── 05-memoria-del-agente.md
-│   │   └── 06-componentes-con-llm.md
-│   ├── orchestration/                        # método concreto, acoplado a herramientas
-│   │   ├── orquestacion-codex-opencode-tmux.md
-│   │   └── orquestacion-codex-opencode-tmux-runbook.md
-│   ├── plans/                                # planes de implementación (ADR-010)
-│   ├── specs/                               # F0/F1 de los programas de mejora
-│   ├── reviews/                             # rondas y cierres de programa
-│   ├── proposals/                           # cambios bajo deliberación, no normativos
-│   └── history/                            # registro, no normativo
-│       ├── PROP-001-agent-native-model-improvements.md
-│       ├── PROP-001-decision-2026-08-15.md
-│       ├── PROP-002-correcciones-desde-adoptantes.md
-│       ├── PROP-002-decision-2026-08-15.md
-│       ├── PROP-003-decision-2026-08-17.md
-│       ├── PROP-003-frontera-con-praxis-dev.md
-│       ├── PROP-00N-adversarial-*.md        # rondas por propuesta
-│       ├── drift-checkpoint-an-kla-2026-08-15.md
-│       ├── orquestacion-codex-opencode-tmux-adversarial.md
-│       ├── piloto-autoaplicacion-skevi.md
-│       ├── piloto-orbitanova.md
-│       ├── piloto-orbitanova-2.md
-│       ├── piloto-skopos.md
-│       └── supervision-agente-externo.md
-├── templates/                 # formatos copiables, no se improvisan (§3.5)
-│   ├── registro-contexto.md
-│   ├── plan-de-implementacion.md
-│   └── skevi/
-│       ├── usage-guide.md
-│       ├── architecture-overview.md
-│       ├── MANIFEST.json     # versión vigente + historial de saltos (ADR-020)
-│       ├── installed.json    # plantilla del registro del consumidor
-│       └── scripts-installed.json  # ídem, para scripts/ (ADR-028)
-├── scripts/
-│   ├── check_sizes.py         # gate de estructura y tamaños
-│   ├── check_plans.py         # gate estructural de planes (ADR-014)
-│   ├── check_reports.py       # forma de los reportes de dos capas (ADR-022)
-│   ├── check_templates.py     # drift de artefactos versionados (ADR-020, ADR-028)
-│   ├── MANIFEST.json          # versión vigente de los 4 scripts (ADR-028)
-│   └── hooks/                 # hooks de Git (pre-push)
-└── tests/                     # suites de scripts/ (check_sizes, check_plans,
-                                #  check_reports, check_templates)
-```
+Por directorio y vida útil, sin enumerar archivos: cada carpeta tiene su
+fuente de verdad, que es la que se consulta para el contenido vigente.
+
+| Ruta | Contenido | Vida útil | Fuente de verdad |
+|---|---|---|---|
+| `AGENTS.md` | Entrada para ejecutores automatizados | Estable | — |
+| `project-manifest.yaml` | Qué ofrece y qué no, frente al ecosistema | Por release | — |
+| `docs/estandar-diseno-software-github.md` | Capa normativa transversal | Cambia poco | `docs/MANIFEST.json` |
+| `docs/ai-agent-guide/` | Guía por fases F0→F3 y complementos | Cambia con la práctica | `00-INDICE.md` |
+| `docs/adr/` | Decisiones estructurales inmutables | Sólo crece | `00-INDICE.md` |
+| `docs/crosswalk-estandares.md` | Cotejo con NIST SSDF y OWASP LLM | Caduca con sus fuentes | Tabla de versiones del archivo |
+| `docs/proposals/` | Cambios bajo deliberación, no normativos | Hasta decidir | Encabezado de cada archivo |
+| `docs/specs/`, `docs/plans/` | F0/F1 y planes de programas de mejora | Por programa | Encabezado; planes: `check_plans` |
+| `docs/reviews/` | Rondas y cierres de programa | Congelado al cerrar | `skevi-gate.json` clave `reports` |
+| `docs/history/` | Registro de procedencia, no normativo | No cambia | — |
+| `docs/orchestration/` | Método concreto, acoplado a herramientas | Caduca con ellas | Fecha de verificación del archivo |
+| `templates/skevi/` | Plantillas de adopción versionadas | Versionado | `templates/skevi/MANIFEST.json` |
+| `templates/` (raíz) | Formatos copiables | Sin versionar (issue #48) | — |
+| `scripts/` | Gates copiables y hooks de Git | Versionado | `scripts/MANIFEST.json` |
+| `tests/` | Suites de los scripts | Con los scripts | `python3 -m unittest discover -s tests` |
 
 La separación no es estética: cada carpeta tiene una **vida útil distinta**.
 El estándar cambia poco, la guía cambia con la práctica, `orchestration/`
