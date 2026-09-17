@@ -1,14 +1,14 @@
 {
   "schema": "skevi/template-manifest/v1",
-  "version": "plantillas/v7",
-  "generated_at": "2026-09-13T12:52:17Z",
+  "version": "plantillas/v8",
+  "generated_at": "2026-09-17T12:05:15Z",
   "files": {
     "architecture-overview.md": "sha256:c7a03679ec978ff609e6216cc63b5043eeb185424895083970b399ac9912b2d3",
-    "corpus-installed.json": "sha256:513b81d22628396e20dd1d7655762b625bfef8aab50a877306fa4aaa543dffe5",
+    "corpus-installed.json": "sha256:88d1ea749ba34b71f06a47e9fda20d34044554bcd9c233a69d24998eefed6d52",
     "frozen-trees.md": "sha256:768a87e69ef7da18b276f27d77d7cb2e492fb2eba2a55ae483d6d9b21d32751b",
-    "installed.json": "sha256:e96f6a9d8312a63e013bf443a0c10677b39e4bcc99dc84b0ca0d8f3c62c67160",
+    "installed.json": "sha256:c6fde911973bcb27918cf4a73f618a122a61f34ae0d49b7d800127b91d2d64b5",
     "scripts-installed.json": "sha256:3fc6b38c2ddd32b1d05021c7749f6fea725f1c6b12e5889b263b2a69243ef076",
-    "usage-guide.md": "sha256:b141db1fdfd975bf540221deb70d27562fb46703a0fc27b865450d72c8a2922b"
+    "usage-guide.md": "sha256:b4f2f83a7159c1b634a85cfb8b37605ad83afdcbe05554c4444b99b63af5cdc0"
   },
   "history": [
     {
@@ -64,6 +64,16 @@
       "changes": {
         "frozen-trees.md": "nuevo: complemento de adopción para árboles congelados (ADR-033, PROP-009)",
         "usage-guide.md": "puntero a la plantilla opcional de árboles congelados"
+      }
+    },
+    {
+      "from": "plantillas/v7",
+      "to": "plantillas/v8",
+      "breaking": false,
+      "changes": {
+        "usage-guide.md": "gate en CI opcional (comandos, control positivo, check requerido) junto al hook local; aclara que el chequeo de drift compara contra la copia local del manifest, no contra el origen en vivo (hallazgo de ronda adversarial sobre ADR-034)",
+        "installed.json": "version actualizada a plantillas/v8, sincronizada con este salto (hallazgo de ronda adversarial: quedaba en v6 con el manifest ya en v7)",
+        "corpus-installed.json": "version actualizada a corpus/v2, sincronizada con el salto del corpus de esta misma ronda"
       }
     }
   ]

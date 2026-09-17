@@ -52,9 +52,11 @@ misma autoría que este cuerpo normativo):
   plan-write/commit-write-plan, guardias de fences y hook pre-commit —
   instalable sin red; la memoria no se reconstruye por sesión
   (referencia de consumo real: issue #25).
-- Update check desactivado y gates locales: la memoria no debe
-  introducir llamadas de red rutinarias ni dependencia de CI
-  remoto.
+- Update check desactivado y verificación de la memoria sin red: **la
+  integración de memoria en sí** no debe introducir llamadas de red
+  rutinarias ni depender de un CI remoto propio. Esto no es una postura
+  sobre el CI del resto del proyecto — ver `04` §7 y, en el repositorio
+  fuente de Skevi, ADR-034.
 
 ## 5. Límites
 

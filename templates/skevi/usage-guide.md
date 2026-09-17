@@ -57,14 +57,43 @@ python3 scripts/check_templates.py --manifest scripts/MANIFEST.json --installed 
 python3 scripts/check_templates.py --manifest docs/MANIFEST.json --installed .skevi/corpus-installed.json
 ```
 
-## Gate de push
+**Qué significa `OK`.** El resultado compara tu registro contra la copia
+**local** del manifest fuente que trajiste al `.skevi/` de este proyecto —
+no consulta el origen en vivo. `OK` dice "coherente con esa copia local",
+no "al día contra el repositorio de origen ahora mismo". Para saber si hay
+una versión más nueva en el origen, actualiza esa copia local del manifest
+deliberadamente (nueva lectura del origen, con su propia autorización si el
+proyecto la exige) y vuelve a comparar.
 
-La activación es config local, no viaja con el clon — un clon fresco
+## Gate de push (local) y gate en CI (opcional)
+
+La activación local es config, no viaja con el clon — un clon fresco
 pierde el gate de push en silencio si no la repites:
 
 ```bash
 git config core.hooksPath scripts/hooks
 ```
+
+Si tu proyecto usa GitHub Actions (u otro CI), puedes exigir el mismo gate
+ahí en vez de depender sólo del hook local, que un `--no-verify` o un clon
+sin configurar puede saltarse en silencio. El origen de Skevi hace esto
+consigo mismo (ADR-034 en su propio repositorio, si tu origen es Skevi):
+`.github/workflows/skevi-gate.yml` es un ejemplo real y copiable — adapta
+la rama principal, la versión de tu runtime y los comandos de verificación
+de tu proyecto (los mismos de la sección "Verificación local" de este
+documento). Un `push`/`pull_request` a tu rama principal, permisos de
+sólo lectura (`contents: read`) y acciones fijadas por SHA bastan como
+punto de partida.
+
+**Copiar el workflow no exige nada por sí solo.** El check corre, pero
+nadie está obligado a esperarlo hasta que:
+
+1. lo pruebas con un **control positivo** — una violación deliberada del
+   gate debe hacer fallar el CI por la razón esperada, no por otra;
+2. lo marcas como **check requerido** en la protección de tu rama
+   principal (configuración de tu hosting, no de este repositorio).
+
+Sin esos dos pasos, el workflow es informativo, no un gate.
 
 ## Dependencias activas del ecosistema
 

@@ -1,7 +1,7 @@
 {
   "schema": "skevi/corpus-manifest/v1",
-  "version": "corpus/v1",
-  "generated_at": "2026-09-13T12:23:35Z",
+  "version": "corpus/v2",
+  "generated_at": "2026-09-17T12:05:15Z",
   "files": {
     "estandar-diseno-software-github.md": "sha256:aa50be7544d59d07e7bd3f3c8aa50eb4b8c22f2eba95566ceaa1707394627e3e",
     "ai-agent-guide/00-INDICE.md": "sha256:0409a225db77ac52b0d08219cd124c5f214e7790587a3a2cc09c4e1aa9406bf7",
@@ -9,7 +9,7 @@
     "ai-agent-guide/02-specs-adr-contratos.md": "sha256:8f120b304b284e7a4e418ba01f3b8343f150ec46c6a928c861339810c244336e",
     "ai-agent-guide/03-cascaron-proyecto.md": "sha256:db94814f3bd6ed6699718d39df875f6ea3460865397cbe576ed8f6c51f6a06ad",
     "ai-agent-guide/04-ejecucion-y-verificacion.md": "sha256:cd557c65b4d97ec7f9be7229b4fda8ad99612211ac5298e9ea08e6250a487a6e",
-    "ai-agent-guide/05-memoria-del-agente.md": "sha256:26ee54abae3b2a46b0d0d377f9828ed51fdda9a9e4eaedcbf61c5886e50f2f48",
+    "ai-agent-guide/05-memoria-del-agente.md": "sha256:ff7598d7e7f72b65b068772992c8414c62ff2049fda7f6a4529467404c2c43d4",
     "ai-agent-guide/06-componentes-con-llm.md": "sha256:4fb5926f31fdff7c3c50208a1c1c4c78403f4f4e23dc087f646f28924fb04fd2"
   },
   "history": [
@@ -18,6 +18,14 @@
       "to": "corpus/v1",
       "breaking": false,
       "changes": {}
+    },
+    {
+      "from": "corpus/v1",
+      "to": "corpus/v2",
+      "breaking": false,
+      "changes": {
+        "ai-agent-guide/05-memoria-del-agente.md": "acota la restricción de red/CI de §4 a la integración de memoria en sí, no al CI del proyecto (hallazgo de ronda adversarial sobre ADR-034)"
+      }
     }
   ]
 }
