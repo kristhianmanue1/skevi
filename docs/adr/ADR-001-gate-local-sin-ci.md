@@ -1,6 +1,7 @@
 # ADR-001: gate de estructura y tamaños corre local, no en CI remoto
 
-Estado: aceptado
+Estado: sustituido por [ADR-034](ADR-034-gate-en-ci-remoto.md) (2026-09-17).
+El texto siguiente se conserva sin cambios como registro de la decisión.
 
 Contexto: el proyecto necesita un gate que impida commits/push que rompan
 la estructura canónica o los límites de tamaño (`estandar-diseno-software-github.md`

@@ -144,14 +144,11 @@ Corre las suites de `tests/` sobre los scripts del proyecto — sus cuatro
 artefactos ejecutables: `check_sizes.py`, `check_plans.py` (ADR-014),
 `check_reports.py` (ADR-022) y `check_templates.py` (ADR-020, ADR-028).
 
-**Gate local, no GitHub Actions.** La cuenta que aloja este repositorio tiene
-minutos de CI limitados (se agotan rápido y se reinician mensualmente). Por
-eso el gate corre localmente, vía hook de Git (`scripts/hooks/`, instalado
-con `git config core.hooksPath scripts/hooks`), en vez de un workflow de
-GitHub Actions. Ramas, commits, PRs, revisiones y push se administran por
-`gh` con la cuenta de administrador; sólo la ejecución del gate se mantiene
-fuera de Actions. Si en el futuro cambian los límites de la cuenta, esto se
-reevalúa explícitamente — no se agrega un workflow en silencio.
+**Gate en CI, hook local como verificación rápida** (ADR-034, sustituye a
+ADR-001). El workflow `.github/workflows/skevi-gate.yml` ejecuta los tres
+gates y los tests en cada PR y push a `main`, con Python 3.9 y 3.12. El hook
+(`git config core.hooksPath scripts/hooks`) corre lo mismo antes del push para
+detectar fallos sin esperar al CI; no sustituye al CI, que es el autoritativo.
 
 ## Principios que lo sostienen
 
@@ -163,8 +160,8 @@ palabras, y envejece igual de mal que una copia literal.
 
 **Estable.** El criterio de salida de Alpha — «un piloto F0→F3 completo
 con evidencia» — se cumplió el 2026-09-01 con el piloto infosalud
-(`docs/history/piloto-infosalud.md`). El gate sigue verificándose sólo
-localmente, sin CI remoto (ADR-001).
+(`docs/history/piloto-infosalud.md`). El gate se verifica en CI y, como
+paso previo opcional, con el hook local (ADR-034).
 
 `docs/history/` conserva los registros de los pilotos que originaron
 estas reglas, incluida la ronda adversarial que corrigió el protocolo de
