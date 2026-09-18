@@ -1,6 +1,8 @@
 # PROP-010 — Destilación de Engineering 1.2.0: revisión y diagnóstico
 
-> **Estado:** EN DELIBERACIÓN. Las rondas ejecutadas, sus veredictos, sus
+> **Estado:** **ACEPTADA** el 2026-09-18 (§7, folio
+> `SKV-ACC-PROP010-20260918-01`), pendiente de que ADR-035 y el plan de §8
+> la materialicen. Las rondas ejecutadas, sus veredictos, sus
 > registros y dónde se dispone cada una están en **§6.5**, la única sección
 > que los cuenta: este encabezado no los repite, porque una cifra copiada
 > aquí caduca con la ronda siguiente. **Alcance recortado el 2026-09-18** (§7 A: no se amplía):
@@ -450,11 +452,36 @@ de exenciones que lo motivó.
 
 ## 7. Decisión
 
-PENDIENTE (T04). Requiere, tras la última ronda en `proceed`: aceptación
-humana con fecha, alcance y folio, y creación de **ADR-035** con su fila en
-`docs/adr/00-INDICE.md` — ADR-034 ya está ocupado por el gate en CI remoto
-(v1.4.0), y el número libre se comprueba contra `main` vigente, no contra
-esta línea. Sin esa aceptación no hay ADR ni plan.
+**ACEPTADA** el 2026-09-18, folio `SKV-ACC-PROP010-20260918-01`.
+
+**Alcance de lo aceptado:** la destilación se reduce a una plantilla,
+`templates/skevi/review-defect-catalog.md`, con el catálogo de clases de
+defecto (REQ-P10-01) y la sección de diagnóstico (REQ-P10-02). Quedan fuera
+postmortem, runbook, preparación de despliegue y las seis skills rechazadas
+en §4. `proposito` y `no_ofrece` de `project-manifest.yaml` no se tocan;
+`ofrece` gana una línea para el catálogo, marcada como experimental. La
+aceptación habilita ADR-035 y el plan de §8; no autoriza por sí sola ningún
+commit, push ni merge, que siguen gateados uno a uno (`AGENTS.md`).
+
+**Procedencia de la aceptación:** instrucción directa del Operador en
+conversación, el 2026-09-18 — «autorizo firma», tras responder «a, no» y «b,
+sí» a las dos preguntas de alcance y ordenar antes retirar C2a y la
+enumeración de categorías de dato. Como las decisiones de §2, su registro es
+este documento y no un acta independiente; lo asume el límite 1.
+
+**Condición no cumplida, aceptada con nombre.** Esta sección exigía una ronda
+previa en `proceed` y **ninguna la dio**: las seis cerraron en
+`fix-and-retry`. Las cuatro últimas ya no hallaban defectos del contenido
+sino de la autodescripción del documento —efecto del formato compacto, §6.5—,
+y el Operador decidió detener el ciclo y firmar. La instrucción humana
+prevalece sobre la condición que este mismo documento se había puesto
+(`AGENTS.md`, prioridad 1), pero la condición existía por una razón y no se
+declara satisfecha: se declara **omitida por decisión**, y ese es el cuarto
+riesgo residual que la firma asume.
+
+Sigue vigente el resto: **ADR-035** con su fila en `docs/adr/00-INDICE.md` —
+ADR-034 ya está ocupado por el gate en CI remoto (v1.4.0), y el número libre
+se comprueba contra `main` vigente, no contra esta línea.
 
 Cada ronda cerrada se queda con el veredicto que emitió: las ejecutadas hasta
 hoy quedaron en `fix-and-retry` de forma permanente, son historia y no
