@@ -10,7 +10,7 @@
 | ADR-007 | Validar en la frontera implica fallar controlado | Aceptado | `estandar-diseno-software-github.md` §2.4 | `an-kla-memory` #84 | 2026-08-16 |
 | ADR-008 | Disparadores objetivos de rigor | Aceptado | `AGENTS.md`, `04-ejecucion-y-verificacion.md` | PROP-002 §A-8 | 2026-08-15 |
 | ADR-009 | Clasificación de tarea por disparadores observables | Aceptado | `01-analisis-y-requerimientos.md` §2, `04` §1 | PROP-004 §2 A-1 | 2026-08-20 |
-| ADR-010 | Plan de implementación como artefacto de escala | Aceptado | `templates/plan-de-implementacion.md`, `03` §2, `04` §1 | PROP-004 §2 A-2 | 2026-08-20 |
+| ADR-010 | Plan de implementación como artefacto de escala | Aceptado | `templates/skevi/plan-de-implementacion.md` (hogar movido por ADR-036; el cuerpo del ADR conserva la ruta de su fecha), `03` §2, `04` §1 | PROP-004 §2 A-2 | 2026-08-20 |
 | ADR-011 | RED-GREEN-REFACTOR como default condicional de F3 | Aceptado | `04-ejecucion-y-verificacion.md` §3 | PROP-004 §2 A-3 | 2026-08-20 |
 | ADR-012 | Los archivos de test nuevos no escalan la clase de una tarea | Aceptado | `01-analisis-y-requerimientos.md` §2, ADR-009 (Estado) | `piloto-orbitanova.md` PF-1 | 2026-08-20 |
 | ADR-013 | Crear un plan de implementación es disparador de Architectural | Aceptado | `01-analisis-y-requerimientos.md` §2 | `piloto-orbitanova-2.md` PF-2 | 2026-08-20 |
@@ -35,6 +35,7 @@
 | [ADR-032](ADR-032-manifiesto-de-corpus.md) | Manifiesto de corpus: el canon normativo versionado | Aceptado | `docs/MANIFEST.json` (corpus/v1), `check_sizes.py`/`check_templates.py` (gate/v6), plantillas (plantillas/v6) | [Issue #40](https://github.com/kristhianmanue1/skevi/issues/40) §2; [PROP-002-correcciones](../history/PROP-002-correcciones-desde-adoptantes.md) §4 | 2026-09-13 |
 | [ADR-033](ADR-033-arboles-congelados.md) | Complemento de adopción para árboles congelados (aterriza A-2) | Aceptado | `templates/skevi/frozen-trees.md` (plantillas/v7) | [PROP-009](../history/PROP-009-codigo-generado-congelado.md); [issue #43](https://github.com/kristhianmanue1/skevi/issues/43); PROP-002 §A-2 | 2026-09-13 |
 | [ADR-034](ADR-034-gate-en-ci-remoto.md) | Gate en CI remoto; hook local como verificación rápida (sustituye ADR-001) | Aceptado | `.github/workflows/skevi-gate.yml` | Instrucción directa; disparador de ADR-001 y [AUDIT-review-enforcement](../proposals/AUDIT-review-enforcement.md) §3 | 2026-09-17 |
+| [ADR-036](ADR-036-hogar-unico-de-plantillas.md) | Hogar único de plantillas copiables en `templates/skevi/` | Aceptado | `templates/skevi/MANIFEST.json` (plantillas/v9), `check_sizes.py` (gate/v7), `docs/MANIFEST.json` (corpus/v3) | [Issue #48](https://github.com/kristhianmanue1/skevi/issues/48); hallazgo F1 de [PROP-010](../proposals/PROP-010-destilacion-engineering.md) §5 | 2026-09-18 |
 
 **Reglas de este índice**
 

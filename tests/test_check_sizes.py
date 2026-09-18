@@ -668,5 +668,39 @@ class ConfigTests(unittest.TestCase):
 
 
 
+class RequiredDefaultsMatchTheRepositoryTests(unittest.TestCase):
+    """El conjunto REQUIRED del script rige para el adoptante que copia
+    `check_sizes.py` sin `skevi-gate.json`. Nada lo verificaba: la suite
+    construye su repo temporal *a partir de* REQUIRED, así que una ruta
+    inexistente viajaba con los tests en verde (ronda adversarial de
+    ADR-036, HIGH). Estos dos casos atan el default al repositorio real."""
+
+    REPO = Path(__file__).resolve().parent.parent
+
+    def test_every_default_required_path_exists_in_this_repository(self):
+        faltan = sorted(
+            relative for relative in check_sizes._SKEVI_DEFAULTS["REQUIRED"]
+            if not (self.REPO / relative).is_file()
+        )
+        self.assertEqual(
+            faltan, [],
+            "REQUIRED nombra rutas que no existen en el repositorio: "
+            "el adoptante sin configuración recibiría «falta archivo "
+            "requerido» por un archivo que Skevi tampoco ofrece",
+        )
+
+    def test_defaults_are_contained_in_the_declared_configuration(self):
+        declarado = set(
+            json.loads((self.REPO / "skevi-gate.json").read_text(encoding="utf-8"))
+            ["required"]
+        )
+        fuera = sorted(check_sizes._SKEVI_DEFAULTS["REQUIRED"] - declarado)
+        self.assertEqual(
+            fuera, [],
+            "el default del script y la configuración de Skevi divergieron: "
+            "mover un archivo canónico exige actualizar los dos",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

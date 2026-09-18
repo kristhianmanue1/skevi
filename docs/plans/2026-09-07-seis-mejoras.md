@@ -45,7 +45,7 @@ TAREA T00 — Base, rama y SPEC
         verificación: python3 scripts/check_sizes.py sale OK
 
 TAREA T01 — Plan completo verificable
-  Consumes: `docs/specs/SPEC-M6-2026-09-07-seis-mejoras.md`; `templates/plan-de-implementacion.md`
+  Consumes: `docs/specs/SPEC-M6-2026-09-07-seis-mejoras.md`; `templates/skevi/plan-de-implementacion.md`
   Produce:  crea `docs/plans/2026-09-07-seis-mejoras.md` (este archivo)
   Steps:
   - [x] Nueve bloques TAREA con Consumes/Produce/Steps y criterio por step —

@@ -36,8 +36,7 @@ fuente de verdad, que es la que se consulta para el contenido vigente.
 | `docs/reviews/` | Rondas y cierres de programa | Congelado al cerrar | `skevi-gate.json` clave `reports` |
 | `docs/history/` | Registro de procedencia, no normativo | No cambia | — |
 | `docs/orchestration/` | Método concreto, acoplado a herramientas | Caduca con ellas | Fecha de verificación del archivo |
-| `templates/skevi/` | Plantillas de adopción versionadas | Versionado | `templates/skevi/MANIFEST.json` |
-| `templates/` (raíz) | Formatos copiables | Sin versionar (issue #48) | — |
+| `templates/skevi/` | Plantillas y formatos copiables, versionados | Versionado | `templates/skevi/MANIFEST.json` |
 | `scripts/` | Gates copiables y hooks de Git | Versionado | `scripts/MANIFEST.json` |
 | `tests/` | Suites de los scripts | Con los scripts | `python3 -m unittest discover -s tests` |
 
