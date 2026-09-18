@@ -24,7 +24,7 @@ from pathlib import Path
 # proyectos ajenos. Lo que sí puede es que la copia diga quién es y cuántos
 # días tiene, en la salida que el adoptante ya ejecuta. Al cambiar el
 # comportamiento del gate se sube GATE_VERSION y se pone la fecha del cambio.
-GATE_VERSION = "gate/v7"
+GATE_VERSION = "gate/v8"
 GATE_GENERATED_AT = "2026-09-18"
 GATE_STALE_AFTER_DAYS = 90
 
@@ -82,6 +82,8 @@ EXEMPT_PATHS: set[str] = set()
 # Exención por nombre exacto de archivo (ADR-030): basura que Git no
 # versiona, sin declarar su ruta una a una.
 EXEMPT_NAMES: set[str] = set()
+# Basura del SO que el listado ignora; cerrada, nunca config (issue #59).
+LISTING_JUNK = frozenset({".DS_Store", "Thumbs.db", "desktop.ini"})
 # Presupuesto de la ruta de lectura obligatoria (ADR-021). Vacío =
 # inactivo: §3.4 acota cada archivo por separado, y hasta ADR-021
 # nada acotaba la suma que un ejecutor debe leer antes de actuar.
@@ -589,7 +591,8 @@ def check_template_manifest(
                 f"{label}: symlink no permitido en {dir_label}/: {path.name}"
             )
             continue
-        on_disk.append(path.name)
+        if path.name not in LISTING_JUNK or path.name in data["files"]:
+            on_disk.append(path.name)
     listed = sorted(data["files"])
     if listed != on_disk:
         missing = sorted(set(on_disk) - set(listed))

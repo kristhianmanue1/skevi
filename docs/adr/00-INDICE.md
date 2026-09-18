@@ -37,6 +37,7 @@
 | [ADR-034](ADR-034-gate-en-ci-remoto.md) | Gate en CI remoto; hook local como verificación rápida (sustituye ADR-001) | Aceptado | `.github/workflows/skevi-gate.yml` | Instrucción directa; disparador de ADR-001 y [AUDIT-review-enforcement](../proposals/AUDIT-review-enforcement.md) §3 | 2026-09-17 |
 | [ADR-035](ADR-035-catalogo-de-defectos-destilado.md) | Catálogo de clases de defecto, destilado de material ajeno | Aceptado | `templates/skevi/review-defect-catalog.md` (pendiente del plan de PROP-010 §8) | [PROP-010](../proposals/PROP-010-destilacion-engineering.md) §7, folio `SKV-ACC-PROP010-20260918-01` | 2026-09-18 |
 | [ADR-036](ADR-036-hogar-unico-de-plantillas.md) | Hogar único de plantillas copiables en `templates/skevi/` | Aceptado | `templates/skevi/MANIFEST.json` (plantillas/v9), `check_sizes.py` (gate/v7), `docs/MANIFEST.json` (corpus/v3) | [Issue #48](https://github.com/kristhianmanue1/skevi/issues/48); hallazgo F1 de [PROP-010](../proposals/PROP-010-destilacion-engineering.md) §5 | 2026-09-18 |
+| [ADR-037](ADR-037-disposicion-de-rondas-en-el-registro.md) | La disposición de cada ronda vive en su registro, no en la propuesta | Aceptado | `docs/ai-agent-guide/02-specs-adr-contratos.md` §3.3 (corpus/v4) | Deliberación de [PROP-010](../proposals/PROP-010-destilacion-engineering.md) §6.5 y sus rondas | 2026-09-18 |
 
 **Reglas de este índice**
 

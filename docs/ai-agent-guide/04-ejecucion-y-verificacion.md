@@ -138,6 +138,8 @@ proceed | fix-and-retry | escalate
 Ronda sobre tarea material: el reporte lleva las dos capas y el bloque
 de trazabilidad de ADR-016 (ver `00-INDICE.md`, §Reporte en dos capas);
 la decisión `proceed | fix-and-retry | escalate` vive en ambas capas.
+El informe y la disposición de sus hallazgos viven juntos en `docs/reviews/`,
+nunca dentro del documento que la ronda revisa (ADR-037, `02` §3.3).
 
 ### 5.3 Reglas de cierre
 

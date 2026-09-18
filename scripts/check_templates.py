@@ -237,6 +237,16 @@ def _chain(history, start: str, current: str):
     return jumps, None
 
 
+def _detalle(texto: str) -> str:
+    """El texto de `changes` viene de un manifiesto ajeno: dato no confiable
+    (estándar, principio 7). Se imprime saneado —una línea, sin controles ni
+    secuencias de escape, acotado— para que no pueda falsear la salida del
+    gate con un `OK` inventado ni borrar la pantalla con ANSI."""
+    limpio = "".join(c if c.isprintable() else " " for c in texto)
+    unido = " ".join(limpio.split())
+    return unido[:300] + "…" if len(unido) > 300 else unido
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
         description=(
@@ -283,6 +293,10 @@ def main(argv=None) -> int:
         # Con saltos breaking y sin registro por archivo, el fallo es
         # conservador: todos los archivos instalados cuentan como afectados
         # salvo los declarados customized (T09, bandera conservadora).
+        # `stale` **no** se acota a lo declarado en installed.json, al revés
+        # que el aviso de la rama compatible: ahí sobrar un nombre es ruido,
+        # aquí faltar uno sería dejar pasar una migración obligatoria. Ante
+        # un registro incompleto, el BLOQ se equivoca del lado seguro.
         stale = sorted((affected or set(installed["files"])) - customized)
         if stale:
             print(f"BLOQ — {DRIFT_REASON}: copia obsoleta incompatible "
@@ -290,23 +304,66 @@ def main(argv=None) -> int:
             for jump in breaking:
                 print(f"- salto breaking: {jump['from']} -> {jump['to']}")
             for name in stale:
-                print(f"- afectado sin customized declarado: {name}")
+                print(f"- afectado sin customized declarado: "
+                      f"{_detalle(name)}")
+                # El texto de migración vive en `changes` del manifiesto y
+                # nadie lo imprimía: el adoptante recibía el BLOQ y tenía que
+                # abrir el JSON para saber qué hacer, justo cuando más falta
+                # le hace (issue #57).
+                for jump in breaking:
+                    detalle = _detalle(jump["changes"].get(name) or "")
+                    if detalle:
+                        print(f"  {jump['from']} -> {jump['to']}: {detalle}")
             for name in custom:
                 print(f"- customized (re-copia bajo responsabilidad del "
-                      f"consumidor): {name}")
+                      f"consumidor): {_detalle(name)}")
+                # Quien declaró el archivo como customizado es justo quien
+                # tiene que aplicar la migración a mano: necesita el detalle
+                # más que nadie (issue #57).
+                for jump in breaking:
+                    detalle = _detalle(jump["changes"].get(name) or "")
+                    if detalle:
+                        print(f"  {jump['from']} -> {jump['to']}: {detalle}")
             return 1
 
-    print(f"OK — copia obsoleta pero compatible: sin saltos breaking "
-          f"aplicables hasta {current}")
+    if breaking:
+        # El detalle sale sólo de los saltos `breaking`: en los demás, la
+        # re-copia es opcional y el manifiesto ya la resume en el aviso.
+        # Todos los afectados están declarados `customized`, así que no hay
+        # BLOQ —eso no cambia, sería romper a quien hoy pasa—, pero decir
+        # «sin saltos breaking» sería falso: los hay, y la migración es del
+        # consumidor. Sin esto, el adoptante que customizó todo no se entera
+        # de que existe (issue #57).
+        print(f"OK — copia obsoleta con saltos breaking cubiertos por "
+              f"customized, hasta {current}")
+        for jump in breaking:
+            print(f"- salto breaking: {jump['from']} -> {jump['to']}")
+            for name in sorted(set(jump["changes"]) & customized):
+                print(f"  {_detalle(name)}: "
+                      f"{_detalle(jump['changes'][name])}")
+    else:
+        print(f"OK — copia obsoleta pero compatible: sin saltos breaking "
+              f"aplicables hasta {current}")
     if not affected:
         print("- aviso: la cadena no registra cambios por archivo; "
               "re-copia opcional")
     else:
-        for name in sorted(affected - customized):
-            print(f"- aviso: re-copia opcional; cambia en la cadena: {name}")
+        # El aviso se acota a lo que el consumidor declaró instalado: decirle
+        # «re-copia» de un archivo que nunca copió es ruido, y señal ruidosa
+        # es señal que se ignora (issue #57). Lo que cambió y no figura en su
+        # registro se anuncia aparte, sin llamarlo «nuevo»: el manifiesto
+        # lleva cambios por salto, no inventario por versión, así que desde
+        # aquí no se sabe si el archivo es nuevo o si nunca lo copió.
+        instalado = set(installed["files"])
+        for name in sorted((affected - customized) & instalado):
+            print(f"- aviso: re-copia opcional; cambia en la cadena: "
+                  f"{_detalle(name)}")
+        for name in sorted((affected - customized) - instalado):
+            print(f"- aviso: cambia en la cadena y no está en tu "
+                  f"installed.json: {_detalle(name)}")
     for name in custom:
         print(f"- aviso: customized — re-copia bajo responsabilidad del "
-              f"consumidor: {name}")
+              f"consumidor: {_detalle(name)}")
     return 0
 
 

@@ -14,8 +14,9 @@
 > rondas y decisión en un solo archivo, y al cerrar se mueve a
 > `docs/history/` en el mismo cambio que implemente la decisión (`02` §3.3).
 > Con una excepción **ya decidida** (§7 B, 2026-09-18): el registro textual
-> de cada ronda vive en `docs/reviews/`, donde `check_reports` lo alcanza; en
-> este archivo queda su disposición.
+> de cada ronda vive en `docs/reviews/`, donde `check_reports` lo alcanza.
+> ~~Y su disposición en este archivo~~ — esa segunda mitad la sustituyó
+> **ADR-037** el mismo día: la disposición se va con el informe.
 > **Origen:** instrucción directa del Operador en conversación (claude.ai,
 > 2026-09-16/17). Base original: `main` `a918ceb`; rebasada sobre `main`
 > `c2f3720` (v1.4.0) el 2026-09-17. Rama
@@ -91,7 +92,7 @@ Tomadas en conversación el 2026-09-16/17. Se registran aquí como
 | F1 | Hueco preexistente de plantillas raíz sin MANIFEST: issue aparte |
 | T01/T03 | Autorizados: procedencia con red de lectura; ronda fresca con Codex |
 | §7 A | **No** se amplía el alcance declarado de Skevi a operación (2026-09-18) |
-| §7 B | **Sí**: el registro textual de cada ronda vive en `docs/reviews/`; en la propuesta queda su disposición (2026-09-18) |
+| §7 B | **Sí**: el registro textual de cada ronda vive en `docs/reviews/`; ~~en la propuesta queda su disposición~~ — **la segunda mitad la sustituye ADR-037** el mismo día: la disposición se va con el informe, porque dejarla aquí es lo que hizo que este documento necesitara rondas para arreglar su propia narración (2026-09-18) |
 
 ## 3. Propuesta
 
@@ -323,10 +324,10 @@ El informe vive textual, con su envoltorio de registro gateado, en
 `../reviews/2026-09-17-prop010-t03.md`. No se anexa aquí por el motivo que da
 MED-1: dentro de esta propuesta el gate de reportes no lo descubre —su
 `reports.dir` es `docs/reviews`—, así que una capa técnica malformada se
-colaría sin que nada lo dijera. El formato compacto (D-D2) se conserva para
-la disposición, que es lo que sí vive aquí. Esto es lo que se hizo **con esta
-ronda**; que valga para las siguientes es un ajuste de D-D2 y por tanto
-decisión del Operador, planteada en §7.
+colaría sin que nada lo dijera. En su momento el formato compacto (D-D2) se
+conservó para la disposición, que quedó aquí; **eso lo sustituyó ADR-037**,
+que se lleva la disposición al registro junto con el informe. Lo de este
+párrafo es lo que se hizo **con esta ronda**, antes de esa decisión.
 
 | # | Hallazgo de T03 | Impacto si no se corrige | Corrección aplicada | Estado |
 |---|---|---|---|---|
@@ -536,10 +537,11 @@ A. **Ampliación del alcance declarado de Skevi. RESPONDIDA: no**
    autorización, que pertenecen a quien opera el sistema y no a este corpus.
 
 B. **Registro de rondas. RESPONDIDA: sí** (2026-09-18). El registro textual
-   de cada ronda vive en `docs/reviews/`, con capa técnica gateada; en la
-   propuesta queda su disposición. No rompe D-D2 —la deliberación sigue en un
-   solo archivo—: sólo pone el informe donde `check_reports` lo alcanza, que
-   es lo que MED-1 pedía.
+   de cada ronda vive en `docs/reviews/`, con capa técnica gateada. ~~Y en la
+   propuesta queda su disposición~~ — **sustituido por ADR-037** el mismo
+   día, al verse que dejar la disposición aquí es lo que obligó a este
+   documento a gastar rondas arreglando su propia narración. No rompe D-D2:
+   la deliberación sigue en un solo archivo; lo que sale es su contabilidad.
 
 **Desaparecida, no resuelta:** hubo una tercera pregunta sobre la frontera de
 datos de REQ-P10-03. Dejó de existir el 2026-09-18 en dos pasos: el Operador
