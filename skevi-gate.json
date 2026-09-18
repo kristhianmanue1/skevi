@@ -3,9 +3,8 @@
   "root_markdown": [
     "AN-KLA.md"
   ],
-  "exempt_paths": [
-    ".DS_Store",
-    "docs/.DS_Store"
+  "exempt_names": [
+    ".DS_Store"
   ],
   "limits": {
     "scripts/check_sizes.py": 870
