@@ -24,8 +24,8 @@ from pathlib import Path
 # proyectos ajenos. Lo que sí puede es que la copia diga quién es y cuántos
 # días tiene, en la salida que el adoptante ya ejecuta. Al cambiar el
 # comportamiento del gate se sube GATE_VERSION y se pone la fecha del cambio.
-GATE_VERSION = "gate/v6"
-GATE_GENERATED_AT = "2026-09-13"
+GATE_VERSION = "gate/v7"
+GATE_GENERATED_AT = "2026-09-18"
 GATE_STALE_AFTER_DAYS = 90
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -40,8 +40,8 @@ REQUIRED = {
     "docs/ai-agent-guide/03-cascaron-proyecto.md",
     "docs/ai-agent-guide/04-ejecucion-y-verificacion.md",
     "scripts/check_sizes.py",
-    "templates/registro-contexto.md",
-    "templates/plan-de-implementacion.md",
+    "templates/skevi/registro-contexto.md",
+    "templates/skevi/plan-de-implementacion.md",
     "templates/skevi/usage-guide.md",
     "templates/skevi/architecture-overview.md",
 }

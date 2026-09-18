@@ -69,8 +69,8 @@ Tomadas en conversación el 2026-09-16/17. Se registran aquí como
 
 ### 3.1 Qué se destila y dónde
 
-Plantillas nuevas en `templates/skevi/` (salto `plantillas/v8` →
-`plantillas/v9`, no breaking), para que `check_templates` emita señal de
+Plantillas nuevas en `templates/skevi/` (salto al siguiente
+`plantillas/vN` libre, comprobado contra `main` vigente; no breaking), para que `check_templates` emita señal de
 drift. Nombres en inglés, prosa en español (ADR-015, ADR-029).
 
 | Archivo | Fuente upstream | Tipo de derivación |
@@ -198,7 +198,7 @@ Sin cambios en `scripts/` (`check_sizes.py` 867/870 el 2026-09-17).
 - `docs/crosswalk-estandares.md`: fila RV.2 cita postmortem y runbook;
   resumen recontado contra filas.
 - `skevi-gate.json`: plantillas nuevas en `required`.
-- `docs/MANIFEST.json`: salto de corpus `corpus/v2` → `corpus/v3` por los
+- `docs/MANIFEST.json`: salto al siguiente `corpus/vN` libre por los
   cambios en `00` y `04` (ADR-032).
 - Antes de implementar, barrido completo de identificadores y versiones
   caducados contra `main` vigente —número de ADR libre, versión de
@@ -232,8 +232,16 @@ escrito: un caso sigue siendo evidencia de ese caso, no validación general.
 ## 5. Hueco preexistente (F1)
 
 `templates/plan-de-implementacion.md` y `templates/registro-contexto.md` no
-están en ningún MANIFEST: no emiten drift. Fuera de esta propuesta; se
-registra en issue aparte.
+estaban en ningún MANIFEST: no emitían drift. Fuera de esta propuesta; se
+registró en issue aparte, como decidió F1.
+
+**Resuelto el 2026-09-18**, fuera del alcance de esta propuesta:
+[ADR-036](../adr/ADR-036-hogar-unico-de-plantillas.md) las movió a
+`templates/skevi/`, donde el manifiesto vigente las cubre con listado exacto
+y digests (issue #48). Las plantillas nuevas que propone §3.1 siguen yendo a
+ese mismo directorio; lo que cambia es el salto de versión de partida. Por
+eso §3.1 y §3.4 dejaron de nombrar números concretos en este mismo cambio:
+`plantillas/v9` y `corpus/v3` ya los consumió ADR-036.
 
 ## 6. Rondas
 

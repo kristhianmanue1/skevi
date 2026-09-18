@@ -1,6 +1,6 @@
 {
   "schema": "skevi/corpus-install/v1",
-  "version": "corpus/v2",
+  "version": "corpus/v3",
   "files": {
     "estandar-diseno-software-github.md": "sha256:<digest-en-docs/MANIFEST-fuente>",
     "ai-agent-guide/00-INDICE.md": "sha256:<digest-en-docs/MANIFEST-fuente>",

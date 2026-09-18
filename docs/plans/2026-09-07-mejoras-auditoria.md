@@ -78,7 +78,7 @@ TAREA T00
   - [x] Aislar rama propia — verificación: git branch --show-current devuelve
         fix/audit-gate-read-errors; ningún cambio ajeno eliminado.
 TAREA T01
-  Consumes: REQ-AUD-01/06; `templates/plan-de-implementacion.md`
+  Consumes: REQ-AUD-01/06; `templates/skevi/plan-de-implementacion.md`
   Produce: plan completo y SPEC-AUD-01 con F0/F1 de entrada
   Steps:
   - [x] Definir requisitos, no objetivos y casos — verificación: SPEC-AUDIT
