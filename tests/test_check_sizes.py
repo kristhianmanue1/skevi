@@ -668,6 +668,73 @@ class ConfigTests(unittest.TestCase):
 
 
 
+class ListingIgnoresOsJunkButNotConfigTests(unittest.TestCase):
+    """El listado exacto ignora la basura del SO por constante cerrada, y sólo
+    eso. `exempt_names` es config del adoptante: si pudiera retirar archivos
+    del cotejo, cualquiera ocultaría uno real del versionado — el agujero que
+    ManifestListingRespectsExemptionsTests defiende (issue #59)."""
+
+    def setUp(self):
+        self._orig_root = check_sizes.ROOT
+        self._orig_names = set(check_sizes.EXEMPT_NAMES)
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.addCleanup(self._restore)
+        self.root = Path(self._tmp.name)
+        check_sizes.ROOT = self.root
+        self.dir = self.root / "templates" / "skevi"
+        self.dir.mkdir(parents=True)
+        (self.dir / "usage-guide.md").write_text("# x\n", encoding="utf-8")
+        self.manifest = self.dir / check_sizes.TEMPLATE_MANIFEST_NAME
+        self._write_manifest({"usage-guide.md": self._digest("usage-guide.md")})
+
+    def _restore(self):
+        check_sizes.ROOT = self._orig_root
+        check_sizes.EXEMPT_NAMES.clear()
+        check_sizes.EXEMPT_NAMES.update(self._orig_names)
+
+    def _digest(self, name):
+        return "sha256:" + hashlib.sha256((self.dir / name).read_bytes()).hexdigest()
+
+    def _write_manifest(self, files):
+        self.manifest.write_text(json.dumps({
+            "schema": check_sizes.TEMPLATE_MANIFEST_SCHEMA,
+            "version": "plantillas/v1",
+            "generated_at": "2026-09-18T00:00:00Z",
+            "files": files,
+            "history": [],
+        }), encoding="utf-8")
+
+    def test_os_junk_is_ignored_without_any_configuration(self):
+        (self.dir / ".DS_Store").write_bytes(b"\x00\x01")
+        check_sizes.EXEMPT_NAMES.clear()
+        self.assertEqual(check_sizes.check_template_manifest(self.manifest, self.dir), [])
+
+    def test_config_cannot_hide_a_real_file_from_the_listing(self):
+        """El caso que motivó rehacer el arreglo: `exempt_names` exime del
+        límite de tamaño, nunca del versionado."""
+        (self.dir / "notas-internas.md").write_text("real\n", encoding="utf-8")
+        check_sizes.EXEMPT_NAMES.add("notas-internas.md")
+        fallos = check_sizes.check_template_manifest(self.manifest, self.dir)
+        self.assertTrue(
+            any("notas-internas.md" in f for f in fallos), fallos)
+
+    def test_junk_declared_in_the_manifest_is_still_checked(self):
+        (self.dir / ".DS_Store").write_bytes(b"\x00\x01")
+        self._write_manifest({
+            "usage-guide.md": self._digest("usage-guide.md"),
+            ".DS_Store": "sha256:" + "0" * 64,
+        })
+        fallos = check_sizes.check_template_manifest(self.manifest, self.dir)
+        self.assertTrue(any("digest desactualizado" in f for f in fallos), fallos)
+
+    def test_other_extra_files_still_fail_the_listing(self):
+        (self.dir / "suelto.md").write_text("x\n", encoding="utf-8")
+        fallos = check_sizes.check_template_manifest(self.manifest, self.dir)
+        self.assertTrue(
+            any("archivos sin entrada en el manifiesto" in f for f in fallos), fallos)
+
+
 class RequiredDefaultsMatchTheRepositoryTests(unittest.TestCase):
     """El conjunto REQUIRED del script rige para el adoptante que copia
     `check_sizes.py` sin `skevi-gate.json`. Nada lo verificaba: la suite

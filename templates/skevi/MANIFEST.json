@@ -1,15 +1,15 @@
 {
   "schema": "skevi/template-manifest/v1",
-  "version": "plantillas/v9",
-  "generated_at": "2026-09-18T11:11:55Z",
+  "version": "plantillas/v10",
+  "generated_at": "2026-09-18T18:18:29Z",
   "files": {
     "architecture-overview.md": "sha256:c7a03679ec978ff609e6216cc63b5043eeb185424895083970b399ac9912b2d3",
-    "corpus-installed.json": "sha256:0fb84cfe443eceea196705ed2deaec25f302c7cd354091bf81ce9b419884b22a",
+    "corpus-installed.json": "sha256:b4e739927bd8551defd99940f9878b1b3502496f88853a1052eab41aa429e10b",
     "frozen-trees.md": "sha256:768a87e69ef7da18b276f27d77d7cb2e492fb2eba2a55ae483d6d9b21d32751b",
-    "installed.json": "sha256:6cec95cd8c190b3a1a77c2b7d2db1ecc4016ef0d3e7dd8d5f04b719a7b8fc341",
+    "installed.json": "sha256:f8d9dfeb63253e55590494284971c686860b4dbc5b35378b2f5ad1103b9c520b",
     "plan-de-implementacion.md": "sha256:f93a8435757af5f65fe166737a87ea880928844efe4637df554f5b8c09b6b073",
     "registro-contexto.md": "sha256:60c768b449a416fa8727b1bf2515caecab0e9962111cc97a2d203f922fdc3227",
-    "scripts-installed.json": "sha256:77fe91e30451d46fc52f810834bbbcd2e17bf60b6d00499fa8068a3e3c568442",
+    "scripts-installed.json": "sha256:629579404162abfc464475db482b1c426ec3bc0f1edbd81f87eac39fa65f6716",
     "usage-guide.md": "sha256:52ee31a1064a9f79edafee750518fe06a040431f508711f80c422de0643cd332"
   },
   "history": [
@@ -88,6 +88,16 @@
         "installed.json": "ejemplo de versión alineado con plantillas/v9",
         "scripts-installed.json": "ejemplo de versión alineado con gate/v7",
         "corpus-installed.json": "ejemplo de versión alineado con corpus/v3"
+      }
+    },
+    {
+      "from": "plantillas/v9",
+      "to": "plantillas/v10",
+      "breaking": false,
+      "changes": {
+        "corpus-installed.json": "ejemplo de versión alineado con corpus/v4",
+        "installed.json": "ejemplo de versión alineado con plantillas/v10",
+        "scripts-installed.json": "ejemplo de versión alineado con gate/v8"
       }
     }
   ]

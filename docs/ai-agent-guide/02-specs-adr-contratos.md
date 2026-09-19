@@ -92,6 +92,13 @@ Checklist de cierre (obligatorio para ADRs que modifican norma o guía):
 Un ADR sin cierre completo no cierra el gate de F1: la decisión existe, pero
   el rastro no.
 
+**Dónde vive el resultado de cada ronda** (ADR-037): el informe y la
+disposición de sus hallazgos van al registro de `docs/reviews/`, no dentro de
+la propuesta. Una propuesta que se narra a sí misma —cuántas rondas
+corrieron, qué encontró cada una— queda desfasada con cada corrección y
+obliga a una ronda más para arreglar la narración, no el contenido. La
+propuesta remite; el registro cuenta.
+
 ## 4. Contratos de interfaz
 
 ### 4.1 Qué necesita contrato

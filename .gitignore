@@ -1,4 +1,6 @@
 .DS_Store
+Thumbs.db
+desktop.ini
 .an-kla/
 __pycache__/
 *.pyc
