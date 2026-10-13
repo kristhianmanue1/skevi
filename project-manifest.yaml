@@ -91,7 +91,7 @@ publica:
   - { tipo: contrato, id: skevi/plantillas-adopcion, version: v1 }
 
 consume:
-  - { tipo: proyecto, id: argos, uso: "observación del corpus y evidencia con presupuesto; sin él, el análisis degrada a inventario propio y lo declara", requerido: false }
+  - { tipo: proyecto, id: argos-epistemic, uso: "observación del corpus y evidencia con presupuesto; sin él, el análisis degrada a inventario propio y lo declara", requerido: false }
   - { tipo: proyecto, id: praxis-dev, uso: "gobernanza, autoridad y conformidad; solapamiento normativo declarado y pendiente de resolver", requerido: false }
   - { tipo: proyecto, id: an-kla-memory, uso: "continuidad entre sesiones en repos que la instalen; Skevi opera igual sin ella", requerido: false }
   - { tipo: externo, id: git, uso: "estado real del proyecto y evidencia de las prácticas que norma", requerido: true }
