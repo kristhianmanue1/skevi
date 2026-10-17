@@ -52,3 +52,11 @@ report_sha256 = 13e18ac0b7613869b2f329ecd31945dcd34f51a6f8e8dbaa0131ced4630e6f8d
 
 Hash: UTF-8, LF, sin newline final y sin la línea `report_sha256`.
 Partido de PARTIAL: publicación inmediata bajo autorización vigente.
+
+Posdata de CI (2026-10-17): la primera corrida del PR #71 rojo en las dos
+matrices — el checkout a `fetch-depth: 1` deja la prueba de procedencia sin
+historia (`git log -1 -- <manifiesto>` devuelve el propio commit de
+checkout y las tres familias fallan). El LOW «primera prueba que exige
+`.git`» era más serio: no era el tarball, era el runner canónico. Corregido
+con `fetch-depth: 0` y el motivo declarado en el workflow: la propiedad
+ADR-031 se verifica donde manda, no se salta en CI.

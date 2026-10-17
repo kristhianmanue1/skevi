@@ -32,6 +32,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
+          # Historia completa: la prueba de procedencia de .skevi/ (HG-4,
+          # ADR-031) coteja el source de cada registro contra el último
+          # commit que tocó su manifiesto — sin historia sería siempre el
+          # commit de checkout, y la propiedad quedaría sin verificar en
+          # el runner autoritativo.
+          fetch-depth: 0
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
           python-version: ${{ matrix.python }}
