@@ -144,6 +144,9 @@ python3 -m unittest discover -s tests
 Corre las suites de `tests/` sobre los scripts del proyecto — sus cuatro
 artefactos ejecutables: `check_sizes.py`, `check_plans.py` (ADR-014),
 `check_reports.py` (ADR-022) y `check_templates.py` (ADR-020, ADR-028).
+El runner canónico es `unittest`, stdlib pura: el entorno virtual del
+repositorio **no** incluye `pytest`; si lo prefieres, instálalo aparte —
+la suite pasa por ambas vías, pero sólo unittest está garantizado aquí.
 
 **Gate en CI, hook local como verificación rápida** (ADR-034, sustituye a
 ADR-001). El workflow `.github/workflows/skevi-gate.yml` ejecuta los tres
