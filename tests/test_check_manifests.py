@@ -152,5 +152,57 @@ class ListingIgnoresOsJunkButNotConfigTests(unittest.TestCase):
             fallos)
 
 
+class SelfInstalledRecordsStayInSyncTests(unittest.TestCase):
+    """HG-4: skevi consume sus propias plantillas — `.skevi/` es el
+    registro de auto-instalación que el paso check_templates del CI coteja
+    (issue #64 §2). Estos casos fijan que el registro no se quede atrás
+    del manifiesto fuente: sin ellos envejece en silencio y el drift sólo
+    lo detecta el consumidor o el CI, tarde."""
+
+    REPO = Path(__file__).resolve().parent.parent
+
+    PAIRS = (
+        ("templates/skevi/MANIFEST.json", ".skevi/installed.json"),
+        ("scripts/MANIFEST.json", ".skevi/scripts-installed.json"),
+        ("docs/MANIFEST.json", ".skevi/corpus-installed.json"),
+    )
+
+    def _installed(self, installed_rel):
+        return json.loads(
+            (self.REPO / installed_rel).read_text(encoding="utf-8"))
+
+    def test_versions_and_digests_track_their_source_manifests(self):
+        for manifest_rel, installed_rel in self.PAIRS:
+            with self.subTest(installed=installed_rel):
+                manifest = json.loads(
+                    (self.REPO / manifest_rel).read_text(encoding="utf-8"))
+                installed = self._installed(installed_rel)
+                self.assertEqual(installed["version"], manifest["version"])
+                self.assertEqual(
+                    installed["schema"],
+                    manifest["schema"].replace("-manifest/", "-install/"))
+                self.assertEqual(installed["files"], manifest["files"])
+                self.assertEqual(installed["customized"], [])
+
+    def test_sources_point_to_the_last_bump_of_each_family(self):
+        """ADR-031: la revisión es la del último bump de CADA familia, no
+        la del HEAD por comodidad — el registro no caduca con cada commit
+        ajeno, y esta prueba sella esa propiedad: el sha declarado debe
+        ser el último commit que tocó el manifiesto de su familia."""
+        import subprocess
+        for manifest_rel, installed_rel in self.PAIRS:
+            with self.subTest(installed=installed_rel):
+                source = self._installed(installed_rel)["source"]
+                revision = source.rsplit("@", 1)[1]
+                probe = subprocess.run(
+                    ["git", "log", "-1", "--format=%H", "--", manifest_rel],
+                    cwd=self.REPO, capture_output=True, text=True)
+                self.assertEqual(probe.returncode, 0)
+                self.assertTrue(
+                    probe.stdout.strip().startswith(revision),
+                    f"{installed_rel}: source {revision} no es el último "
+                    f"bump de {manifest_rel} ({probe.stdout.strip()[:12]})")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,9 @@
 # Gate autoritativo de Skevi (ADR-034). El hook local scripts/hooks/pre-push
-# ejecuta los mismos comandos como verificación rápida antes del push.
+# corre check_sizes, check_plans, check_reports y unittest como verificación
+# rápida; el espejo de digests de .skevi/ también lo cubre unittest. Las tres
+# invocaciones de check_templates (HG-4) viven aquí: su señal es el drift de
+# VERSIÓN (breaking y cadenas), no el contenido — manifiesto contra disco es
+# cosa de check_sizes, y digests del registro contra manifiesto, del unittest.
 name: skevi-gate
 
 on:
@@ -39,5 +43,10 @@ jobs:
         run: python scripts/check_plans.py
       - name: check_reports
         run: python scripts/check_reports.py
+      - name: check_templates (drift de versión; espejo de digests en unittest)
+        run: |
+          python scripts/check_templates.py --manifest templates/skevi/MANIFEST.json --installed .skevi/installed.json
+          python scripts/check_templates.py --manifest scripts/MANIFEST.json --installed .skevi/scripts-installed.json
+          python scripts/check_templates.py --manifest docs/MANIFEST.json --installed .skevi/corpus-installed.json
       - name: unittest
         run: python -m unittest discover -s tests
