@@ -44,7 +44,7 @@ from pathlib import Path
 # SCHEMA_NAMESPACE no es un error silencioso: _check_namespace falla
 # cerrado ante un esquema sin namespace registrado (ronda adversarial, MED).
 MANIFEST_SCHEMAS = {"skevi/template-manifest/v1", "skevi/script-manifest/v1",
-                    "skevi/corpus-manifest/v1"}
+                    "skevi/corpus-manifest/v1", "skevi/adr-manifest/v1"}
 INSTALL_SCHEMAS = {"skevi/template-install/v1", "skevi/script-install/v1",
                    "skevi/corpus-install/v1"}
 # Cada esquema exige su propio espacio de nombres de versión. Sin esto, un
@@ -59,6 +59,7 @@ SCHEMA_NAMESPACE = {
     "skevi/script-install/v1": "gate",
     "skevi/corpus-manifest/v1": "corpus",
     "skevi/corpus-install/v1": "corpus",
+    "skevi/adr-manifest/v1": "adr",
 }
 MANIFEST_KEYS = {"schema", "version", "generated_at", "files", "history"}
 INSTALL_KEYS = {"schema", "version", "files", "installed_at", "source",
@@ -271,6 +272,11 @@ SCRIPT_MANIFEST_SCHEMA = "skevi/script-manifest/v1"
 # digests en docs/MANIFEST.json; sin listado de directorio, porque docs/
 # anida subdirectorios y el contrato de ADR-020 es plano por diseño.
 CORPUS_MANIFEST_SCHEMA = "skevi/corpus-manifest/v1"
+# Cuarta familia (ADR-040): los ADRs inmutables de docs/adr/, con listado
+# exacto — directorio plano, cada ADR nuevo exige entrada y bump. Sin
+# esquema de instalación: existe para verificar descargas, no como flujo
+# de adopción.
+ADR_MANIFEST_SCHEMA = "skevi/adr-manifest/v1"
 
 
 def _namespace_failure(version, expected_schema: str, where: str) -> str | None:

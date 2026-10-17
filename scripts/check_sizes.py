@@ -28,7 +28,7 @@ import check_templates
 # proyectos ajenos. Lo que sí puede es que la copia diga quién es y cuántos
 # días tiene, en la salida que el adoptante ya ejecuta. Al cambiar el
 # comportamiento del gate se sube GATE_VERSION y se pone la fecha del cambio.
-GATE_VERSION = "gate/v10"
+GATE_VERSION = "gate/v11"
 GATE_GENERATED_AT = "2026-10-17"
 GATE_STALE_AFTER_DAYS = 90
 
@@ -463,22 +463,31 @@ def check_reading_path() -> list[str]:
     # real— es lectura obligatoria del ejecutor; un presupuesto activo que
     # no lo declara mide una ruta incompleta y da la falsa comodidad que
     # #42 dejó y #63 encontró dos veces en adoptantes. Config contra
-    # config: sin detectar runtime, sin red. Alcance deliberado (ronda
-    # 2026-10-17): sólo los extras del adoptante, no el conjunto
-    # intrínseco AGENTS/CLAUDE/README — extender el requisito a los
-    # intrínsecos existentes es decisión de alcance pendiente del
-    # Operador, no de este chequeo.
+    # config: sin detectar runtime, sin red. Desde gate/v11 (ADR-041) la
+    # exigencia cubre también la entrada del ejecutor: AGENTS.md y
+    # CLAUDE.md, si existen en la raíz, son lectura obligatoria con
+    # presupuesto activo — README queda fuera: cara humana, no entrada del
+    # ejecutor.
     intrinsic = _SKEVI_DEFAULTS["ROOT_MARKDOWN"]
     spine = set(READING_PATH["files"])
-    for name in sorted(ROOT_MARKDOWN - intrinsic):
+    # README.md nunca entra: intrinsic siempre lo contiene y la exigencia
+    # de existencia condicional sólo cubre AGENTS/CLAUDE (ADR-041).
+    pendientes = sorted(ROOT_MARKDOWN - intrinsic)
+    for name in ("AGENTS.md", "CLAUDE.md"):
+        # .is_file() sigue symlinks a diferencia de discover(), que los
+        # excluye: asimetría aceptada y conservadora — el presupuesto
+        # cuenta las líneas reales del destino; el límite por archivo de
+        # §3.4 es el que un symlink podría saltar (ronda gate/v11, LOW).
+        if (ROOT / name).is_file():
+            pendientes.append(name)
+    for name in pendientes:
         if name not in spine:
             failures.append(
-                f"ruta de lectura obligatoria: {name} está declarado en "
-                "«root_markdown» y ausente de «reading_path.files»; "
-                "absórbelo en el presupuesto por decisión escrita "
-                "(la plantilla usage-guide documenta el caso con límite "
-                "1400 como ejemplo) o, si no es de lectura obligatoria, "
-                "muévelo fuera de la raíz del proyecto"
+                f"ruta de lectura obligatoria: {name} es lectura "
+                "obligatoria del ejecutor y no figura en "
+                "«reading_path.files»; absórbelo en el presupuesto por "
+                "decisión escrita (la plantilla usage-guide documenta el "
+                "caso con límite 1400 como ejemplo)"
             )
 
     def contar(name: str) -> int | None:
@@ -602,6 +611,14 @@ def main() -> int:
         failures.extend(
             check_templates.check_corpus_manifest(corpus_manifest_path)
         )
+
+    # Cuarta familia (ADR-040): los ADRs inmutables, con listado exacto
+    # del directorio plano.
+    adr_manifest_path = ROOT / "docs" / "adr" / TEMPLATE_MANIFEST_NAME
+    if adr_manifest_path.is_file():
+        failures.extend(check_templates.check_template_manifest(
+            adr_manifest_path, adr_manifest_path.parent,
+            expected_schema=check_templates.ADR_MANIFEST_SCHEMA))
 
     unexpected_markdown = sorted(
         path.name

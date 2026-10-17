@@ -204,5 +204,40 @@ class SelfInstalledRecordsStayInSyncTests(unittest.TestCase):
                     f"bump de {manifest_rel} ({probe.stdout.strip()[:12]})")
 
 
+class AdrManifestRealRepoTests(unittest.TestCase):
+    """ADR-040: docs/adr/MANIFEST.json sella los ADRs inmutables con
+    listado exacto del directorio plano."""
+
+    REPO = Path(__file__).resolve().parent.parent
+
+    def test_real_adr_manifest_validates_with_exact_listing(self):
+        manifest = self.REPO / "docs" / "adr" / "MANIFEST.json"
+        self.assertTrue(manifest.is_file())
+        failures = check_templates.check_template_manifest(
+            manifest, manifest.parent,
+            expected_schema=check_templates.ADR_MANIFEST_SCHEMA)
+        self.assertEqual(failures, [])
+
+    def test_wrong_schema_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "ADR-001-x.md").write_text("# d\n", encoding="utf-8")
+            data = {
+                "schema": "skevi/template-manifest/v1",
+                "version": "adr/v1",
+                "generated_at": "2026-10-17T00:00:00Z",
+                "files": {"ADR-001-x.md":
+                          "sha256:" + hashlib.sha256(
+                              (root / "ADR-001-x.md").read_bytes()
+                          ).hexdigest()},
+                "history": [],
+            }
+            path = root / "MANIFEST.json"
+            path.write_text(json.dumps(data), encoding="utf-8")
+            failures = check_templates.check_template_manifest(
+                path, root, expected_schema=check_templates.ADR_MANIFEST_SCHEMA)
+            self.assertTrue(any("schema desconocido" in f for f in failures))
+
+
 if __name__ == "__main__":
     unittest.main()

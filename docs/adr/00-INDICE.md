@@ -40,6 +40,8 @@
 | [ADR-037](ADR-037-disposicion-de-rondas-en-el-registro.md) | La disposición de cada ronda vive en su registro, no en la propuesta | Aceptado | `docs/ai-agent-guide/02-specs-adr-contratos.md` §3.3 (corpus/v4) | Deliberación de [PROP-010](../proposals/PROP-010-destilacion-engineering.md) §6.5 y sus rondas | 2026-09-18 |
 | [ADR-038](ADR-038-presupuesto-de-lectura-con-memoria-activa.md) | Presupuesto de ruta de lectura con memoria activa | Aceptado | `skevi-gate.json` clave `reading_path` | Deuda §6 de `05` (ADR-019); [issue #63](https://github.com/kristhianmanue1/skevi/issues/63) | 2026-10-17 |
 | [ADR-039](ADR-039-particion-del-gate-dominio-de-manifiestos.md) | El dominio de manifiestos vive en check_templates; check_sizes delega | Aceptado | `scripts/check_sizes.py` + `scripts/check_templates.py` (gate/v9, plantillas/v11) | [Issue #61](https://github.com/kristhianmanue1/skevi/issues/61); tarea HG-2 del plan 2026-10-17 | 2026-10-17 |
+| [ADR-040](ADR-040-familia-de-manifiesto-adr.md) | Familia de manifiesto adr/v1 — los ADRs quedan sellados | Aceptado | `docs/adr/MANIFEST.json` (adr/v1), `check_templates.py`/`check_sizes.py` (gate/v11) | [Issue #64](https://github.com/kristhianmanue1/skevi/issues/64) §1; HG-5 del plan 2026-10-17 | 2026-10-17 |
+| [ADR-041](ADR-041-presupuesto-cubre-entrada-del-ejecutor.md) | El presupuesto de lectura cubre la entrada del ejecutor | Aceptado | `scripts/check_sizes.py` (gate/v11) | Hallazgo MED de la ronda gate/v10; instrucción directa del Operador | 2026-10-17 |
 
 **Reglas de este índice**
 

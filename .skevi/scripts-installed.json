@@ -1,13 +1,13 @@
 {
   "schema": "skevi/script-install/v1",
-  "version": "gate/v10",
+  "version": "gate/v11",
   "files": {
-    "check_sizes.py": "sha256:c8070c8b743b57e8f20f1ebb6dbe047bb7cd633305e7af94e075290c612a5961",
+    "check_sizes.py": "sha256:8ef045b53f8e3fbca69ef1110cbdc6ea53164fa3c007fdae45b7b29df5aa1d5c",
     "check_plans.py": "sha256:e6bff6446f2c5e73315cb4fafec904d5040d70195f67bbefa4a7597f9a14553d",
     "check_reports.py": "sha256:5663866d6575765be22353f9587c743005f3e612153efd492279b68bf0a0f21c",
-    "check_templates.py": "sha256:73f0057da6dff51ce5044971afdd9b182af8ecf29912f8b166f2f98ca8e1c094"
+    "check_templates.py": "sha256:12ffbcdac0c27c3b9cd7e9f2f4cb14b9390667790ff85db2d6f9687167b480e7"
   },
-  "installed_at": "2026-10-17T14:09:47Z",
+  "installed_at": "2026-10-17T14:41:54Z",
   "source": "https://github.com/kristhianmanue1/skevi@a6bfa33",
   "customized": []
 }

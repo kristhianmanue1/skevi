@@ -55,10 +55,10 @@ TAREA HG-4 — Autochequeo de plantillas en casa (#64.2)
   Produce: crea `.skevi/installed.json` con digests reales y step de
     `scripts/check_templates.py` en el workflow de CI
   Steps:
-  - [ ] Crear el registro con source apuntando a la revisión de la última
+  - [x] Crear el registro con source apuntando a la revisión de la última
         actualización de plantillas, no al HEAD — verificación: invocación
         canónica del gate en verde contra templates/skevi
-  - [ ] Añadir el step al workflow — verificación: CI en verde con el
+  - [x] Añadir el step al workflow — verificación: CI en verde con el
         chequeo corriendo y fallando ante un drift introducido a propósito
 
 TAREA HG-5 — Familia adr/v1 de manifiesto (#64.1)
@@ -66,9 +66,9 @@ TAREA HG-5 — Familia adr/v1 de manifiesto (#64.1)
   Produce: crea docs/adr/MANIFEST.json con listado exacto y digests de los
     ADRs inmutables
   Steps:
-  - [ ] Generar el manifiesto y registrarlo en el gate — verificación: BLOQ
+  - [x] Generar el manifiesto y registrarlo en el gate — verificación: BLOQ
         ante un ADR editado y OK con el listado exacto del directorio
-  - [ ] Documentar la capa sellada frente a la no sellada — verificación:
+  - [x] Documentar la capa sellada frente a la no sellada — verificación:
         el manifiesto declara qué protege y history/reviews quedan fuera
         por vida útil, no por olvido
 
@@ -77,10 +77,10 @@ TAREA HG-6 — Claims legibles por máquinas: frontera primero (#64.4)
     a argos); ADR-026 como precedente de precisión de frontera
   Produce: decisión escrita entre precisar la cesión o descartar la idea
   Steps:
-  - [ ] Deliberar la frontera con argos antes que la mecánica —
+  - [x] Deliberar la frontera con argos antes que la mecánica —
         verificación: la decisión cita la cesión exacta y dice qué haría
         skevi que hoy no hace (nada de extracción de evidencia)
-  - [ ] Sólo si procede: crea claims.json y su consumidor en el gate —
+  - [x] Sólo si procede: NO procede — wontfix por frontera con argos
         verificación: cifras fechadas, no copiadas (ADR-025 p4), y gate
         en verde
 
@@ -89,7 +89,7 @@ TAREA HG-7 — Frontera de memoria agnóstica (P7)
   Produce: §2 de 05 como condición de adopción para cualquier memoria
     local, con bump corpus/v5
   Steps:
-  - [ ] Redactar la PROP con §2 como condición y §1 como recomendación —
+  - [x] Redactar la PROP con §2 como condición y §1 como recomendación —
         verificación: la PROP no toca el contrato v1 de §6 (cambios, v2)
   - [ ] Tras aceptación: aplicar el cambio y sellar — verificación:
         digests nuevos en docs/MANIFEST.json y K4 sigue en pie (adoptante
