@@ -42,11 +42,12 @@ TAREA HG-3 — Chequeo de coherencia root_markdown ↔ reading_path (#63)
   Produce: BLOQ con remedio cuando AN-KLA.md esté en root_markdown y falte
     del presupuesto de lectura
   Steps:
-  - [ ] Test RED: root_markdown declara un markdown de raíz ausente de la
-        espina — verificación: fallo observado por la razón correcta antes
-        de tocar producción
-  - [ ] Implementar el chequeo con mensaje que cite el remedio —
-        verificación: test en verde y skevi mismo pasa (1592/1600)
+  - [x] Test RED: root_markdown declara un markdown de raíz ausente de la
+        espina — verificación: fallo observado por la razón correcta
+        (exit 0 != 1) antes de tocar producción
+  - [x] Implementar el chequeo con mensaje que cite el remedio —
+        verificación: test en verde (25 en el módulo, 269 en la suite) y
+        skevi mismo pasa (1592/1600, gate/v10 breaking con migración)
 
 TAREA HG-4 — Autochequeo de plantillas en casa (#64.2)
   Consumes: issue #64 §2; ADR-020 (registro en el consumidor); ADR-031

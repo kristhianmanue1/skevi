@@ -156,6 +156,59 @@ class ReadingPathTests(unittest.TestCase):
         self.assertEqual(exit_code, 0)
         self.assertNotIn("ruta de lectura", output)
 
+    def test_root_markdown_extra_absent_from_reading_path_fails(self):
+        """Issue #63: un Markdown operativo de raíz declarado y sin
+        presupuesto es la falsa comodidad de los adoptantes — el gate
+        mide una ruta que ya no es la obligatoria (segundo caso real:
+        lalia-akuo, 927/1100 declarados contra 1388 reales)."""
+        self._write_lines("AN-KLA.md", 345)
+        self._write_lines("docs/uno.md", 10)
+        self._write_config({
+            "root_markdown": ["AN-KLA.md"],
+            "reading_path": {"limit": 100, "files": ["docs/uno.md"]},
+        })
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertIn("ruta de lectura obligatoria: AN-KLA.md", output)
+        self.assertIn("reading_path.files", output)
+        self.assertIn("1400", output)
+
+    def test_root_markdown_extra_inside_reading_path_passes(self):
+        self._write_lines("AN-KLA.md", 5)
+        self._write_lines("docs/uno.md", 10)
+        self._write_config({
+            "root_markdown": ["AN-KLA.md"],
+            "reading_path": {"limit": 100,
+                             "files": ["docs/uno.md", "AN-KLA.md"]},
+        })
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 0)
+        self.assertIn("ruta de lectura 15/100", output)
+
+    def test_root_markdown_extra_only_in_worst_case_still_fails(self):
+        """Un Markdown de raíz es lectura siempre, no alternativa
+        excluyente de fase: declararlo sólo en «worst_case_of» no lo
+        presupuesta (ronda 2026-10-17, fijado contra ediciones futuras
+        del conjunto 'declarado')."""
+        self._write_lines("AN-KLA.md", 5)
+        self._write_lines("docs/uno.md", 10)
+        self._write_config({
+            "root_markdown": ["AN-KLA.md"],
+            "reading_path": {"limit": 100, "files": ["docs/uno.md"],
+                             "worst_case_of": ["AN-KLA.md"]},
+        })
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertIn("ruta de lectura obligatoria: AN-KLA.md", output)
+
+    def test_root_markdown_extra_without_budget_checks_nothing(self):
+        """Sin presupuesto activo no hay comodidad que falsificar: la
+        coherencia hereda la polaridad del resto del chequeo."""
+        self._write_lines("AN-KLA.md", 345)
+        self._write_config({"root_markdown": ["AN-KLA.md"]})
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 0)
+
     def test_sum_over_limit_fails(self):
         self._write_lines("docs/uno.md", 400)
         self._write_lines("docs/dos.md", 201)
