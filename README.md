@@ -64,6 +64,8 @@ positivo, check requerido). Si su estructura de directorios difiere de la
 de Skevi — otros nombres de ADR, guía o plantillas, o ninguno de ellos —,
 declara `skevi-gate.json` en su raíz en vez de editar
 `scripts/check_sizes.py`: el script se copia sin modificación (ADR-006).
+Skevi consume sus propias plantillas: el registro `.skevi/` de la raíz y
+el step de `check_templates` del CI son el dogfood de ese mecanismo.
 
 **Las plantillas de adopción están versionadas** (ADR-020): el
 `templates/skevi/MANIFEST.json` declara la versión vigente y el historial de
