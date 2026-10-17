@@ -91,7 +91,7 @@ TAREA HG-7 — Frontera de memoria agnóstica (P7)
   Steps:
   - [x] Redactar la PROP con §2 como condición y §1 como recomendación —
         verificación: la PROP no toca el contrato v1 de §6 (cambios, v2)
-  - [ ] Tras aceptación: aplicar el cambio y sellar — verificación:
+  - [x] Tras aceptación: aplicar el cambio y sellar — verificación:
         digests nuevos en docs/MANIFEST.json y K4 sigue en pie (adoptante
         sin memoria cumple la norma completa)
 ```

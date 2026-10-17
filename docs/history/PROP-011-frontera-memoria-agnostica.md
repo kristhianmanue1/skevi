@@ -1,8 +1,14 @@
 # PROP-011 — Frontera de memoria agnóstica en `05`
 
-> **Estado:** **PROPUESTO** (2026-10-17). Sin decisión humana, sin ADR y sin
-> cambio normativo todavía. Las rondas que llegue a tener vivirán en
-> `docs/reviews/`, con su disposición (ADR-037); este archivo no las cuenta.
+> **Estado:** **ACEPTADA** el 2026-10-17 (sesión 4): instrucción directa
+> del Operador — «están autorizadas tus propuestas» — que resuelve §4:
+> **K1** vocabulario neutro con la tabla de AN-KLA como ejemplo; **K2**
+> la frase de no-exclusividad basta; **K3** exigir respetar §2 y
+> escritura gobernada (equivalente local de plan -> commit). Aterrizada
+> en el mismo
+> cambio: `05` generalizado, bump `corpus/v5`, presupuesto re-decidido a
+> 1620 por ADR-042 (la política de ADR-038 se disparó como estaba
+> diseñada). Traslado a `docs/history/` conforme a `02` §3.3.
 > **Origen:** instrucción directa del Operador (sesión del 2026-10-17:
 > proyectos del ecosistema usan también memoria memmy y skevi no depende de
 > ninguna); tarea HG-7 del

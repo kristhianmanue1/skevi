@@ -42,6 +42,7 @@
 | [ADR-039](ADR-039-particion-del-gate-dominio-de-manifiestos.md) | El dominio de manifiestos vive en check_templates; check_sizes delega | Aceptado | `scripts/check_sizes.py` + `scripts/check_templates.py` (gate/v9, plantillas/v11) | [Issue #61](https://github.com/kristhianmanue1/skevi/issues/61); tarea HG-2 del plan 2026-10-17 | 2026-10-17 |
 | [ADR-040](ADR-040-familia-de-manifiesto-adr.md) | Familia de manifiesto adr/v1 — los ADRs quedan sellados | Aceptado | `docs/adr/MANIFEST.json` (adr/v1), `check_templates.py`/`check_sizes.py` (gate/v11) | [Issue #64](https://github.com/kristhianmanue1/skevi/issues/64) §1; HG-5 del plan 2026-10-17 | 2026-10-17 |
 | [ADR-041](ADR-041-presupuesto-cubre-entrada-del-ejecutor.md) | El presupuesto de lectura cubre la entrada del ejecutor | Aceptado | `scripts/check_sizes.py` (gate/v11) | Hallazgo MED de la ronda gate/v10; instrucción directa del Operador | 2026-10-17 |
+| [ADR-042](ADR-042-presupuesto-1620-generalizacion-de-05.md) | Presupuesto de lectura 1620 — la generalización de 05 lo agotó | Aceptado | `skevi-gate.json` clave `reading_path` | Política ADR-038 p3; aceptación de PROP-011 | 2026-10-17 |
 
 **Reglas de este índice**
 

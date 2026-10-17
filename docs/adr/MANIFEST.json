@@ -1,9 +1,9 @@
 {
   "schema": "skevi/adr-manifest/v1",
-  "version": "adr/v1",
-  "generated_at": "2026-10-17T14:30:34Z",
+  "version": "adr/v2",
+  "generated_at": "2026-10-17T14:54:49Z",
   "files": {
-    "00-INDICE.md": "sha256:630ed9364864991ed580974ef9c6bc93522b8eec2d1d65a51e5ac2a1722071e2",
+    "00-INDICE.md": "sha256:2d58fd7bc87f7b8bf43aa14ea4f7bab5e6d64ab1b5fa7225fa1f4f69e3ac79e3",
     "ADR-001-gate-local-sin-ci.md": "sha256:8e935fba22b1e8023c304569b08c2503c975a0662b5db51035466932e1f6c875",
     "ADR-002-separacion-docs-por-vida-util.md": "sha256:1b0532904e903d0dd2bf45fed8ed3f8529be3c1900882dedd44fdf6fb00770af",
     "ADR-003-directorios-en-ingles.md": "sha256:b06d60a8079ae0c73f2d0b9124a0d7941aec04d82bfff0cc8df9972a90dd84c4",
@@ -44,7 +44,18 @@
     "ADR-038-presupuesto-de-lectura-con-memoria-activa.md": "sha256:6b091a73c78ac5375de7c4c027f934126bf5c9a0322c8368a1fd2ca218ad0296",
     "ADR-039-particion-del-gate-dominio-de-manifiestos.md": "sha256:8ff1b14dc80db08068169a1c87ca54d4dee51ab63245d98800ef366a014f4d12",
     "ADR-040-familia-de-manifiesto-adr.md": "sha256:ecb4b38f2ff6e654f275f4b33dc2399084fabcc76d548a686729a17c14ad2932",
-    "ADR-041-presupuesto-cubre-entrada-del-ejecutor.md": "sha256:d05ac844b16d2baaaacaaa66201f71e12c9a36a5c5aa32c52878c020b485f268"
+    "ADR-041-presupuesto-cubre-entrada-del-ejecutor.md": "sha256:d05ac844b16d2baaaacaaa66201f71e12c9a36a5c5aa32c52878c020b485f268",
+    "ADR-042-presupuesto-1620-generalizacion-de-05.md": "sha256:ebd9d480cc1026f6171a0d07128f2d96eee6debf5f459eaf95be1f89b6bebfd3"
   },
-  "history": []
+  "history": [
+    {
+      "from": "adr/v1",
+      "to": "adr/v2",
+      "breaking": false,
+      "changes": {
+        "ADR-042-presupuesto-1620-generalizacion-de-05.md": "nuevo ADR",
+        "00-INDICE.md": "fila de ADR-042"
+      }
+    }
+  ]
 }
