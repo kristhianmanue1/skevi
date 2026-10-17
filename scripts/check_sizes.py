@@ -28,7 +28,7 @@ import check_templates
 # proyectos ajenos. Lo que sí puede es que la copia diga quién es y cuántos
 # días tiene, en la salida que el adoptante ya ejecuta. Al cambiar el
 # comportamiento del gate se sube GATE_VERSION y se pone la fecha del cambio.
-GATE_VERSION = "gate/v9"
+GATE_VERSION = "gate/v10"
 GATE_GENERATED_AT = "2026-10-17"
 GATE_STALE_AFTER_DAYS = 90
 
@@ -457,6 +457,29 @@ def check_reading_path() -> list[str]:
     if not READING_PATH:
         return []
     failures: list[str] = []
+
+    # Coherencia root_markdown ↔ reading_path (issue #63): un Markdown
+    # operativo de raíz declarado por el adoptante —`AN-KLA.md` en el caso
+    # real— es lectura obligatoria del ejecutor; un presupuesto activo que
+    # no lo declara mide una ruta incompleta y da la falsa comodidad que
+    # #42 dejó y #63 encontró dos veces en adoptantes. Config contra
+    # config: sin detectar runtime, sin red. Alcance deliberado (ronda
+    # 2026-10-17): sólo los extras del adoptante, no el conjunto
+    # intrínseco AGENTS/CLAUDE/README — extender el requisito a los
+    # intrínsecos existentes es decisión de alcance pendiente del
+    # Operador, no de este chequeo.
+    intrinsic = _SKEVI_DEFAULTS["ROOT_MARKDOWN"]
+    spine = set(READING_PATH["files"])
+    for name in sorted(ROOT_MARKDOWN - intrinsic):
+        if name not in spine:
+            failures.append(
+                f"ruta de lectura obligatoria: {name} está declarado en "
+                "«root_markdown» y ausente de «reading_path.files»; "
+                "absórbelo en el presupuesto por decisión escrita "
+                "(la plantilla usage-guide documenta el caso con límite "
+                "1400 como ejemplo) o, si no es de lectura obligatoria, "
+                "muévelo fuera de la raíz del proyecto"
+            )
 
     def contar(name: str) -> int | None:
         path = ROOT / name
