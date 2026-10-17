@@ -16,6 +16,7 @@
     "docs/ai-agent-guide/03-cascaron-proyecto.md",
     "docs/ai-agent-guide/04-ejecucion-y-verificacion.md",
     "docs/MANIFEST.json",
+    "docs/adr/MANIFEST.json",
     "scripts/check_sizes.py",
     "scripts/check_reports.py",
     "scripts/MANIFEST.json",

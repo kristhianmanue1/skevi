@@ -165,7 +165,8 @@ class ReadingPathTests(unittest.TestCase):
         self._write_lines("docs/uno.md", 10)
         self._write_config({
             "root_markdown": ["AN-KLA.md"],
-            "reading_path": {"limit": 100, "files": ["docs/uno.md"]},
+            "reading_path": {"limit": 100,
+                             "files": ["AGENTS.md", "docs/uno.md"]},
         })
         exit_code, output = self._run_main()
         self.assertEqual(exit_code, 1)
@@ -178,12 +179,12 @@ class ReadingPathTests(unittest.TestCase):
         self._write_lines("docs/uno.md", 10)
         self._write_config({
             "root_markdown": ["AN-KLA.md"],
-            "reading_path": {"limit": 100,
-                             "files": ["docs/uno.md", "AN-KLA.md"]},
+            "reading_path": {"limit": 100, "files": [
+                "AGENTS.md", "docs/uno.md", "AN-KLA.md"]},
         })
         exit_code, output = self._run_main()
         self.assertEqual(exit_code, 0)
-        self.assertIn("ruta de lectura 15/100", output)
+        self.assertIn("ruta de lectura 16/100", output)
 
     def test_root_markdown_extra_only_in_worst_case_still_fails(self):
         """Un Markdown de raíz es lectura siempre, no alternativa
@@ -194,7 +195,8 @@ class ReadingPathTests(unittest.TestCase):
         self._write_lines("docs/uno.md", 10)
         self._write_config({
             "root_markdown": ["AN-KLA.md"],
-            "reading_path": {"limit": 100, "files": ["docs/uno.md"],
+            "reading_path": {"limit": 100,
+                             "files": ["AGENTS.md", "docs/uno.md"],
                              "worst_case_of": ["AN-KLA.md"]},
         })
         exit_code, output = self._run_main()
@@ -209,16 +211,52 @@ class ReadingPathTests(unittest.TestCase):
         exit_code, output = self._run_main()
         self.assertEqual(exit_code, 0)
 
+    def test_agents_md_absent_from_active_budget_fails(self):
+        """ADR-041: la entrada del ejecutor es lectura obligatoria; un
+        presupuesto que no la declara mide una ruta incompleta."""
+        self._write_lines("docs/uno.md", 10)
+        self._write_config(
+            {"reading_path": {"limit": 100, "files": ["docs/uno.md"]}}
+        )
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertIn(
+            "ruta de lectura obligatoria: AGENTS.md es lectura obligatoria",
+            output)
+
+    def test_claude_md_existing_is_required_nonexistent_is_not(self):
+        """La exigencia es condicional a la existencia: un proyecto sin
+        CLAUDE.md no debe declararlo — ni fallar por él."""
+        self._write_lines("docs/uno.md", 10)
+        self._write_config(
+            {"reading_path": {"limit": 100, "files": ["AGENTS.md",
+                                                      "docs/uno.md"]}}
+        )
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 0, output)  # sin CLAUDE.md: nada exigido
+        self.assertNotIn("CLAUDE.md", output)
+        self._write_lines("CLAUDE.md", 7)
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 1)
+        self.assertIn("ruta de lectura obligatoria: CLAUDE.md", output)
+        self._write_config(
+            {"reading_path": {"limit": 100, "files": [
+                "AGENTS.md", "CLAUDE.md", "docs/uno.md"]}}
+        )
+        exit_code, output = self._run_main()
+        self.assertEqual(exit_code, 0, output)
+        self.assertIn("ruta de lectura 18/100", output)
+
     def test_sum_over_limit_fails(self):
         self._write_lines("docs/uno.md", 400)
         self._write_lines("docs/dos.md", 201)
         self._write_config(
-            {"reading_path": {"limit": 600,
-                              "files": ["docs/uno.md", "docs/dos.md"]}}
+            {"reading_path": {"limit": 600, "files": [
+                "AGENTS.md", "docs/uno.md", "docs/dos.md"]}}
         )
         exit_code, output = self._run_main()
         self.assertEqual(exit_code, 1)
-        self.assertIn("ruta de lectura obligatoria: 601 líneas > límite 600",
+        self.assertIn("ruta de lectura obligatoria: 602 líneas > límite 600",
                       output)
 
     def test_ok_line_reports_the_occupancy(self):
@@ -227,11 +265,12 @@ class ReadingPathTests(unittest.TestCase):
         ad-hoc (hallazgo de la ronda fresca del 2026-09-08)."""
         self._write_lines("docs/uno.md", 400)
         self._write_config(
-            {"reading_path": {"limit": 600, "files": ["docs/uno.md"]}}
+            {"reading_path": {"limit": 600,
+                              "files": ["AGENTS.md", "docs/uno.md"]}}
         )
         exit_code, output = self._run_main()
         self.assertEqual(exit_code, 0, output)
-        self.assertIn("ruta de lectura 400/600", output)
+        self.assertIn("ruta de lectura 401/600", output)
 
     def test_ok_line_omits_occupancy_when_inactive(self):
         exit_code, output = self._run_main()
@@ -242,8 +281,8 @@ class ReadingPathTests(unittest.TestCase):
         self._write_lines("docs/uno.md", 400)
         self._write_lines("docs/dos.md", 200)
         self._write_config(
-            {"reading_path": {"limit": 600,
-                              "files": ["docs/uno.md", "docs/dos.md"]}}
+            {"reading_path": {"limit": 601, "files": [
+                "AGENTS.md", "docs/uno.md", "docs/dos.md"]}}
         )
         exit_code, output = self._run_main()
         self.assertEqual(exit_code, 0)
@@ -251,7 +290,8 @@ class ReadingPathTests(unittest.TestCase):
     def test_missing_file_in_path_fails(self):
         """Una ruta que no existe no acredita tamaño cero (ADR-007)."""
         self._write_config(
-            {"reading_path": {"limit": 600, "files": ["docs/ausente.md"]}}
+            {"reading_path": {"limit": 600,
+                              "files": ["AGENTS.md", "docs/ausente.md"]}}
         )
         exit_code, output = self._run_main()
         self.assertEqual(exit_code, 1)
@@ -293,7 +333,8 @@ class ReadingPathTests(unittest.TestCase):
         2026-09-08)."""
         self._write_lines("docs/uno.md", 10)
         self._write_config(
-            {"reading_path": {"limit": 600, "files": ["docs/uno.md"]}}
+            {"reading_path": {"limit": 600,
+                              "files": ["AGENTS.md", "docs/uno.md"]}}
         )
         original = Path.read_text
 
@@ -317,8 +358,8 @@ class ReadingPathTests(unittest.TestCase):
         self._write_lines("docs/fase-corta.md", 50)
         self._write_lines("docs/fase-larga.md", 90)
         self._write_config({"reading_path": {
-            "limit": 190,
-            "files": ["docs/espina.md"],
+            "limit": 191,
+            "files": ["AGENTS.md", "docs/espina.md"],
             "worst_case_of": ["docs/fase-corta.md", "docs/fase-larga.md"],
         }})
         exit_code, output = self._run_main()
@@ -329,19 +370,19 @@ class ReadingPathTests(unittest.TestCase):
         self._write_lines("docs/fase-corta.md", 50)
         self._write_lines("docs/fase-larga.md", 91)
         self._write_config({"reading_path": {
-            "limit": 190,
-            "files": ["docs/espina.md"],
+            "limit": 191,
+            "files": ["AGENTS.md", "docs/espina.md"],
             "worst_case_of": ["docs/fase-corta.md", "docs/fase-larga.md"],
         }})
         exit_code, output = self._run_main()
         self.assertEqual(exit_code, 1)
-        self.assertIn("191 líneas > límite 190", output)
+        self.assertIn("192 líneas > límite 191", output)
 
     def test_worst_case_missing_file_fails(self):
         self._write_lines("docs/espina.md", 10)
         self._write_config({"reading_path": {
             "limit": 190,
-            "files": ["docs/espina.md"],
+            "files": ["AGENTS.md", "docs/espina.md"],
             "worst_case_of": ["docs/ausente.md"],
         }})
         exit_code, output = self._run_main()
@@ -351,7 +392,7 @@ class ReadingPathTests(unittest.TestCase):
     def test_worst_case_is_optional(self):
         self._write_lines("docs/espina.md", 10)
         self._write_config({"reading_path": {
-            "limit": 190, "files": ["docs/espina.md"]}})
+            "limit": 190, "files": ["AGENTS.md", "docs/espina.md"]}})
         exit_code, output = self._run_main()
         self.assertEqual(exit_code, 0, output)
 

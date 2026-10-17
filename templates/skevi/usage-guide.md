@@ -114,8 +114,13 @@ Sin esos dos pasos, el workflow es informativo, no un gate.
   `skevi/an-kla-integration` (guía `05` §6) hace obligatorias dos
   lecturas más por sesión material (`05` y `AN-KLA.md`): decláralas en
   `reading_path` de `skevi-gate.json` y sube el límite por decisión
-  escrita (ADR-021, ADR-025), p. ej. límite 1400 con `05` y `AN-KLA.md`
-  añadidas a `files`.
+  escrita (ADR-021, ADR-025), p. ej. límite 1400 con `AGENTS.md`, `05` y
+  `AN-KLA.md` añadidas a `files`.
+  Nota: el gate no comprueba la veracidad de este marcador —`instalada` o
+  `no instalada` es tu decisión declarada—; lo que sí comprueba, desde
+  gate/v10, es la coherencia: cualquier Markdown operativo de raíz
+  declarado en `root_markdown` —p. ej. `AN-KLA.md`— debe figurar en
+  `reading_path.files` con presupuesto.
 - Otras dependencias: <ninguna declarada>.
 
 ## Plantilla opcional: árboles congelados
