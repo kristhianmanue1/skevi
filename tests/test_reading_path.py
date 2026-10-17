@@ -22,6 +22,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts"
+# Desde gate/v9 (ADR-039) check_sizes importa check_templates: el import
+# fraterno exige que scripts/ resuelva en sys.path antes de exec_module.
+# Sin esto el módulo pasa en discovery (otro test inserta la ruta de
+# lejos) y falla aislado — hallazgo HIGH de la ronda del 2026-10-17.
+sys.path.insert(0, str(SCRIPTS_DIR))
 _SPEC = importlib.util.spec_from_file_location(
     "check_sizes", SCRIPTS_DIR / "check_sizes.py"
 )

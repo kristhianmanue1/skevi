@@ -27,14 +27,15 @@ TAREA HG-2 — Partir el cluster de check_sizes (#61)
   Produce: gate repartido por responsabilidad sin perder la copia única del
     adoptante, con gate/v9
   Steps:
-  - [ ] Decidir el corte (paquete scripts/ frente a módulos) y su ADR —
-        verificación: el ADR nuevo declara cómo copia el adoptante y por
-        qué no se rompe ADR-006
-  - [ ] Partir tamaños, canónicos, ruta, manifiestos e identidad —
-        verificación: suite completa en verde y ningún archivo del cluster
-        sobre su límite tras mover las suites que correspondan
-  - [ ] Subir gate/v9 con fecha regenerada — verificación: sin aviso de
-        vejez antes de 2027 y `scripts/MANIFEST.json` con digests vigentes
+  - [x] Decidir el corte (paquete scripts/ frente a módulos) y su ADR —
+        verificación: ADR-039 declara el corte por materia (dominio de
+        manifiestos a check_templates) y por qué no rompe ADR-006
+  - [x] Partir tamaños, canónicos, ruta, manifiestos e identidad —
+        verificación: 266 tests OK (aislados y en discovery) y ningún
+        archivo del cluster sobre 800: 654/606/647/156/733/771
+  - [x] Subir gate/v9 con fecha regenerada — verificación: sin aviso de
+        vejez (2026-10-17) y `scripts/MANIFEST.json` con digests vigentes
+        verificados por test y por sha256 independiente (ronda)
 
 TAREA HG-3 — Chequeo de coherencia root_markdown ↔ reading_path (#63)
   Consumes: salida de HG-2; issue #63; ejemplo 1400 del adoptante lalia-akuo
