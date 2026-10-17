@@ -6,9 +6,6 @@
   "exempt_names": [
     ".DS_Store"
   ],
-  "limits": {
-    "scripts/check_sizes.py": 870
-  },
   "required": [
     "AGENTS.md",
     "README.md",

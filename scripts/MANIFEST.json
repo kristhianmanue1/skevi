@@ -1,12 +1,12 @@
 {
   "schema": "skevi/script-manifest/v1",
-  "version": "gate/v8",
-  "generated_at": "2026-09-18T21:02:30Z",
+  "version": "gate/v9",
+  "generated_at": "2026-10-17T13:38:25Z",
   "files": {
-    "check_sizes.py": "sha256:656191fc16119edfa291e9ac1c0a48d79fc8da097bbc373c63ab8593bc5d5b7f",
+    "check_sizes.py": "sha256:88e0e070163fcd465e818fa256f687af496f861f3240ddb5f2fe1cf86e6f88d4",
     "check_plans.py": "sha256:e6bff6446f2c5e73315cb4fafec904d5040d70195f67bbefa4a7597f9a14553d",
     "check_reports.py": "sha256:5663866d6575765be22353f9587c743005f3e612153efd492279b68bf0a0f21c",
-    "check_templates.py": "sha256:f021ba190bc5eba4c19f363417a94403fcb9f59f09aff867e3adfd7f0dfa35fe"
+    "check_templates.py": "sha256:73f0057da6dff51ce5044971afdd9b182af8ecf29912f8b166f2f98ca8e1c094"
   },
   "history": [
     {
@@ -59,6 +59,15 @@
       "changes": {
         "check_sizes.py": "el listado exacto del manifiesto ignora la basura del SO por una constante cerrada del script, no por `exempt_names` (issue #59): la config del adoptante sigue sin poder retirar un archivo real del versionado, y un nombre declarado en el manifiesto se coteja igual",
         "check_templates.py": "los avisos de re-copia se acotan a lo declarado en installed.json y lo que cambia y no figura en el registro del consumidor se anuncia aparte, sin llamarlo nuevo; la rama breaking imprime el texto de migración del manifiesto, saneado como dato no confiable —una línea, sin controles, acotado— (issue #57); y un salto breaking cuyos archivos afectados están todos declarados customized deja de anunciarse como «sin saltos breaking»: se nombra, con su migración, sin cambiar el código de salida; todo lo que venga del manifiesto ajeno y se imprima —texto y nombres— se sanea a una línea sin controles y acotada a 600, que es más que el texto de migración más largo del propio proyecto"
+      }
+    },
+    {
+      "from": "gate/v8",
+      "to": "gate/v9",
+      "breaking": true,
+      "changes": {
+        "check_sizes.py": "partición del gate (ADR-039, issue #61): la validación estructural de manifiestos y su cotejo contra el disco se mudan a check_templates.py, su dueño por materia; este script queda con tamaños, canónicos, ruta de lectura e identidad, y delega por import. MIGRACIÓN ANTES DE RE-COPIAR: copia check_sizes.py y check_templates.py JUNTOS — check_sizes importa ahora a check_templates y una re-copia parcial falla con ImportError al arrancar (fail-closed, no validación a medias). Sin cambio de comportamiento observable: mismos mensajes y códigos de salida; GATE_GENERATED_AT regenerada",
+        "check_templates.py": "asume su dominio completo (ADR-039): llega la validación estructural de manifiestos fuente con listado exacto y digests contra disco, modelo de fallo en lista agregable, idénticos mensajes; _load_manifest (CLI) sigue fallando al primer defecto. Re-cópialo junto con check_sizes.py"
       }
     }
   ]

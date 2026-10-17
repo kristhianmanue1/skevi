@@ -18,6 +18,10 @@ from pathlib import Path
 from unittest.mock import patch
 
 SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts"
+# Desde gate/v9 (ADR-039) check_sizes importa check_templates: el import
+# fraterno exige que scripts/ resuelva en sys.path antes de exec_module.
+sys.path.insert(0, str(SCRIPTS_DIR))
+import check_templates
 _SPEC = importlib.util.spec_from_file_location(
     "check_sizes_manifest_gate", SCRIPTS_DIR / "check_sizes.py"
 )
@@ -642,28 +646,35 @@ class MainBlockIsAtTheEndTests(unittest.TestCase):
 
 
 class CheckSizesNamespaceFailsClosedTests(unittest.TestCase):
-    """check_sizes._check_namespace portaba la comprobación pero no el
-    fail-closed de check_templates.py: un esquema sin namespace registrado
-    pasaba en silencio en vez de fallar (MED, tercera ronda 2026-09-08)."""
+    """El fail-closed del namespace del dominio de manifiestos: un esquema
+    sin namespace registrado pasaba en silencio en vez de fallar (MED,
+    tercera ronda 2026-09-08). Desde gate/v9 (ADR-039) la comprobación
+    vive en check_templates como _namespace_failure; check_sizes delega."""
 
     def test_unregistered_schema_fails_closed(self):
-        """_check_namespace devuelve un mensaje de fallo (no None) ante un
+        """_namespace_failure devuelve un mensaje de fallo (no None) ante un
         esquema sin namespace registrado — el patrón del resto de
         _validate_template_manifest, que acumula strings, no excepciones.
         Un test que sólo comprobara "no revienta" habría sido vacuo: aquí
         se exige la señal positiva de fallo."""
-        fallo = check_sizes._check_namespace(
+        fallo = check_templates._namespace_failure(
             "cualquier/cosa", "skevi/tercera-familia/v1", "L")
         self.assertIsNotNone(fallo)
         self.assertIn("namespace", fallo)
 
     def test_every_expected_schema_has_a_namespace(self):
-        self.assertEqual(
-            set(check_sizes.SCHEMA_NAMESPACE),
-            {check_sizes.TEMPLATE_MANIFEST_SCHEMA,
-             check_sizes.SCRIPT_MANIFEST_SCHEMA,
-             check_sizes.CORPUS_MANIFEST_SCHEMA},
-        )
+        """En check_templates.SCHEMA_NAMESPACE conviven manifiestos y
+        registros de instalación (seis claves); lo que este caso exige es
+        que las tres familias de manifiesto fuente estén y apunten a su
+        espacio de nombres, no la igualdad exacta del conjunto."""
+        for schema, namespace in (
+            (check_sizes.TEMPLATE_MANIFEST_SCHEMA, "plantillas"),
+            (check_sizes.SCRIPT_MANIFEST_SCHEMA, "gate"),
+            (check_sizes.CORPUS_MANIFEST_SCHEMA, "corpus"),
+        ):
+            with self.subTest(schema=schema):
+                self.assertEqual(
+                    check_templates.SCHEMA_NAMESPACE.get(schema), namespace)
 
 
 class CorpusManifestRealRepoTests(unittest.TestCase):

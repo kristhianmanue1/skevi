@@ -72,7 +72,7 @@ class ManifestInputTests(unittest.TestCase):
                     manifest, _ = documents(family)
                     schema = manifest["schema"]
                     del manifest[field]
-                    errors = check_sizes._validate_template_manifest(
+                    errors = check_templates._validate_template_manifest(
                         manifest, "manifest", schema)
                     self.assertTrue(errors)
                     self.assertTrue(any(field in error for error in errors), errors)
@@ -84,7 +84,7 @@ class ManifestInputTests(unittest.TestCase):
                     manifest, _ = documents(family)
                     schema = manifest["schema"]
                     manifest["schema"] = value
-                    errors = check_sizes._validate_template_manifest(
+                    errors = check_templates._validate_template_manifest(
                         manifest, "manifest", schema)
                     self.assertTrue(any("schema" in error for error in errors))
 
@@ -94,7 +94,7 @@ class ManifestInputTests(unittest.TestCase):
                 manifest, installed = documents(family)
                 code, output = self.run_comparator(manifest, installed)
                 self.assertEqual(code, 0, output)
-                self.assertEqual(check_sizes._validate_template_manifest(
+                self.assertEqual(check_templates._validate_template_manifest(
                     manifest, "manifest", manifest["schema"]), [])
 
 
