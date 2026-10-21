@@ -84,6 +84,13 @@ no_ofrece:
     forma, tamaño y hash reproducible — que un reporte esté completo no prueba
     que su evidencia sea cierta ni que la ronda adversarial se ejecutara
   - "garantía de que adoptarlo mejore un proyecto; los pilotos son evidencia de casos, no promesa"
+  - >
+    el mecanismo de manifiestos de adopción como contrato ofrecido a terceros:
+    los sellos de origen skevi/*-manifest cubren sólo el canon de skevi y un
+    tercero no estampa el namespace skevi/ sobre material que no proviene de
+    skevi; el adoptante del kit produce skevi/*-install según plantilla
+    (ADR-020), y quien cita el método sin adoptar el kit emula la mecánica con
+    namespace propio (ADR-026, issue #76)
 
 publica:
   - { tipo: contrato, id: skevi/estandar-diseno-software, version: v1 }
