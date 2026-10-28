@@ -1,9 +1,9 @@
 {
   "schema": "skevi/adr-manifest/v1",
-  "version": "adr/v2",
-  "generated_at": "2026-10-17T14:54:49Z",
+  "version": "adr/v3",
+  "generated_at": "2026-10-28T21:10:18Z",
   "files": {
-    "00-INDICE.md": "sha256:2d58fd7bc87f7b8bf43aa14ea4f7bab5e6d64ab1b5fa7225fa1f4f69e3ac79e3",
+    "00-INDICE.md": "sha256:4706a51d9fac43d5222c4247172171f8948924479f688fb67e0e6c009858bb69",
     "ADR-001-gate-local-sin-ci.md": "sha256:8e935fba22b1e8023c304569b08c2503c975a0662b5db51035466932e1f6c875",
     "ADR-002-separacion-docs-por-vida-util.md": "sha256:1b0532904e903d0dd2bf45fed8ed3f8529be3c1900882dedd44fdf6fb00770af",
     "ADR-003-directorios-en-ingles.md": "sha256:b06d60a8079ae0c73f2d0b9124a0d7941aec04d82bfff0cc8df9972a90dd84c4",
@@ -45,7 +45,9 @@
     "ADR-039-particion-del-gate-dominio-de-manifiestos.md": "sha256:8ff1b14dc80db08068169a1c87ca54d4dee51ab63245d98800ef366a014f4d12",
     "ADR-040-familia-de-manifiesto-adr.md": "sha256:ecb4b38f2ff6e654f275f4b33dc2399084fabcc76d548a686729a17c14ad2932",
     "ADR-041-presupuesto-cubre-entrada-del-ejecutor.md": "sha256:d05ac844b16d2baaaacaaa66201f71e12c9a36a5c5aa32c52878c020b485f268",
-    "ADR-042-presupuesto-1620-generalizacion-de-05.md": "sha256:ebd9d480cc1026f6171a0d07128f2d96eee6debf5f459eaf95be1f89b6bebfd3"
+    "ADR-042-presupuesto-1620-generalizacion-de-05.md": "sha256:ebd9d480cc1026f6171a0d07128f2d96eee6debf5f459eaf95be1f89b6bebfd3",
+    "ADR-043-continuacion-autonoma-acotada.md": "sha256:4c23e1d80b6010669b2394439475438eaf013cf0acb3d0f23a5dd8613aa226fb",
+    "ADR-044-push-merge-condicional.md": "sha256:8af86ba671092dc8a2c143bf290ba1c03267e6a08333e61f458fd32ac33e452b"
   },
   "history": [
     {
@@ -55,6 +57,16 @@
       "changes": {
         "ADR-042-presupuesto-1620-generalizacion-de-05.md": "nuevo ADR",
         "00-INDICE.md": "fila de ADR-042"
+      }
+    },
+    {
+      "from": "adr/v2",
+      "to": "adr/v3",
+      "breaking": false,
+      "changes": {
+        "00-INDICE.md": "filas de ADR-043 y ADR-044 aceptados",
+        "ADR-043-continuacion-autonoma-acotada.md": "nuevo ADR aceptado",
+        "ADR-044-push-merge-condicional.md": "nuevo ADR aceptado; excepción local condicional"
       }
     }
   ]

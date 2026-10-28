@@ -65,7 +65,7 @@ no_ofrece:
     gobernanza de autoridad, conformidad ni perfiles de aseguramiento; ese plano
     es de praxis-dev. El mecanismo de graduación de permisos —qué operación exige
     qué autorización, cómo se escala— sí es de Skevi: §4.3, §6.2 y §6.8 del
-    estándar, ADR-017, ADR-018 y ADR-023 (precisado por ADR-026)
+    estándar, ADR-017, ADR-018, ADR-023 y ADR-044 (precisado por ADR-026)
   - "observación de corpus, extracción de evidencia ni claims; ese plano es de argos"
   - "memoria ni continuidad entre sesiones; ese plano es de an-kla-memory"
   - "contrato de tarea ejecutable ni máquina de estados de auditoría; ese plano es de epistates"
@@ -117,12 +117,14 @@ fronteras_de_confianza:
     tres de los cinco lo adoptan por otra vía, con ADR propio — escrubery
     ADR-0001, epistates ADR-0002, an-kla-memory ADR-0045. La cesión no
     garantiza que alguien cubra ese plano (ADR-026)
-  # ADR-018: distinguir autodeclaración general de la restricción local.
+  # ADR-018 y ADR-044: la política local no nace del manifest.
   - >
     Toda operación destructiva o con efecto fuera del entorno local exige
     autorización previa y específica conforme al §6 del estándar y a las
     restricciones del proyecto adoptante. Esta declaración no concede
-    autoridad; en el repositorio Skevi rige la restricción humana de AGENTS.md.
+    autoridad; en Skevi rige AGENTS.md. Push ordinario y merge pueden pasar por
+    instrucción humana vigente o por un gate futuro adoptado por humano y
+    verificado como independiente; esta declaración no instala tal gate.
 
 pospuesto:
   - perfiles por herramienta más allá de GitHub

@@ -151,6 +151,11 @@ convenciones del repo, detalles internos reversibles, estilo.
 
 Prohibido: responder preguntas materiales con supuestos silenciosos.
 
+Antes de preguntar, investiga fuentes y opciones, separa hechos de hipótesis
+y recomienda una salida. Continúa las partes independientes de la TAREA
+autorizada; detén sólo la decisión dependiente. Procedencia: ADR-043; razón:
+reducir consultas rutinarias sin convertir inferencias en decisiones de diseño.
+
 ## 6. Registro de evidencia
 
 Desde F0, conserva evidencia de todo lo que afirmes sobre el entorno:

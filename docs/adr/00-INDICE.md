@@ -43,6 +43,8 @@
 | [ADR-040](ADR-040-familia-de-manifiesto-adr.md) | Familia de manifiesto adr/v1 — los ADRs quedan sellados | Aceptado | `docs/adr/MANIFEST.json` (adr/v1), `check_templates.py`/`check_sizes.py` (gate/v11) | [Issue #64](https://github.com/kristhianmanue1/skevi/issues/64) §1; HG-5 del plan 2026-10-17 | 2026-10-17 |
 | [ADR-041](ADR-041-presupuesto-cubre-entrada-del-ejecutor.md) | El presupuesto de lectura cubre la entrada del ejecutor | Aceptado | `scripts/check_sizes.py` (gate/v11) | Hallazgo MED de la ronda gate/v10; instrucción directa del Operador | 2026-10-17 |
 | [ADR-042](ADR-042-presupuesto-1620-generalizacion-de-05.md) | Presupuesto de lectura 1620 — la generalización de 05 lo agotó | Aceptado | `skevi-gate.json` clave `reading_path` | Política ADR-038 p3; aceptación de PROP-011 | 2026-10-17 |
+| [ADR-043](ADR-043-continuacion-autonoma-acotada.md) | Continuación autónoma dentro de la TAREA | Aceptado | `01` §5, `04` §1 (`corpus/v6` local) | [PROP-012](../history/PROP-012-continuacion-agentica-acotada.md); decisión del Operador | 2026-10-28 |
+| [ADR-044](ADR-044-push-merge-condicional.md) | Push y merge propuestos por avance con autoridad condicional | Aceptado | `AGENTS.md`, `04` §7 (local) | Instrucción directa del Operador | 2026-10-28 |
 
 **Reglas de este índice**
 
