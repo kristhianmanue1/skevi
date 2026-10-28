@@ -42,6 +42,10 @@ Reglas:
   tarea es operación con autoridad separada (§7), no un ajuste (estándar §6.8).
 - La condición de parada es obligatoria aunque parezca obvia: es lo que te
   impide seguir "mejorando" más allá del alcance.
+- En la TAREA vigente, investiga, implementa, verifica y corrige hasta el DoD,
+  sin pedir permiso por cada paso reversible. Tras dos fallos, aplica §8;
+  antes de cerrar, §§3-5. Si falta autoridad, pausa sólo la parte afectada.
+  Procedencia: ADR-043; razón: autonomía acotada por TAREA y gates.
 - `Presupuesto` es opcional salvo que la tarea consuma cuota tarifada o
   recursos compartidos por invocación; ahí es obligatorio y su agotamiento
   produce un estado de fallo explícito, nunca éxito inferido
@@ -235,8 +239,15 @@ explícitamente una secuencia aún vigente, se verifica esa cobertura; no
 se inventa una autorización distinta por cambiar de tarea. Ante duda se
 aplica fail-closed, sin ampliar ni renovar el permiso por inferencia.
 
-Procedencia: [ADR-018](../adr/ADR-018-coherencia-de-autoridad.md).
-Razón: remitir la política común a su fuente sin ampliar permisos vigentes.
+Al hito verificado, propón `push` ordinario o `merge` mediante dossier en
+dos capas con folio, destino, commit, evidencia y riesgos (§4.3, ADR-044).
+Ejecuta sólo con aceptación vigente registrada contra ese folio por humano
+o gate futuro adoptado e independiente; revalida antes del efecto. Esto no
+cubre `force-push` ni activa hoy un gate nuevo en Skevi.
+
+Procedencia: [ADR-018](../adr/ADR-018-coherencia-de-autoridad.md) y
+[ADR-044](../adr/ADR-044-push-merge-condicional.md).
+Razón: proponer operaciones oportunamente sin ampliar permisos vigentes.
 
 Instalar o actualizar una dependencia con efecto en archivos del
 repositorio es, como mínimo, tarea Bounded.

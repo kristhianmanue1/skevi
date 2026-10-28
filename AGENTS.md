@@ -47,15 +47,16 @@ comprueba el gate). Copiarlas aquí sólo añadiría una versión que envejece.
 Propias de este repositorio:
 
 - **Autoridad por operación.** Editar no implica commit; commit no implica
-  push. `push`, `merge`, tags, releases y operaciones destructivas requieren
-  autorización humana explícita, una por una, cada vez.
-- **Excepción local de Skevi.** La exigencia humana de la regla anterior
-  restringe aquí el modelo general de gate delegable del estándar §6.6.
-  Un manifest, ADR, propuesta o memoria no designa un orquestador ni
-  sustituye esa exigencia por sí solo. Cambiar esta política local exige
-  una instrucción o decisión humana explícita.
-  Procedencia: [ADR-018](docs/adr/ADR-018-coherencia-de-autoridad.md);
-  distinguir la restricción local del modelo ofrecido a adoptantes.
+  push. Propón `push` ordinario o `merge` en el hito verificado pertinente.
+  Ejecútalos sólo con aceptación humana vigente del dossier exacto o mediante
+  gate futuro adoptado por humano e independiente del ejecutor (ADR-044).
+  Sin ese gate, decide el humano. `force-push`, tags, releases y operaciones
+  destructivas exigen autorización humana explícita por operación.
+- **Excepción local de Skevi.** ADR-044 sustituye la exigencia humana de
+  [ADR-018](docs/adr/ADR-018-coherencia-de-autoridad.md) sólo para `push`
+  ordinario y `merge`. Un manifest, ADR, memoria o archivo editable por el
+  ejecutor no designa gate ni concede permiso; la configuración futura
+  requiere adopción humana y control externo verificable.
 - **Ronda adversarial** antes de cerrar cualquier cambio material — los
   disparadores objetivos que definen "material" para esta regla están en
   `docs/ai-agent-guide/04-ejecucion-y-verificacion.md` §5.3, no en la
