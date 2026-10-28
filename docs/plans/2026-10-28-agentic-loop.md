@@ -107,7 +107,7 @@ TAREA AG-4 — Versionado y compatibilidad
         check_sizes y comparación independiente de hashes.
   - [x] Inspeccionar referencias, ruta de lectura y adopción —
         verificación: enlaces resuelven y check_sizes muestra ruta <=1620.
-  - [ ] Sincronizar ejemplos e instalación con procedencia real —
+  - [x] Sincronizar ejemplos e instalación con procedencia real —
         verificación: suite y check_templates; si falta commit fuente,
         reportar PARCIAL sin inventar source.
 
@@ -125,7 +125,7 @@ TAREA AG-5 — Revisión y cierre local
   Consumes: SPEC-AG-01, resultado AG-1..AG-4 y gates del repo
   Produce: registro de ronda y reporte con límites del piloto
   Steps:
-  - [ ] Ejecutar gates y tests pertinentes — verificación: salida real de
+  - [x] Ejecutar gates y tests pertinentes — verificación: salida real de
         check_sizes, check_plans, check_reports y unittest.
   - [x] Revisar con contexto fresco y disponer hallazgos — verificación:
         registro en docs/reviews con proceed o escalate, hash reproducible.
@@ -145,9 +145,9 @@ TAREA AG-6 — Entrega Git autorizada
   Consumes: autorización del Operador de esta sesión y AG-1..AG-5
   Produce: dos commits, PR integrado y árbol local/remoto conciliado
   Steps:
-  - [ ] Commit fuente y registrar SHA real — verificación: Git log del
+  - [x] Commit fuente y registrar SHA real — verificación: Git log del
         manifest y diff del commit; primer estado .skevi/ transitorio.
-  - [ ] Sincronizar .skevi/ y cerrar gates — verificación: unittest y los
+  - [x] Sincronizar .skevi/ y cerrar gates — verificación: unittest y los
         tres checkers en verde, check_templates y source@SHA real.
   - [ ] Push, PR y merge condicionado — verificación: CI del commit,
         revisión, estado de protección y SHA remoto final.
