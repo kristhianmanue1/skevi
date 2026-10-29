@@ -72,7 +72,7 @@ python3 scripts/check_reports.py
 
 `check_sizes` comprueba archivos canónicos, tamaños y el presupuesto de la ruta
 de lectura obligatoria (ADR-021); `check_plans` (ADR-014) verifica la
-estructura de los planes de `docs/plans/` (E1–E5), fail-closed vía
+estructura de los planes de `docs/plans/` (E1–E6), fail-closed vía
 la clave `plans` de `skevi-gate.json`; `check_reports` (ADR-022) verifica la
 forma de la capa técnica de los reportes de `docs/reviews/`, incluido el hash
 canónico. Salida `OK` o `BLOQ` con código de
