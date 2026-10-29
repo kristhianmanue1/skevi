@@ -1,10 +1,10 @@
 {
   "schema": "skevi/script-manifest/v1",
-  "version": "gate/v12",
-  "generated_at": "2026-10-29T14:45:06Z",
+  "version": "gate/v13",
+  "generated_at": "2026-10-29T15:35:14Z",
   "files": {
-    "check_sizes.py": "sha256:39856248d613565aac9419d0516adb7cd1e19c9ab1e94b6ca0235fa5482878a7",
-    "check_plans.py": "sha256:fea573bfe217101590eb8220d0016895734053b3f55bf133df31254652fe9709",
+    "check_sizes.py": "sha256:ad0cdfc8d618f97c14e45cb94e9f2111b6567db9f74edda75bb9ccb50c12d054",
+    "check_plans.py": "sha256:37f9203df1e37b8765d49f5715465348871f89c27ee1a367d3b034accf720395",
     "check_reports.py": "sha256:5663866d6575765be22353f9587c743005f3e612153efd492279b68bf0a0f21c",
     "check_templates.py": "sha256:12ffbcdac0c27c3b9cd7e9f2f4cb14b9390667790ff85db2d6f9687167b480e7"
   },
@@ -94,6 +94,15 @@
       "changes": {
         "check_plans.py": "ADR-045: regla E6 — una TAREA cuyo campo Permitido: (con continuación) nombra push o merge declara, al mismo nivel, Lote: con un folio (identificador con al menos un dígito; rechaza TBD, relleno y <...>); verifica forma, no aceptación. Primera regla que falla por vocabulario, acotada al campo (excepción a REQ-2 de ADR-014). MIGRACIÓN ANTES DE RE-COPIAR: añade Lote: <folio> a cada TAREA cuyo Permitido: nombre push o merge",
         "check_sizes.py": "identidad gate/v12 (2026-10-29)"
+      }
+    },
+    {
+      "from": "gate/v12",
+      "to": "gate/v13",
+      "breaking": false,
+      "changes": {
+        "check_plans.py": "ADR-046: frontera final en OPERACION_RE — «pushes», «merged» y «mergeable» ya no activan E6; «Force-Push», la negación y la palabra exacta siguen activando. No breaking: ningún plan válido pasa a fallar. Tests de flexión en test_check_plans.py",
+        "check_sizes.py": "GATE_VERSION y GATE_GENERATED_AT a gate/v13 (2026-10-29)"
       }
     }
   ]

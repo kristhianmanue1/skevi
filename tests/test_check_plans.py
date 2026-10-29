@@ -380,6 +380,14 @@ class TestE6Lote(ConGateActivo):
         fallos = self._fallos(_plan_e6("edición local; sin push ni merge"))
         self.assertTrue(any("regla E6" in f for f in fallos), fallos)
 
+    def test_flexiones_no_activan(self):
+        # ADR-046 (hallazgo M1 de la revisión GLM): sin frontera final,
+        # «pushes», «merged» o «mergeable» activaban la regla.
+        for texto in ("editar docs; sin pushes", "subir commits ya merged",
+                      "rama mergeable a main"):
+            with self.subTest(texto=texto):
+                self.assertEqual(self._fallos(_plan_e6(texto)), [])
+
 
 class TestMainCli(BaseConProyecto):
     """El camino real de main(), vía subprocess — REQ-3 completo y argv."""

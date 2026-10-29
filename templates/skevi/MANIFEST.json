@@ -1,15 +1,15 @@
 {
   "schema": "skevi/template-manifest/v1",
-  "version": "plantillas/v17",
-  "generated_at": "2026-10-29T14:38:36Z",
+  "version": "plantillas/v18",
+  "generated_at": "2026-10-29T16:39:46Z",
   "files": {
     "architecture-overview.md": "sha256:c7a03679ec978ff609e6216cc63b5043eeb185424895083970b399ac9912b2d3",
     "corpus-installed.json": "sha256:75e2d33d91e5c5db4cfe0b30b2ff906ffaaaa20feb68765d1cff1f5a23acaed7",
     "frozen-trees.md": "sha256:768a87e69ef7da18b276f27d77d7cb2e492fb2eba2a55ae483d6d9b21d32751b",
-    "installed.json": "sha256:1c927d3237c1fe93f4ae85888686dac52e35532cbd3348d8adadf9435ef04ed8",
+    "installed.json": "sha256:721032c59e88c578d8317d1a8b4b18d4417bd59862a5329a0df8a2af10ebd01c",
     "plan-de-implementacion.md": "sha256:c9e27a08666eb727d39e755ca4df1d72757bb2bc7cee76a281967738199c9717",
     "registro-contexto.md": "sha256:60c768b449a416fa8727b1bf2515caecab0e9962111cc97a2d203f922fdc3227",
-    "scripts-installed.json": "sha256:1815800900621d94d71578dbabf43d9435961ee4bc95647239aefc506721c8ae",
+    "scripts-installed.json": "sha256:eae4594474b7f5ecc566890f4de13db5759315d6d8a1b41f5ca3ad36709c407e",
     "usage-guide.md": "sha256:209ed4a281077d8a721bd67a97d7d0be743bd270cef005ade442f36fc1d60815"
   },
   "history": [
@@ -165,6 +165,15 @@
         "corpus-installed.json": "ejemplo alineado con corpus/v8",
         "installed.json": "ejemplo alineado con plantillas/v17",
         "scripts-installed.json": "ejemplo alineado con gate/v12"
+      }
+    },
+    {
+      "from": "plantillas/v17",
+      "to": "plantillas/v18",
+      "breaking": false,
+      "changes": {
+        "scripts-installed.json": "ejemplo sincronizado a gate/v13 (ADR-046): version y digests de los cuatro scripts",
+        "installed.json": "ejemplo sincronizado a plantillas/v18 con digests del propio kit"
       }
     }
   ]
