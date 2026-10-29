@@ -1,9 +1,9 @@
 {
   "schema": "skevi/adr-manifest/v1",
-  "version": "adr/v5",
-  "generated_at": "2026-10-29T14:45:06Z",
+  "version": "adr/v6",
+  "generated_at": "2026-10-29T15:35:14Z",
   "files": {
-    "00-INDICE.md": "sha256:99ef4283ee6a2f0cc5e8f03b063716566615392507d71124ccde04b887bf45f1",
+    "00-INDICE.md": "sha256:f130d341d856d7b510f0e66ea99f314721396c239734192cc3da022792087bc1",
     "ADR-001-gate-local-sin-ci.md": "sha256:8e935fba22b1e8023c304569b08c2503c975a0662b5db51035466932e1f6c875",
     "ADR-002-separacion-docs-por-vida-util.md": "sha256:1b0532904e903d0dd2bf45fed8ed3f8529be3c1900882dedd44fdf6fb00770af",
     "ADR-003-directorios-en-ingles.md": "sha256:b06d60a8079ae0c73f2d0b9124a0d7941aec04d82bfff0cc8df9972a90dd84c4",
@@ -48,7 +48,8 @@
     "ADR-042-presupuesto-1620-generalizacion-de-05.md": "sha256:ebd9d480cc1026f6171a0d07128f2d96eee6debf5f459eaf95be1f89b6bebfd3",
     "ADR-043-continuacion-autonoma-acotada.md": "sha256:4c23e1d80b6010669b2394439475438eaf013cf0acb3d0f23a5dd8613aa226fb",
     "ADR-044-push-merge-condicional.md": "sha256:8af86ba671092dc8a2c143bf290ba1c03267e6a08333e61f458fd32ac33e452b",
-    "ADR-045-regla-e6-lote-en-plan.md": "sha256:29e47d17baf0c2b7cdfd58a36cfb9b2a05959b510e3dfc20eccbed9318ba7a2a"
+    "ADR-045-regla-e6-lote-en-plan.md": "sha256:29e47d17baf0c2b7cdfd58a36cfb9b2a05959b510e3dfc20eccbed9318ba7a2a",
+    "ADR-046-frontera-final-e6.md": "sha256:f02cfd1f4d4c62794798a3b0f6f819f21d0553bb8be9a8b49fde4564f8b8eab2"
   },
   "history": [
     {
@@ -85,6 +86,14 @@
       "changes": {
         "00-INDICE.md": "fila de ADR-045 aceptado; la fila de ADR-014 anota la excepción acotada a REQ-2",
         "ADR-045-regla-e6-lote-en-plan.md": "nuevo ADR aceptado: regla E6 de check_plans"
+      }
+    },
+    {
+      "from": "adr/v5",
+      "to": "adr/v6",
+      "breaking": false,
+      "changes": {
+        "ADR-046-frontera-final-e6.md": "PROPUESTO: frontera final en E6 — flexiones (pushes, merged, mergeable) no activan la regla; hallazgo M1 de la revisión GLM; entrada de índice sólo al confirmar el Operador"
       }
     }
   ]

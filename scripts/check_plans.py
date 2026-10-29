@@ -49,7 +49,9 @@ CAMPO_RE = {
 TOKEN_RE = re.compile(r"`([^`]+)`")
 PERMITIDO_RE = re.compile(r"^(\s*)Permitido:(.*)$")
 # Las dos operaciones de ADR-044 (ADR-045): sólo dentro de Permitido.
-OPERACION_RE = re.compile(r"\b(?:push|merge)", re.IGNORECASE)
+# Frontera final (ADR-046): «pushes», «merged» o «mergeable» no activan;
+# «Force-Push» sí (hay límite de palabra tras el guión).
+OPERACION_RE = re.compile(r"\b(?:push|merge)\b", re.IGNORECASE)
 LOTE_RE = re.compile(r"^(\s*)Lote:[ \t]*(\S*)")
 # Folio: caracteres de identificador y al menos un dígito; rechaza TBD,
 # guiones sueltos, «pendiente» y el marcador <...> de la plantilla.
