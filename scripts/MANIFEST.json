@@ -1,10 +1,10 @@
 {
   "schema": "skevi/script-manifest/v1",
-  "version": "gate/v11",
-  "generated_at": "2026-10-17T14:41:54Z",
+  "version": "gate/v12",
+  "generated_at": "2026-10-29T14:45:06Z",
   "files": {
-    "check_sizes.py": "sha256:8ef045b53f8e3fbca69ef1110cbdc6ea53164fa3c007fdae45b7b29df5aa1d5c",
-    "check_plans.py": "sha256:e6bff6446f2c5e73315cb4fafec904d5040d70195f67bbefa4a7597f9a14553d",
+    "check_sizes.py": "sha256:39856248d613565aac9419d0516adb7cd1e19c9ab1e94b6ca0235fa5482878a7",
+    "check_plans.py": "sha256:fea573bfe217101590eb8220d0016895734053b3f55bf133df31254652fe9709",
     "check_reports.py": "sha256:5663866d6575765be22353f9587c743005f3e612153efd492279b68bf0a0f21c",
     "check_templates.py": "sha256:12ffbcdac0c27c3b9cd7e9f2f4cb14b9390667790ff85db2d6f9687167b480e7"
   },
@@ -85,6 +85,15 @@
       "changes": {
         "check_sizes.py": "ADR-041: con reading_path activo, AGENTS.md y CLAUDE.md (sólo si existen en la raíz) deben figurar en reading_path.files — la entrada del ejecutor es lectura obligatoria y un presupuesto que la omite mide una ruta incompleta; README queda fuera (cara humana). MIGRACIÓN ANTES DE RE-COPIAR: añade tu archivo de entrada a reading_path.files con el presupuesto que corresponda. Además: cableado de la cuarta familia de manifiesto (ADR-040) sobre docs/adr/MANIFEST.json",
         "check_templates.py": "ADR-040: cuarta familia skevi/adr-manifest/v1 (namespace adr/vN) con listado exacto del directorio plano; sin esquema de instalación — existe para verificar descargas, no como flujo de adopción"
+      }
+    },
+    {
+      "from": "gate/v11",
+      "to": "gate/v12",
+      "breaking": true,
+      "changes": {
+        "check_plans.py": "ADR-045: regla E6 — una TAREA cuyo campo Permitido: (con continuación) nombra push o merge declara, al mismo nivel, Lote: con un folio (identificador con al menos un dígito; rechaza TBD, relleno y <...>); verifica forma, no aceptación. Primera regla que falla por vocabulario, acotada al campo (excepción a REQ-2 de ADR-014). MIGRACIÓN ANTES DE RE-COPIAR: añade Lote: <folio> a cada TAREA cuyo Permitido: nombre push o merge",
+        "check_sizes.py": "identidad gate/v12 (2026-10-29)"
       }
     }
   ]

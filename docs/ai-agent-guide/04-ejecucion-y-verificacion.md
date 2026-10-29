@@ -239,11 +239,11 @@ explícitamente una secuencia aún vigente, se verifica esa cobertura; no
 se inventa una autorización distinta por cambiar de tarea. Ante duda se
 aplica fail-closed, sin ampliar ni renovar el permiso por inferencia.
 
-Al hito verificado, propón `push` ordinario o `merge` con dossier en dos
-capas y folio (§4.3, ADR-044); de preferencia un lote previo al primer
-efecto que enumere operaciones y condiciones (en plan, campo `Lote:`).
-Ejecuta sólo con aceptación vigente registrada contra ese folio, por humano
-o gate futuro adoptado por humano e independiente; revalida cada efecto.
+Al hito verificado, propón `push` ordinario o `merge` con dossier en dos capas
+(folio, destino, commit, evidencia, riesgos; §4.3, ADR-044), mejor un lote
+previo al primer efecto (en plan, `Lote:`); no cubre `force-push`. Ejecuta sólo
+con aceptación vigente registrada contra ese folio, por humano o gate futuro
+adoptado por humano e independiente; revalida justo antes de cada efecto.
 
 Procedencia: [ADR-018](../adr/ADR-018-coherencia-de-autoridad.md) y
 [ADR-044](../adr/ADR-044-push-merge-condicional.md).

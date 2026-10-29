@@ -1,7 +1,8 @@
 """Tests de scripts/check_plans.py — gate estructural de planes (A-4).
 
 Escritos en RED antes del script (PLAN 2026-08-20, TAREA a4-t1). Las reglas
-E1–E5 están definidas en docs/plans/2026-08-20-a4-gate-de-planes.md; estos
+E1–E5 están definidas en docs/plans/2026-08-20-a4-gate-de-planes.md (E6, en
+ADR-045); estos
 tests las anclan con fixtures válidos y rotos, incluida la regla REQ-2: un
 plan sin marcadores léxicos pero sin estructura debe fallar, y la prosa
 legítima con "pendiente de definir" no debe fallar por vocabulario.
@@ -254,6 +255,130 @@ class TestRonda20260820(ConGateActivo):
         self.escribir_plan(plan)
         fallos = self.fallos_de("docs/plans/p.md")
         self.assertTrue(any("docs/roto/nunca.md" in f for f in fallos), fallos)
+
+
+def _plan_e6(permitido, lote=None, extra=""):
+    """Plan válido E1-E5 con una TAREA de entrega: `permitido` es el valor
+    del campo (puede traer continuación) y `lote`, la línea Lote: o None."""
+    lineas = ["# PLAN x", "", "```text", "TAREA t1",
+              f"  Permitido: {permitido}"]
+    if extra:
+        lineas.append(extra)
+    if lote is not None:
+        lineas.append(f"  Lote: {lote}".rstrip())
+    lineas += ["  Consumes: REQ-1", "  Produce: algo", "  Steps:",
+               "  - [ ] paso — verificación: manual", "```", ""]
+    return "\n".join(lineas)
+
+
+class TestE6Lote(ConGateActivo):
+    """ADR-045: una TAREA cuyo Permitido incluye push o merge declara el
+    folio de su lote. El gate verifica forma, nunca la aceptación."""
+
+    def _fallos(self, texto):
+        self.escribir_plan(texto)
+        return self.fallos_de("docs/plans/p.md")
+
+    def test_push_sin_lote_falla(self):
+        fallos = self._fallos(_plan_e6("commits y push de la rama"))
+        self.assertTrue(any("regla E6" in f for f in fallos), fallos)
+
+    def test_push_con_folio_pasa(self):
+        texto = _plan_e6("push y merge del PR", lote="SKV-LOTE-20261029-01")
+        self.assertEqual(self._fallos(texto), [])
+
+    def test_merge_en_linea_de_continuacion_falla(self):
+        texto = _plan_e6("commits locales; PR a main y",
+                         extra="    merge si CI y revisión cumplen")
+        fallos = self._fallos(texto)
+        self.assertTrue(any("regla E6" in f for f in fallos), fallos)
+
+    def test_mayusculas_y_force_push_cuentan(self):
+        fallos = self._fallos(_plan_e6("Force-Push a rama propia"))
+        self.assertTrue(any("regla E6" in f for f in fallos), fallos)
+
+    def test_folio_placeholder_falla(self):
+        fallos = self._fallos(_plan_e6("push", lote="<folio del lote>"))
+        self.assertTrue(any("regla E6" in f for f in fallos), fallos)
+
+    def test_lote_vacio_falla(self):
+        fallos = self._fallos(_plan_e6("push", lote=""))
+        self.assertTrue(any("regla E6" in f for f in fallos), fallos)
+
+    def test_prohibido_no_activa_la_regla(self):
+        texto = _plan_e6("edición local",
+                         extra="  Prohibido: push, merge y tags")
+        self.assertEqual(self._fallos(texto), [])
+
+    def test_continuacion_no_cruza_al_campo_siguiente(self):
+        # La línea Prohibido tiene la misma sangría que Permitido: termina
+        # el campo, aunque mencione push.
+        texto = _plan_e6("edición local de docs",
+                         extra="  Prohibido: force-push")
+        self.assertEqual(self._fallos(texto), [])
+
+    def test_sin_campo_permitido_no_aplica(self):
+        # Límite declarado en ADR-045: la plantilla mínima no trae
+        # Permitido; sin él la regla no tiene ancla.
+        self.assertEqual(self._fallos(PLAN_VALIDO), [])
+
+    def test_palabra_que_contiene_merge_no_activa(self):
+        self.assertEqual(self._fallos(_plan_e6("ruta de emergencia")), [])
+
+    def test_folio_de_relleno_falla(self):
+        for relleno in ("TBD", "—", "pendiente", "TODO"):
+            with self.subTest(folio=relleno):
+                fallos = self._fallos(_plan_e6("push", lote=relleno))
+                self.assertTrue(any("regla E6" in f for f in fallos), fallos)
+
+    def test_folio_con_coma_final_pasa(self):
+        texto = _plan_e6("push", lote="SKV-AG-PUSH-20261028-01, otro")
+        self.assertEqual(self._fallos(texto), [])
+
+    def test_lote_dentro_de_un_step_no_cuenta(self):
+        texto = _plan_e6("push").replace(
+            "  - [ ] paso — verificación: manual",
+            "  - [ ] paso — verificación: manual\n      Lote: SKV-1")
+        fallos = self._fallos(texto)
+        self.assertTrue(any("regla E6" in f for f in fallos), fallos)
+
+    def test_step_que_menciona_push_no_activa(self):
+        texto = _plan_e6("edición local").replace(
+            "paso — verificación: manual",
+            "push de la rama — verificación: manual")
+        self.assertEqual(self._fallos(texto), [])
+
+    def test_permitido_real_tras_continuacion_ajena_cuenta(self):
+        texto = _plan_e6("edición local").replace(
+            "  Permitido: edición local",
+            "  Produce: x\n    Permitido: nada\n  Permitido: push de la rama")
+        fallos = self._fallos(texto)
+        self.assertTrue(any("regla E6" in f for f in fallos), fallos)
+
+    def test_permitido_repetido_se_une(self):
+        texto = _plan_e6("edición local",
+                         extra="  Permitido: merge del PR")
+        fallos = self._fallos(texto)
+        self.assertTrue(any("regla E6" in f for f in fallos), fallos)
+
+    def test_limites_sintacticos_declarados(self):
+        # ADR-045: la forma es sintáctica. `TBD-1` pasa; entre backticks
+        # falla; «integrar a main» sin la palabra no activa la regla.
+        self.assertEqual(self._fallos(_plan_e6("push", lote="TBD-1")), [])
+        fallos = self._fallos(_plan_e6("push", lote="`SKV-1`"))
+        self.assertTrue(any("regla E6" in f for f in fallos), fallos)
+        self.assertEqual(self._fallos(_plan_e6("integrar a main")), [])
+
+    def test_puntuacion_final_del_folio_se_ignora(self):
+        for folio in ("SKV-1;", "SKV-1.", "SKV-1,"):
+            with self.subTest(folio=folio):
+                self.assertEqual(self._fallos(_plan_e6("push", lote=folio)), [])
+
+    def test_negacion_en_permitido_activa(self):
+        # Límite declarado en ADR-045: «sin push ni merge» en Permitido es
+        # falso positivo; esa exclusión va en Prohibido.
+        fallos = self._fallos(_plan_e6("edición local; sin push ni merge"))
+        self.assertTrue(any("regla E6" in f for f in fallos), fallos)
 
 
 class TestMainCli(BaseConProyecto):

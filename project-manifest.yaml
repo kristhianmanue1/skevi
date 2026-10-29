@@ -15,7 +15,7 @@ ofrece:
   - >
     gate en Python estándar sin dependencias: autoritativo en CI del
     repositorio fuente y ejecutable como hook local; el adoptante elige (ADR-034)
-  - gate opcional de planes de implementación con chequeo estructural (E1-E5), fail-closed, copiable sin edición
+  - gate opcional de planes de implementación con chequeo estructural (E1-E5) y regla léxica acotada E6 (ADR-045), fail-closed, copiable sin edición
   - plantillas de adopción instalables como `.skevi/` en el proyecto consumidor
   - clasificación de tarea (spike/bounded/architectural) por disparadores observables, para entrar a repos existentes
   - plantilla de plan de implementación multi-tarea, subordinada al contrato de tarea

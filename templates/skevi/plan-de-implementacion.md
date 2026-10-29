@@ -37,16 +37,16 @@ Reglas:
   criterio de paso. Un step sin verificación es prosa, no un step.
 - Prohibido: código de producción, placeholders (`TBD`, `TODO`), "similar a
   la TAREA N", prosa sin criterio de verificación.
-- En un plan, la TAREA que incluya `push` o `merge` declara `Lote:`: el
-  folio de un dossier de lote (estándar §4.3, `04` §7) presentado al gate
-  **antes** del primer efecto. La aceptación se registra una vez, en un
-  lugar consultable, contra ese folio; cada operación se revalida justo
-  antes de su efecto. El campo no prueba la aceptación: sin ella
-  registrada y vigente, la operación sigue gateada. Procedencia: ADR-044
-  (lote) y PLAN LG de Skevi (campo); razón: dos integraciones de Skevi
-  (PR #78/#79) se hicieron con permiso de sesión y sin aceptación por
-  folio. Forma mínima (capa humana; la técnica sigue el reporte en dos
-  capas):
+- En un plan, la TAREA que incluya `push` o `merge` declara `Lote:`. Si su
+  campo `Permitido:` nombra esas operaciones, `check_plans` lo exige (regla
+  E6, ADR-045). `Lote:` es el folio de un dossier de lote (estándar §4.3, `04`
+  §7) presentado al gate **antes** del primer efecto. La aceptación se
+  registra una vez, en un lugar consultable, contra ese folio; cada operación
+  se revalida justo antes de su efecto. El campo no prueba la aceptación: sin
+  ella registrada y vigente, la operación sigue gateada. Procedencia: ADR-044
+  (lote) y ADR-045 (campo y regla); razón: dos integraciones de Skevi (PR
+  #78/#79) se hicieron con permiso de sesión y sin aceptación por folio. Forma
+  mínima (capa humana; la técnica sigue el reporte en dos capas):
 
   ```text
   LOTE <folio> — <rama> → <destino>

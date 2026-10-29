@@ -57,7 +57,8 @@ sin discrepancias.
   existente», pero crear ese head exige commits que requieren lote. Se
   parte en SKV-LOTE-20261029-02 (commits, push, PR en borrador, antes del
   primer commit) y -03 (merge, con head y confirmación de ADR-045 y del
-  salto breaking). **Cerrado** sin relectura.
+  salto breaking). **Cerrado**; lo verificó la revisión del head final
+  del PR #80.
 - **LOW R2.** Registro y dossier discrepaban sobre N1-N4; alineados tras
   esta ronda. **Cerrado**.
 - **LOW R3.** «Texto del revisor» precisado como «con un ajuste menor».
@@ -77,7 +78,8 @@ EVIDENCE
 - reviewer round 1 -> fix-and-retry; 1 HIGH, 3 MED, 7 LOW -> pass
 - reviewer round 2 -> proceed; H1-H11 closed; N1 MED, N2-N4 LOW -> pass
 - reviewer round 3 -> proceed; N1-N4 closed; R1 MED, R2-R3 LOW -> pass
-- R1-R3 dispositions applied after round 3 -> not re-reviewed; no HIGH open -> inconclusive
+- R1 disposition -> verified closed by PR 80 final-head review (6097f93) -> pass
+- R2-R3 dispositions -> verified closed in PR B round 2 (gate-v12-ronda) -> pass
 - python3 scripts/check_sizes.py -> OK; reading path 1620/1620 -> pass
 - python3 scripts/check_plans.py -> OK -> pass
 - python3 scripts/check_reports.py -> OK -> pass
@@ -86,5 +88,5 @@ DECISION = proceed
 OPERATIONS = read-only review; grants no permission.
 AUTHORITY = Operator 2026-10-29 accepted the recommendations; lote not yet accepted.
 RISK = same-provider reviewer with shared filesystem.
-report_sha256 = beeb2ae6caa283494b09ecd5559c1214273a531c6234f5a3051731656bf3ff63
+report_sha256 = 0c326d4725165b88c5142d42d7ef6c8165f7fb5172ab6f449b0a5cfc60efb963
 ```

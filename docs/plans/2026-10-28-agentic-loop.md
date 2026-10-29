@@ -137,6 +137,9 @@ TAREA AG-6 — Entrega Git autorizada
   Plan: docs/plans/2026-10-28-agentic-loop.md
   Permitido: commits locales de fuente y registros .skevi/; push de esta
     rama, PR a main y merge si CI y revisión cumplen el gate.
+  Lote: SKV-AG-PUSH-20261028-01, SKV-AG-MERGE-20261028-01 (anotado el
+    2026-10-29 por E6: folios anunciados antes de cada efecto, sin
+    aceptación registrada; ver docs/reviews/2026-10-28-pr78-git-dossier.md)
   Superficie: Git y gh con origin; red sólo para fetch, push, PR y checks.
   Prohibido: force-push, tag, release, despliegue y cambios fuera de alcance.
   Presupuesto: sin cuota tarifada; dos fallos exigen diagnóstico previo.
