@@ -1,8 +1,9 @@
 # ADR-045: regla E6 — la TAREA que permite push o merge nombra su lote
 
-Estado: aceptado el 2026-10-29. El Operador confirmó expresamente la regla
-descrita y su salto breaking («Confirmo ADR-045», respuesta a una pregunta
-que los describía). Implementado en `scripts/check_plans.py` (gate/v12).
+Estado: aceptado el 2026-10-29. El Operador confirmó la regla descrita y
+su salto breaking («Confirmo ADR-045», respuesta a una pregunta que los
+describía; transcripción del agente, ver el dossier de los lotes 02-03).
+Implementado en `scripts/check_plans.py` (gate/v12).
 
 Contexto: los PR #78 y #79 se integraron con permiso de sesión, sin
 aceptación registrada contra un folio (estándar §4.3, ADR-044). Los
@@ -16,7 +17,7 @@ Decisión: regla E6 de `check_plans`. Dentro de un bloque TAREA, si el
 campo `Permitido:`, con sus líneas de continuación más sangradas, nombra
 `push` o `merge`, la TAREA declara `Lote:` **al mismo nivel** que
 `Permitido:`; un `Lote:` dentro de un step no cuenta. El folio es su
-primer token, sin la coma final: caracteres de identificador y al menos
+primer token, sin `,`, `;` ni `.` finales: caracteres de identificador y al menos
 un dígito. Esto rechaza `TBD`, `TODO`, `pendiente`, guiones sueltos y el
 marcador `<...>` de la plantilla. E6 verifica la **forma**: no comprueba
 que el folio exista, que alguien lo aceptara ni que siga vigente. `Lote:`
@@ -50,8 +51,10 @@ Límites declarados:
   tiene ancla y no se comprueba;
 - `force-push` activa la regla aunque el lote no lo cubra; la exclusión
   sigue siendo del dossier;
-- la forma del folio es sintáctica: `TBD-1` pasa y un folio entre
-  backticks falla.
+- la forma del folio es sintáctica: `TBD-1`, `0` o una ruta con dígito
+  pasan, y un folio entre backticks falla;
+- si `Permitido:` aparece varias veces, cuenta el de menor sangría y se
+  unen sus repeticiones a ese nivel.
 
 Alternativas descartadas:
 

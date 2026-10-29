@@ -3,7 +3,7 @@
 
 Comprueba estructura, no vocabulario: cada tarea con Consumes/Produce/Steps,
 cada step con su criterio de verificación, cada ruta backtickada existente y
-contenida en el repo. Las reglas E1-E5 y sus límites declarados viven en
+contenida en el repo. Las reglas E1-E5 (estructurales) y sus límites viven en
 docs/plans/2026-08-20-a4-gate-de-planes.md. E6 (ADR-045) es la única
 regla que hace fallar por vocabulario, acotada: si el campo `Permitido:` de
 una TAREA nombra push o merge, la TAREA declara, al mismo nivel que
@@ -191,19 +191,27 @@ def _agrupar_steps(bloque: list[str]) -> list[str]:
 def _permitido(bloque: list[str]) -> tuple[str, int]:
     """Valor del campo Permitido con sus líneas de continuación (más
     sangradas que el campo) y la sangría del campo; ("", -1) si la TAREA
-    no lo declara."""
+    no lo declara. El campo es el de menor sangría; si se repite a ese
+    nivel, se unen todos: tomar sólo el primero dejaba pasar un
+    `Permitido: push` real tras una continuación ajena (ronda del #81)."""
+    candidatos = []
     for i, ln in enumerate(bloque):
         m = PERMITIDO_RE.match(ln)
-        if not m:
+        if m:
+            candidatos.append((len(m.group(1)), i, m.group(2)))
+    if not candidatos:
+        return "", -1
+    sangria = min(c[0] for c in candidatos)
+    partes: list[str] = []
+    for nivel, i, valor in candidatos:
+        if nivel != sangria:
             continue
-        sangria = len(m.group(1))
-        partes = [m.group(2)]
+        partes.append(valor)
         for sig in bloque[i + 1:]:
             if not sig.strip() or len(sig) - len(sig.lstrip()) <= sangria:
                 break
             partes.append(sig)
-        return " ".join(partes), sangria
-    return "", -1
+    return " ".join(partes), sangria
 
 
 def _fallo_lote(bloque: list[str]) -> bool:

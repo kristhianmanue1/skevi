@@ -56,11 +56,12 @@ abierto, base cambiada) suspende los pasos pendientes hasta revalidar.
 ## Aceptación
 
 El Operador respondió «aceptado» en la conversación (2026-10-29T10:11:11Z,
-hora de registro del agente) a la petición que nombraba como único folio pendiente
-SKV-LOTE-20261029-01 y pedía la forma «acepto SKV-LOTE-20261029-01». La
-forma literal difiere; el objeto no es ambiguo porque no había otro folio
-pendiente. Transcripción del agente, sin fuente primaria consultable fuera
-de la conversación; se repite en la descripción del PR A.
+hora de registro del agente) a la petición que nombraba como único folio
+pendiente SKV-LOTE-20261029-01 y pedía la forma «acepto
+SKV-LOTE-20261029-01». La forma literal difiere; el objeto no es ambiguo
+porque no había otro folio pendiente. Transcripción del agente, sin fuente
+primaria consultable fuera de la conversación; se repite en la descripción
+del PR A.
 
 ## Ejecución
 

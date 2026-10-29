@@ -65,6 +65,17 @@ dio a las 2026-10-29T10:55:28Z (hora de registro del agente), antes del
 commit fuente, eligiendo «Confirmo ADR-045» en una pregunta que describía
 la regla, su salto breaking y la excepción a REQ-2.
 
+Esa respuesta confirmó la regla descrita, no el texto, que después ganó
+límites (ronda 2). La revisión del head final `bea8c5c` dictó `escalate` por
+eso. A las 2026-10-29T14:45:06Z el Operador eligió «Confirmo el texto final»
+en una pregunta que enumeraba esos cambios; el texto confirmado es el
+ADR-045 con sha256
+`29e47d17baf0c2b7cdfd58a36cfb9b2a05959b510e3dfc20eccbed9318ba7a2a`, que no
+se edita después. La revisión también señaló seis LOW: se corrigieron con un
+commit adicional, cubierto por la instrucción de sesión. El cambio de
+«(E1–E5)» en `AGENTS.md` lo bloqueó el clasificador de permisos del host y
+queda para el Operador.
+
 Vigencia: esta sesión. Revocable.
 
 ## Capa técnica
@@ -72,7 +83,7 @@ Vigencia: esta sesión. Revocable.
 ```text
 id = SKV-LOTE-20261029-02-03
 date = 2026-10-29
-time_utc = 10:55:28Z
+time_utc = 14:45:06Z
 head_sha = a080151ed0d216d1e09175f164816eaea99a53dc
 model = Claude Opus 5.5 (self-declared; not proof)
 STATE = PARTIAL
@@ -82,11 +93,13 @@ EVIDENCE
 - gh run view (main) -> success at a080151 -> pass
 - Operator session instruction -> classes github, commits, merges, PR; precedes effects -> pass
 - acceptance recorded against folio 02/03 (ADR-044 a) -> session grant, not per folio -> fail
-- Operator confirmation of ADR-045 text and breaking jump -> «Confirmo ADR-045» at 2026-10-29T10:55:28Z -> pass
+- Operator confirmation of ADR-045 rule as described and breaking jump -> «Confirmo ADR-045» at 2026-10-29T10:55:28Z -> pass
+- final-head review of bea8c5c -> escalate; text confirmation missing; 6 LOW -> pass
+- Operator confirmation of final ADR-045 text (sha256 29e47d17baf0) -> «Confirmo el texto final» at 2026-10-29T14:45:06Z -> pass
 PENDING = lote steps 1-7.
 DECISION = proceed
 OPERATIONS = proposed: commits, push, draft PR, PR comment, --merge, local branch -d.
 AUTHORITY = Operator direct session instruction (priority 1), not folio-bound.
 RISK = breaking E6 for adopters; lexical trigger vs ADR-014 REQ-2; same-provider review.
-report_sha256 = b302249725afb2c1dd9eab33474129cea1c387a8c628694b2c76476fc0643fd1
+report_sha256 = 786c76506447bdb788ef2e59592922dd4d03ca6fa39e3547e4d658e50c5c20fa
 ```
