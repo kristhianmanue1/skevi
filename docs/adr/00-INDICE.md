@@ -45,6 +45,7 @@
 | [ADR-042](ADR-042-presupuesto-1620-generalizacion-de-05.md) | Presupuesto de lectura 1620 — la generalización de 05 lo agotó | Aceptado | `skevi-gate.json` clave `reading_path` | Política ADR-038 p3; aceptación de PROP-011 | 2026-10-17 |
 | [ADR-043](ADR-043-continuacion-autonoma-acotada.md) | Continuación autónoma dentro de la TAREA | Aceptado | `01` §5, `04` §1 (`corpus/v6` local) | [PROP-012](../history/PROP-012-continuacion-agentica-acotada.md); decisión del Operador | 2026-10-28 |
 | [ADR-044](ADR-044-push-merge-condicional.md) | Push y merge propuestos por avance con autoridad condicional | Aceptado | `AGENTS.md`, `04` §7 (local) | Instrucción directa del Operador | 2026-10-28 |
+| [ADR-045](ADR-045-regla-e6-lote-en-plan.md) | Regla E6 — la TAREA que permite push o merge nombra su lote | Aceptado | `scripts/check_plans.py` (gate/v12) | Recomendación 2 del análisis del 2026-10-29; confirmación expresa del Operador | 2026-10-29 |
 
 **Reglas de este índice**
 

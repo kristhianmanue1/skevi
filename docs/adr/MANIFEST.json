@@ -1,9 +1,9 @@
 {
   "schema": "skevi/adr-manifest/v1",
-  "version": "adr/v4",
-  "generated_at": "2026-10-29T10:04:12Z",
+  "version": "adr/v5",
+  "generated_at": "2026-10-29T14:38:36Z",
   "files": {
-    "00-INDICE.md": "sha256:1b437a09136358d6a2be14769b1ace4b0d84768fb9f447ddea79ce2e31fab629",
+    "00-INDICE.md": "sha256:7cf031b53a074cd0d556a6f477a2e30caf490ec359f4bd8dfa5dddb55022899d",
     "ADR-001-gate-local-sin-ci.md": "sha256:8e935fba22b1e8023c304569b08c2503c975a0662b5db51035466932e1f6c875",
     "ADR-002-separacion-docs-por-vida-util.md": "sha256:1b0532904e903d0dd2bf45fed8ed3f8529be3c1900882dedd44fdf6fb00770af",
     "ADR-003-directorios-en-ingles.md": "sha256:b06d60a8079ae0c73f2d0b9124a0d7941aec04d82bfff0cc8df9972a90dd84c4",
@@ -47,7 +47,8 @@
     "ADR-041-presupuesto-cubre-entrada-del-ejecutor.md": "sha256:d05ac844b16d2baaaacaaa66201f71e12c9a36a5c5aa32c52878c020b485f268",
     "ADR-042-presupuesto-1620-generalizacion-de-05.md": "sha256:ebd9d480cc1026f6171a0d07128f2d96eee6debf5f459eaf95be1f89b6bebfd3",
     "ADR-043-continuacion-autonoma-acotada.md": "sha256:4c23e1d80b6010669b2394439475438eaf013cf0acb3d0f23a5dd8613aa226fb",
-    "ADR-044-push-merge-condicional.md": "sha256:8af86ba671092dc8a2c143bf290ba1c03267e6a08333e61f458fd32ac33e452b"
+    "ADR-044-push-merge-condicional.md": "sha256:8af86ba671092dc8a2c143bf290ba1c03267e6a08333e61f458fd32ac33e452b",
+    "ADR-045-regla-e6-lote-en-plan.md": "sha256:63e905b0d340c0930f7f299bbc3d585ca845b3635806f3b0dc0a815cc7d866d3"
   },
   "history": [
     {
@@ -75,6 +76,15 @@
       "breaking": false,
       "changes": {
         "00-INDICE.md": "fila de ADR-018 anota que ADR-044 sustituye su exigencia humana una por una para push ordinario y merge; regla del índice para sustituciones parciales"
+      }
+    },
+    {
+      "from": "adr/v4",
+      "to": "adr/v5",
+      "breaking": false,
+      "changes": {
+        "00-INDICE.md": "fila de ADR-045 aceptado",
+        "ADR-045-regla-e6-lote-en-plan.md": "nuevo ADR aceptado: regla E6 de check_plans"
       }
     }
   ]

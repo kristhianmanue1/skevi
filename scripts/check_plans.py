@@ -4,7 +4,11 @@
 Comprueba estructura, no vocabulario: cada tarea con Consumes/Produce/Steps,
 cada step con su criterio de verificación, cada ruta backtickada existente y
 contenida en el repo. Las reglas E1-E5 y sus límites declarados viven en
-docs/plans/2026-08-20-a4-gate-de-planes.md.
+docs/plans/2026-08-20-a4-gate-de-planes.md. E6 (ADR-045) es la única
+regla que hace fallar por vocabulario, acotada: si el campo `Permitido:` de
+una TAREA nombra push o merge, la TAREA declara, al mismo nivel que
+`Permitido:`, `Lote:` con un folio (al menos un dígito, sin relleno).
+Verifica la forma del folio, nunca que alguien lo aceptara.
 
 Los bloques TAREA se reconocen sólo dentro de fences ``` — la prosa que
 mencione "TAREA ..." o checklists fuera de un fence no se parsea (ronda
@@ -43,6 +47,13 @@ CAMPO_RE = {
     "Steps:": re.compile(r"^\s*Steps:", re.MULTILINE),
 }
 TOKEN_RE = re.compile(r"`([^`]+)`")
+PERMITIDO_RE = re.compile(r"^(\s*)Permitido:(.*)$")
+# Las dos operaciones de ADR-044 (ADR-045): sólo dentro de Permitido.
+OPERACION_RE = re.compile(r"\b(?:push|merge)", re.IGNORECASE)
+LOTE_RE = re.compile(r"^(\s*)Lote:[ \t]*(\S*)")
+# Folio: caracteres de identificador y al menos un dígito; rechaza TBD,
+# guiones sueltos, «pendiente» y el marcador <...> de la plantilla.
+FOLIO_RE = re.compile(r"^(?=[^\d]*\d)[A-Za-z0-9][A-Za-z0-9._/-]*$")
 CREA_RE = re.compile(r"\bcrea\w*\b", re.IGNORECASE)
 
 
@@ -177,6 +188,38 @@ def _agrupar_steps(bloque: list[str]) -> list[str]:
     return steps
 
 
+def _permitido(bloque: list[str]) -> tuple[str, int]:
+    """Valor del campo Permitido con sus líneas de continuación (más
+    sangradas que el campo) y la sangría del campo; ("", -1) si la TAREA
+    no lo declara."""
+    for i, ln in enumerate(bloque):
+        m = PERMITIDO_RE.match(ln)
+        if not m:
+            continue
+        sangria = len(m.group(1))
+        partes = [m.group(2)]
+        for sig in bloque[i + 1:]:
+            if not sig.strip() or len(sig) - len(sig.lstrip()) <= sangria:
+                break
+            partes.append(sig)
+        return " ".join(partes), sangria
+    return "", -1
+
+
+def _fallo_lote(bloque: list[str]) -> bool:
+    """E6: Permitido nombra push o merge y falta, al mismo nivel que ese
+    campo, un `Lote:` con folio utilizable. Un `Lote:` dentro de un step
+    o de otra continuación no cuenta."""
+    permitido, sangria = _permitido(bloque)
+    if not OPERACION_RE.search(permitido):
+        return False
+    for ln in bloque:
+        m = LOTE_RE.match(ln)
+        if m and len(m.group(1)) == sangria:
+            return not FOLIO_RE.match(m.group(2).rstrip(",;."))
+    return True
+
+
 def comprobar_plan(relativo: str, texto: str, root: Path) -> list[str]:
     fallos: list[str] = []
     bloques = _bloques_tarea(texto)
@@ -200,6 +243,11 @@ def comprobar_plan(relativo: str, texto: str, root: Path) -> list[str]:
                     f"{relativo}: {id_tarea}: step sin criterio de "
                     "verificación (regla E4)"
                 )
+        if _fallo_lote(bloque):
+            fallos.append(
+                f"{relativo}: {id_tarea}: Permitido incluye push o merge "
+                "sin `Lote:` con folio (regla E6)"
+            )
         for ln in bloque:
             for rota in _rutas_rotas(ln, root):
                 fallos.append(
@@ -302,7 +350,7 @@ def main(argv: list[str] | None = None) -> int:
             for fallo in fallos:
                 print(f"- {fallo}")
             return 1
-        print(f"OK — {len(argv)} plan(es) verificados (estructura E1-E5)")
+        print(f"OK — {len(argv)} plan(es) verificados (estructura E1-E6)")
         return 0
 
     try:
@@ -334,7 +382,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"- {fallo}")
         return 1
 
-    print(f"OK — {len(archivos)} plan(es) verificados (estructura E1-E5)")
+    print(f"OK — {len(archivos)} plan(es) verificados (estructura E1-E6)")
     return 0
 
 

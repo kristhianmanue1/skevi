@@ -55,12 +55,33 @@ abierto, base cambiada) suspende los pasos pendientes hasta revalidar.
 
 ## Aceptación
 
-El Operador respondió «aceptado» en la conversación (2026-10-29T10:11:11Z, hora de
-registro del agente) a la petición que nombraba como único folio pendiente
+El Operador respondió «aceptado» en la conversación (2026-10-29T10:11:11Z,
+hora de registro del agente) a la petición que nombraba como único folio pendiente
 SKV-LOTE-20261029-01 y pedía la forma «acepto SKV-LOTE-20261029-01». La
 forma literal difiere; el objeto no es ambiguo porque no había otro folio
 pendiente. Transcripción del agente, sin fuente primaria consultable fuera
 de la conversación; se repite en la descripción del PR A.
+
+## Ejecución
+
+Anotado el 2026-10-29 en el PR B, tras cerrar el lote.
+
+- Pasos 1-2: commits `340336f` y `6097f93`. Los tres `check_templates`
+  se ejecutaron en local antes del push y en CI después (hallazgo LOW de
+  la revisión del head final).
+- Pasos 3-4: push tras revalidar `main` en `8b1fb3f`; PR #80.
+- Paso 5: revisión del head final `6097f93`, `approve` con un MED y cuatro
+  LOW, publicada como comentario en el PR antes del merge.
+- Paso 6: el primer intento de merge lo bloqueó el clasificador de
+  permisos del host («Merge Without Review»: el PR no tenía aprobación
+  formal en GitHub). El agente se detuvo y lo reportó. El Operador
+  escribió entonces: «tienes permisos para esta esta seion para github ,
+  commits, merges pr etc y dejar tree limpio». Merge `--merge` fijado a
+  `6097f93`: `a080151` a las 10:32:26Z, con CI de `main` en `success`.
+- El MED (04 §7 perdía «justo antes», la mención de `force-push` y la
+  enumeración del contenido del dossier) y los LOW se corrigen en el PR B. La
+  afirmación del commit `340336f` («sin perder ninguna condición») quedó
+  desmentida por ese MED.
 
 ## Capa técnica
 
@@ -81,10 +102,12 @@ EVIDENCE
 - adversarial round 2 -> proceed; H1-H11 closed; N1 MED, N2-N4 LOW -> pass
 - adversarial round 3 -> proceed; N1-N4 closed; R1 MED, R2-R3 LOW -> pass
 - Operator reply in conversation -> «aceptado» at 2026-10-29T10:11:11Z -> pass
-PENDING = lote steps 1-6; final-head review is step 5.
+- gh pr view 80 -> MERGED 10:32:26Z at a080151; head 6097f93 reviewed -> pass
+- first merge attempt -> blocked by host permission classifier; retried after Operator session grant -> pass
+PENDING = none; steps 1-6 done, merge a080151; MED fixed in PR B.
 DECISION = proceed
 OPERATIONS = proposed: commits, push, PR, PR comment and --merge for PR A only.
 AUTHORITY = Operator replied «aceptado» at 2026-10-29T10:11:11Z to the request naming only this folio.
 RISK = same-provider final-head review; PR B needs lotes 02 and 03.
-report_sha256 = 0331047f400f8ab4d4b995b3d717959c128295e53e011d74a4e7d0672d252ef0
+report_sha256 = a271804df7e22f6fd563d20f9dc71744f4ca0be153164ba3469f4e22a206ff81
 ```
