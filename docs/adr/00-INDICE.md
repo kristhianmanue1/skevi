@@ -18,7 +18,7 @@
 | ADR-015 | Convención de idioma: código en inglés, cara al usuario en el idioma del proyecto | Aceptado | `estandar-diseno-software-github.md` §3.1 | Instrucción directa | 2026-09-07 |
 | ADR-016 | Reportes de agente en dos capas con bloque de trazabilidad | Aceptado | `00-INDICE.md`, `04` §5.2, estándar §6 | PROP-006 | 2026-09-07 |
 | ADR-017 | Autoridad Git graduada (Z1-Z3) con gate delegable | Aceptado | estándar §6.2/§6.6/§4.3, `project-manifest.yaml` | PROP-007 | 2026-09-07 |
-| [ADR-018](ADR-018-coherencia-de-autoridad.md) | Coherencia de autoridad general y restricción local | Aceptado | `29243f1` | [T05, opción A](../history/AUDIT-authority-consistency.md) | 2026-09-07 |
+| [ADR-018](ADR-018-coherencia-de-autoridad.md) | Coherencia de autoridad general y restricción local | Aceptado | `29243f1`; [ADR-044](ADR-044-push-merge-condicional.md) sustituye su exigencia humana una por una para push ordinario y merge | [T05, opción A](../history/AUDIT-authority-consistency.md) | 2026-09-07 |
 | [ADR-019](ADR-019-integracion-ankla-por-contrato.md) | Integración skevi↔AN-KLA por contrato condicional | Aceptado | `05` §6, `04` §7 | [PROP-008](../history/PROP-008-integracion-ankla-por-contrato.md) | 2026-09-07 |
 | [ADR-020](ADR-020-adopcion-versionado-plantillas.md) | Adopción del versionado de plantillas (PROP-006@#28 + T09) | Aceptado | `0be3f05` (PR #35): `templates/skevi/MANIFEST.json`, `scripts/check_templates.py`, gate local | [PROP-006@#28](https://github.com/kristhianmanue1/skevi/issues/28), [T09](../proposals/AUDIT-template-provenance.md) | 2026-09-08 |
 | [ADR-021](ADR-021-presupuesto-de-ruta-de-lectura.md) | Presupuesto de la ruta de lectura obligatoria | Aceptado | `scripts/check_sizes.py` clave `reading_path`, estándar §3.4 | [SPEC-M6 REQ-M6-05](../specs/SPEC-M6-2026-09-07-seis-mejoras.md) | 2026-09-07 |
@@ -51,6 +51,8 @@
 - Estado: solo `Aceptado` figura aquí; rechazados, diferidos o sustituidos se
   registran en el ADR que los reemplaza o en `docs/history/`.
 - Implementación: commit, archivo o sección donde la decisión se materializó.
+  Puede anotar la sustitución parcial por un ADR posterior; el ADR afectado
+  sigue Aceptado y su texto sellado no se edita.
 - Origen: si procede de una propuesta, se vincula; si es fundacional o externa,
   se declara como tal.
 - Fecha: del commit o decisión que originó el ADR, no de la última edición.

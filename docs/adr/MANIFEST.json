@@ -1,9 +1,9 @@
 {
   "schema": "skevi/adr-manifest/v1",
-  "version": "adr/v3",
-  "generated_at": "2026-10-28T21:10:18Z",
+  "version": "adr/v4",
+  "generated_at": "2026-10-29T10:04:12Z",
   "files": {
-    "00-INDICE.md": "sha256:4706a51d9fac43d5222c4247172171f8948924479f688fb67e0e6c009858bb69",
+    "00-INDICE.md": "sha256:1b437a09136358d6a2be14769b1ace4b0d84768fb9f447ddea79ce2e31fab629",
     "ADR-001-gate-local-sin-ci.md": "sha256:8e935fba22b1e8023c304569b08c2503c975a0662b5db51035466932e1f6c875",
     "ADR-002-separacion-docs-por-vida-util.md": "sha256:1b0532904e903d0dd2bf45fed8ed3f8529be3c1900882dedd44fdf6fb00770af",
     "ADR-003-directorios-en-ingles.md": "sha256:b06d60a8079ae0c73f2d0b9124a0d7941aec04d82bfff0cc8df9972a90dd84c4",
@@ -67,6 +67,14 @@
         "00-INDICE.md": "filas de ADR-043 y ADR-044 aceptados",
         "ADR-043-continuacion-autonoma-acotada.md": "nuevo ADR aceptado",
         "ADR-044-push-merge-condicional.md": "nuevo ADR aceptado; excepción local condicional"
+      }
+    },
+    {
+      "from": "adr/v3",
+      "to": "adr/v4",
+      "breaking": false,
+      "changes": {
+        "00-INDICE.md": "fila de ADR-018 anota que ADR-044 sustituye su exigencia humana una por una para push ordinario y merge; regla del índice para sustituciones parciales"
       }
     }
   ]

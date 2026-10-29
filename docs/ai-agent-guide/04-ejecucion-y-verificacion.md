@@ -239,11 +239,11 @@ explícitamente una secuencia aún vigente, se verifica esa cobertura; no
 se inventa una autorización distinta por cambiar de tarea. Ante duda se
 aplica fail-closed, sin ampliar ni renovar el permiso por inferencia.
 
-Al hito verificado, propón `push` ordinario o `merge` mediante dossier en
-dos capas con folio, destino, commit, evidencia y riesgos (§4.3, ADR-044).
-Ejecuta sólo con aceptación vigente registrada contra ese folio por humano
-o gate futuro adoptado e independiente; revalida antes del efecto. Esto no
-cubre `force-push` ni activa hoy un gate nuevo en Skevi.
+Al hito verificado, propón `push` ordinario o `merge` con dossier en dos
+capas y folio (§4.3, ADR-044); de preferencia un lote previo al primer
+efecto que enumere operaciones y condiciones (en plan, campo `Lote:`).
+Ejecuta sólo con aceptación vigente registrada contra ese folio, por humano
+o gate futuro adoptado por humano e independiente; revalida cada efecto.
 
 Procedencia: [ADR-018](../adr/ADR-018-coherencia-de-autoridad.md) y
 [ADR-044](../adr/ADR-044-push-merge-condicional.md).

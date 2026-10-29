@@ -18,6 +18,7 @@ TAREAS:
 TAREA <id-1>
   Consumes: <CONTRATO/SPEC existente al que resuelve — o "crea CONTRATO <x>">
   Produce:  <CONTRATO/SPEC/archivo que existirá al cerrar>
+  Lote:     <folio del dossier de lote — sólo si la TAREA incluye push o merge>
   Steps:
   - [ ] <paso> — verificación: <comando real o criterio de paso explícito>
 TAREA <id-n>
@@ -36,6 +37,33 @@ Reglas:
   criterio de paso. Un step sin verificación es prosa, no un step.
 - Prohibido: código de producción, placeholders (`TBD`, `TODO`), "similar a
   la TAREA N", prosa sin criterio de verificación.
+- En un plan, la TAREA que incluya `push` o `merge` declara `Lote:`: el
+  folio de un dossier de lote (estándar §4.3, `04` §7) presentado al gate
+  **antes** del primer efecto. La aceptación se registra una vez, en un
+  lugar consultable, contra ese folio; cada operación se revalida justo
+  antes de su efecto. El campo no prueba la aceptación: sin ella
+  registrada y vigente, la operación sigue gateada. Procedencia: ADR-044
+  (lote) y PLAN LG de Skevi (campo); razón: dos integraciones de Skevi
+  (PR #78/#79) se hicieron con permiso de sesión y sin aceptación por
+  folio. Forma mínima (capa humana; la técnica sigue el reporte en dos
+  capas):
+
+  ```text
+  LOTE <folio> — <rama> → <destino>
+  1. commit(s) de la rama; condición: gates locales OK
+  2. push ordinario <rama> → <remoto>/<rama>; condición: gates OK en el head
+  3. PR <rama> → <destino>
+  4. merge del PR con <método: merge | squash | rebase>; condición: CI
+     requerido verde y revisión independiente registrada del head final,
+     ambos sobre el mismo SHA
+  Evidencia: <gates y checks ya ejecutados>. Riesgos: <lista>.
+  Recomendación: <aceptar | no aceptar, y por qué>.
+  Fuera del lote: force-push, rebase compartido, tags, releases, borrados.
+  Vigencia: hasta <evento o fecha>; revocable en cualquier momento.
+  Aceptación: quién, cuándo, «acepto <folio>», antes del paso 1; registro
+  consultable: <comentario del PR | registro de revisión | otro>.
+  ```
+
 - Límite: 300 líneas como plantilla derivada (estándar §3.4). Si excede, se
   parte en sub-planes vinculados desde este encabezado.
 - Hogar: `docs/plans/` o el equivalente declarado por el proyecto adoptante;
