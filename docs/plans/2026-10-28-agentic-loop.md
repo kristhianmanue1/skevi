@@ -168,3 +168,10 @@ concreto son fases u operaciones posteriores. Un `proceed` no los activa.
 Las fichas de AG-1..AG-4 se incorporaron después de comenzar el borrador
 local, por un hallazgo HIGH de la ronda anterior. Fijan el trabajo restante
 y permiten auditar alcance, sin acreditar un preflight que no ocurrió.
+
+Cierre de AG-6 (2026-10-29, PLAN LG tarea LG-2): el push y el merge del
+PR #78 se ejecutaron, pero el último step queda sin marcar porque su
+verificación no se cumplió: no consta revisión registrada del head final
+ni aceptación por folio. Hechos y límites en
+[el dossier del PR #78](../reviews/2026-10-28-pr78-git-dossier.md) y
+[el del PR #79](../reviews/2026-10-29-pr79-git-dossier.md).

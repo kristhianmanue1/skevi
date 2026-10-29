@@ -1,13 +1,13 @@
 {
   "schema": "skevi/template-manifest/v1",
-  "version": "plantillas/v15",
-  "generated_at": "2026-10-28T21:10:18Z",
+  "version": "plantillas/v16",
+  "generated_at": "2026-10-29T10:04:12Z",
   "files": {
     "architecture-overview.md": "sha256:c7a03679ec978ff609e6216cc63b5043eeb185424895083970b399ac9912b2d3",
-    "corpus-installed.json": "sha256:284ff75a19f02554580b8f18628a3c092a66c214d8b7c97e3711e0c21cd07849",
+    "corpus-installed.json": "sha256:fcc6c087a7d67d8e35795594fc8fda2a9147b660933385b368b3b885286df4af",
     "frozen-trees.md": "sha256:768a87e69ef7da18b276f27d77d7cb2e492fb2eba2a55ae483d6d9b21d32751b",
-    "installed.json": "sha256:5398613b48631e19eaa0674d0a5f4371cb74594c676f554da991827e52729b91",
-    "plan-de-implementacion.md": "sha256:f93a8435757af5f65fe166737a87ea880928844efe4637df554f5b8c09b6b073",
+    "installed.json": "sha256:5d31a824069d42e035456ca5b9c8192c3156a07d225f5c012a85f1ce48a631d0",
+    "plan-de-implementacion.md": "sha256:c4fca54102df4084d5540287045634ce787814b40b0f7825ef82b22c69ae1b3f",
     "registro-contexto.md": "sha256:60c768b449a416fa8727b1bf2515caecab0e9962111cc97a2d203f922fdc3227",
     "scripts-installed.json": "sha256:a1953b017da03b5f355b92060eed609eeba279dece6e40a9105abfc48a845b2b",
     "usage-guide.md": "sha256:209ed4a281077d8a721bd67a97d7d0be743bd270cef005ade442f36fc1d60815"
@@ -144,6 +144,16 @@
       "changes": {
         "corpus-installed.json": "ejemplo alineado con corpus/v6",
         "installed.json": "ejemplo alineado con plantillas/v15"
+      }
+    },
+    {
+      "from": "plantillas/v15",
+      "to": "plantillas/v16",
+      "breaking": false,
+      "changes": {
+        "plan-de-implementacion.md": "campo Lote: y forma mínima del dossier de lote para TAREAs con push o merge (PLAN LG, ADR-044)",
+        "corpus-installed.json": "ejemplo alineado con corpus/v7",
+        "installed.json": "ejemplo alineado con plantillas/v16"
       }
     }
   ]
