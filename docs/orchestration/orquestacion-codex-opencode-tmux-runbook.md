@@ -1,8 +1,10 @@
 # Runbook operativo — Codex/OpenCode/tmux
 
-**Tipo:** material de consulta con el teclado en la mano.
+**Estado:** adaptador por host — sin peso normativo, igual que su protocolo
+asociado (decisión del Operador del 2026-11-07, opción C del cotejo HV-6).  
+**Tipo:** material de consulta con el teclado en la mano.  
 **Protocolo asociado:** `orquestacion-codex-opencode-tmux.md`, que define roles,
-topologías, máquina de estados, tarjeta de trabajo y reglas de autoridad.
+topologías, máquina de estados, tarjeta de trabajo y reglas de autoridad.  
 **Cuándo se usa este archivo:** al adoptar el método en un proyecto nuevo, al
 lanzar una sesión y cuando algo se rompe durante la ejecución.
 
@@ -10,8 +12,9 @@ Este archivo no contiene reglas nuevas: es la parte copiable y consultable del
 protocolo, separada para que ninguno de los dos exceda el límite de tamaño y
 ambos puedan leerse completos de una vez.
 
-**Última verificación:** 2026-08-12, contra `codex-cli 0.147.0`,
-`opencode 1.18.16`, `tmux 3.6a`. Comparte fecha con el protocolo asociado;
+**Última comprobación de versiones:** 2026-11-07, presencia y versión de
+`codex-cli 0.167.0`, `opencode 2.2.5`, `tmux 3.6a` — sin revalidación
+funcional de los procedimientos. Comparte fecha con el protocolo asociado;
 revalidar ambos juntos. Ningún gate comprueba esta fecha automáticamente:
 depende de auditoría manual.
 

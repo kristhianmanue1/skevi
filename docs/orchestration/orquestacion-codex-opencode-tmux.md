@@ -1,20 +1,24 @@
 # Orquestación de desarrollo con Codex CLI, OpenCode y tmux
 
-**Estado:** guía técnica reutilizable  
+**Estado:** adaptador por host — sin peso normativo; el canon vive en
+`docs/estandar-diseno-software-github.md` y `docs/ai-agent-guide/`, y en
+conflicto manda el corpus. Decisión del Operador del 2026-11-07 (opción C
+del cotejo HV-6, `docs/reviews/2026-11-07-hv6-cotejo-orchestration.md`).  
 **Ámbito:** proyectos de software locales en macOS o Linux  
 **Modelo principal:** humano orquestador → Codex CLI controlador → OpenCode ejecutor  
 **Modo directo validado:** humano → Codex Desktop controlador → OpenCode interactivo  
 **Dependencias conceptuales:** ADRC, sesiones persistentes, revisión adversarial y evidencia ejecutable  
 **Dependencias de runtime:** ninguna respecto de Escrubery o Epistates  
 **Material operativo:** `orquestacion-codex-opencode-tmux-runbook.md` (recuperación, fallas comunes, prompts base, checklist de adopción)  
-**Ronda adversarial de esta guía:** `../history/orquestacion-codex-opencode-tmux-adversarial.md`
-**Última verificación:** 2026-08-12, contra `codex-cli 0.147.0`, `opencode 1.18.16`,
-`tmux 3.6a`. Esta guía caduca cuando cambien flags o comportamiento de
-cualquiera de las tres herramientas; si al usarla algo no coincide, es señal
-de que necesita revalidarse, no de que el operador se equivocó. Esta fecha
-no la comprueba ningún gate automatizado: es una declaración de buena fe que
-depende de que quien la lea la audite manualmente contra las versiones
-reales instaladas.
+**Ronda adversarial de esta guía:** `../history/orquestacion-codex-opencode-tmux-adversarial.md`  
+**Última comprobación de versiones:** 2026-11-07, presencia y versión de
+`codex-cli 0.167.0`, `opencode 2.2.5`, `tmux 3.6a` — sin revalidación
+funcional de los flags de la guía. Esta guía caduca cuando cambien flags o
+comportamiento de cualquiera de las tres herramientas; si al usarla algo no
+coincide, es señal de que necesita revalidarse, no de que el operador se
+equivocó. Ningún gate automatizado comprueba esta fecha: es una declaración
+de buena fe que depende de que quien la lea la audite manualmente contra
+las versiones reales instaladas.
 
 ## 1. Propósito
 
