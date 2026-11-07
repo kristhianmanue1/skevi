@@ -12,8 +12,9 @@ Este archivo no contiene reglas nuevas: es la parte copiable y consultable del
 protocolo, separada para que ninguno de los dos exceda el límite de tamaño y
 ambos puedan leerse completos de una vez.
 
-**Última verificación:** 2026-08-12, contra `codex-cli 0.147.0`,
-`opencode 1.18.16`, `tmux 3.6a`. Comparte fecha con el protocolo asociado;
+**Última comprobación de versiones:** 2026-11-07, presencia y versión de
+`codex-cli 0.167.0`, `opencode 2.2.5`, `tmux 3.6a` — sin revalidación
+funcional de los procedimientos. Comparte fecha con el protocolo asociado;
 revalidar ambos juntos. Ningún gate comprueba esta fecha automáticamente:
 depende de auditoría manual.
 
