@@ -31,6 +31,7 @@ fuente de verdad, que es la que se consulta para el contenido vigente.
 | `docs/ai-agent-guide/` | Guía por fases F0→F3 y complementos | Cambia con la práctica | `00-INDICE.md` |
 | `docs/adr/` | Decisiones estructurales inmutables | Sólo crece | `00-INDICE.md` |
 | `docs/crosswalk-estandares.md` | Cotejo con NIST SSDF y OWASP LLM | Caduca con sus fuentes | Tabla de versiones del archivo |
+| `docs/mapa-orientacion.md` | Orientación visual y greppable del método | Caduca con el canon | Encabezado del archivo |
 | `docs/proposals/` | Cambios bajo deliberación, no normativos | Hasta decidir | Encabezado de cada archivo |
 | `docs/specs/`, `docs/plans/` | F0/F1 y planes de programas de mejora | Por programa | Encabezado; planes: `check_plans` |
 | `docs/reviews/` | Rondas y cierres de programa | Congelado al cerrar | `skevi-gate.json` clave `reports` |
@@ -121,7 +122,8 @@ python3 scripts/check_reports.py
 `check_sizes` comprueba que existen los archivos canónicos, que no hay
 Markdown operativo suelto en la raíz, que ningún archivo de texto excede su
 límite y que la ruta de lectura obligatoria cabe en su presupuesto — clave
-`reading_path`, 1000 líneas en este repo (ADR-021). `check_plans` verifica la
+`reading_path`; la ocupación vigente la emite el gate en su salida, no este
+archivo (ADR-025 p4). `check_plans` verifica la
 estructura de los planes de implementación de `docs/plans/` (ADR-014) — cada tarea con Consumes/Produce/Steps, cada step
 con criterio de verificación, cada ruta referenciada existente —; es
 opcional y fail-closed: sin clave `plans` en `skevi-gate.json`, no comprueba
