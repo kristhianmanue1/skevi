@@ -1,16 +1,17 @@
 {
   "schema": "skevi/template-manifest/v1",
-  "version": "plantillas/v21",
-  "generated_at": "2026-11-07T13:39:52Z",
+  "version": "plantillas/v22",
+  "generated_at": "2026-11-07T14:00:35Z",
   "files": {
     "architecture-overview.md": "sha256:c7a03679ec978ff609e6216cc63b5043eeb185424895083970b399ac9912b2d3",
-    "corpus-installed.json": "sha256:6f696a8a11afab0a7d2061285b21adc9d11a0c84954db6bfe1ded2813deab612",
+    "corpus-installed.json": "sha256:ef016335d9e06f5cfc6b02bb2724b13485104f20ccc25dcc08bed45fd76e0107",
     "frozen-trees.md": "sha256:768a87e69ef7da18b276f27d77d7cb2e492fb2eba2a55ae483d6d9b21d32751b",
-    "installed.json": "sha256:33a6a1c8af281b9c11d377d604004e87f822250049f259f6a9d16338d47213aa",
+    "installed.json": "sha256:8ee78a6e1c553ef03747ccc4be3d642041609a6b48856c786e8d573256b6ab35",
     "plan-de-implementacion.md": "sha256:c9e27a08666eb727d39e755ca4df1d72757bb2bc7cee76a281967738199c9717",
     "registro-contexto.md": "sha256:60c768b449a416fa8727b1bf2515caecab0e9962111cc97a2d203f922fdc3227",
     "scripts-installed.json": "sha256:da535f99d86da8c5c47f28d95d6febff3b9c2aefde614f1de97b0af604de9765",
-    "usage-guide.md": "sha256:209ed4a281077d8a721bd67a97d7d0be743bd270cef005ade442f36fc1d60815"
+    "usage-guide.md": "sha256:087e7a87cc24eec4dad97d08e429946d189b0b7d5b6bb33a16195bd6cd0ddd28",
+    "review-defect-catalog.md": "sha256:03feb4808acf54bb8a9e612638858d302f69e9a0a9ec1ebfd85bc343d76c1aaf"
   },
   "history": [
     {
@@ -201,6 +202,17 @@
       "changes": {
         "scripts-installed.json": "digest del ejemplo de check_templates.py al real de gate/v14 (hallazgo de la revision del PR #91)",
         "installed.json": "ejemplo sincronizado a plantillas/v21"
+      }
+    },
+    {
+      "from": "plantillas/v21",
+      "to": "plantillas/v22",
+      "breaking": false,
+      "changes": {
+        "review-defect-catalog.md": "nueva plantilla experimental: catalogo de defectos y diagnostico (ADR-035, PROP-010 T05)",
+        "usage-guide.md": "seccion de la plantilla opcional del catalogo (T07)",
+        "installed.json": "ejemplo sincronizado a plantillas/v22",
+        "corpus-installed.json": "ejemplo sincronizado a corpus/v10"
       }
     }
   ]

@@ -29,7 +29,8 @@
     "templates/skevi/MANIFEST.json",
     "templates/skevi/installed.json",
     "templates/skevi/corpus-installed.json",
-    "templates/skevi/scripts-installed.json"
+    "templates/skevi/scripts-installed.json",
+    "templates/skevi/review-defect-catalog.md"
   ],
   "reading_path": {
     "limit": 1620,

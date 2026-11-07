@@ -1,9 +1,9 @@
 {
   "schema": "skevi/adr-manifest/v1",
-  "version": "adr/v7",
-  "generated_at": "2026-11-07T13:31:45Z",
+  "version": "adr/v8",
+  "generated_at": "2026-11-07T13:50:10Z",
   "files": {
-    "00-INDICE.md": "sha256:c2ddda63b3e85d9f7b9e5cef8f92acffc149e200f31879f4008e0b754d771bf0",
+    "00-INDICE.md": "sha256:26863afe7901e3021031e9160af4b876a21a3e05351d996579118d8e17470e9c",
     "ADR-001-gate-local-sin-ci.md": "sha256:8e935fba22b1e8023c304569b08c2503c975a0662b5db51035466932e1f6c875",
     "ADR-002-separacion-docs-por-vida-util.md": "sha256:1b0532904e903d0dd2bf45fed8ed3f8529be3c1900882dedd44fdf6fb00770af",
     "ADR-003-directorios-en-ingles.md": "sha256:b06d60a8079ae0c73f2d0b9124a0d7941aec04d82bfff0cc8df9972a90dd84c4",
@@ -106,6 +106,14 @@
         "00-INDICE.md": "filas de ADR-047 y ADR-048; anotaciones hacia adelante de ADR-009/017/020/021/038 (HV-5)",
         "ADR-047-rutas-historicas-propuestas.md": "nuevo: doctrina de rutas historicas (opcion A del deadlock, confirmado)",
         "ADR-048-sha-head-autohospedaje.md": "nuevo: @HEAD solo en auto-hospedaje (opcion 2 del dossier HV-4, confirmado)"
+      }
+    },
+    {
+      "from": "adr/v7",
+      "to": "adr/v8",
+      "breaking": false,
+      "changes": {
+        "00-INDICE.md": "enlaces de PROP-010 y AUDITs hacia docs/history (ADR-047; T09); fila de ADR-035 materializada"
       }
     }
   ]
