@@ -89,7 +89,7 @@ TAREA HV-1 — Corregir la deriva de README.md
     salida vigente del gate (1620/1620)
   Produce: README.md remitiendo a la salida de check_sizes, sin cifra
   Steps:
-  - [ ] Sustituir la frase por remisión al gate — verificación: grep
+  - [x] Sustituir la frase por remisión al gate — verificación: grep
         "1000 líneas" README.md sin coincidencias y check_sizes OK
 
 TAREA HV-2 — Holgura por compresión para desbloquear PROP-010 T06

@@ -109,12 +109,12 @@ TAREA MI-1 — Crear el mapa
     precedente crosswalk
   Produce: docs/mapa-orientacion.md con tres fences mermaid
   Steps:
-  - [ ] Redactar el mapa según el diseño — verificación: todo ADR-nnn
+  - [x] Redactar el mapa según el diseño — verificación: todo ADR-nnn
         citado existe en docs/adr/MANIFEST.json (grep mecánico) y tres
         fences mermaid con pares abrir/cerrar contados por grep; el
         render visual queda como verificación humana diferida a la
         primera publicación, declarada en la ronda
-  - [ ] Declarar caducidad y no-normatividad en el encabezado —
+  - [x] Declarar caducidad y no-normatividad en el encabezado —
         verificación: el encabezado cita corpus/v8 y «en conflicto manda
         el corpus»
 
@@ -125,7 +125,7 @@ TAREA MI-2 — Descubrimiento desde README
   Produce: fila «docs/mapa-orientacion.md | Orientación visual y
     greppable del método | Caduca con el canon | Encabezado del archivo»
   Steps:
-  - [ ] Añadir la fila con el patrón crosswalk — verificación: grep del
+  - [x] Añadir la fila con el patrón crosswalk — verificación: grep del
         enlace en README.md, wc -l README.md <= 300 y check_sizes OK
 
 TAREA MI-3 — Frontera de ruta declarada (puntero para agentes diferido)
@@ -140,7 +140,7 @@ TAREA MI-3 — Frontera de ruta declarada (puntero para agentes diferido)
     dependencia declarada para v2 (una línea de puntero cuando HV-2
     libere holgura)
   Steps:
-  - [ ] Verificar la frontera — verificación: git diff --stat HEAD vacío
+  - [x] Verificar la frontera — verificación: git diff --stat HEAD vacío
         sobre los nueve archivos de la ruta declarados en
         skevi-gate.json
 
