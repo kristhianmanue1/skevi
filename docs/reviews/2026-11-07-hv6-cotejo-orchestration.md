@@ -34,7 +34,7 @@ ecosistema sigue usando y que el contraste con la propuesta externa
 id = SKV-HV6-COTEJO-20261107-01
 date = 2026-11-07
 time_utc = 11:52:08Z
-head_sha = 52d0482b4b9a03ea83baf3cc8fa65d0f3d02f96a
+head_sha = 52d0482eb70367c7ac7c245a15b2a3019dfeedc7
 model = GLM-5.3 zai-coding-plan (ejecutor; self-declared; not proof)
 STATE = PARTIAL
 GATE = cotejo HV-6 de docs/orchestration/ contra el canon vigente; guia
@@ -53,7 +53,7 @@ AUTHORITY = orden del Operador 2026-11-07 «adelante con pendientes»
 sobre la tarea HV-6 del plan ya entregado
 RISK = cotejo por grep dirigido, no lectura linea a linea de 728 lineas;
 los huecos encontrados son ausencias verificables, no interpretaciones
-report_sha256 = 37d5fde3004dab9bbcfdfdf8160ff605f7f66dd9f3e746935807393c93b91f5a
+report_sha256 = c2d247e64de0ddae1be848e54750665b6ef19a4efb894016db3677e2172bac61
 ```
 
 La decisión es del Operador. Este cotejo no cierra HV-6: su step 2

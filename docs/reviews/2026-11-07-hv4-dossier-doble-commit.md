@@ -44,7 +44,7 @@ CI y eliminar el segundo commit; M1 como práctica estándar independiente.
 id = SKV-HV4-DOSSIER-20261107-01
 date = 2026-11-07
 time_utc = 11:52:08Z
-head_sha = 52d0482b4b9a03ea83baf3cc8fa65d0f3d02f96a
+head_sha = 52d0482eb70367c7ac7c245a15b2a3019dfeedc7
 model = GLM-5.3 zai-coding-plan (ejecutor; self-declared; not proof)
 STATE = PARTIAL
 GATE = dossier de opciones HV-4: doble commit del auto-hospedaje; dos
@@ -64,7 +64,7 @@ OPERATIONS = redaccion del dossier; sin efectos Git
 AUTHORITY = orden del Operador 2026-11-07 «adelante con pendientes»
 sobre la tarea HV-4 del plan ya entregado
 RISK = dossier de ejecutor que recomienda; la decision es del Operador
-report_sha256 = 81f68afbe13369d0d649babf16c8b2795ca88417c5f827638de3cf4d8c1ac850
+report_sha256 = 31ee612ffac5ca3cbc65be7004ef034cb2843dfdc07cd38dfc0517f1f66fe8d3
 ```
 
 La decisión es del Operador. Este dossier no cierra HV-4: su step 2
