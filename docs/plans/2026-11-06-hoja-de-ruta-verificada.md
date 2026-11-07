@@ -95,17 +95,23 @@ TAREA HV-1 — Corregir la deriva de README.md
 TAREA HV-2 — Holgura por compresión para desbloquear PROP-010 T06
   Permitido: docs/estandar-diseno-software-github.md (§4.3, §6.2, §6.6),
     docs/ai-agent-guide/04-ejecucion-y-verificacion.md (§7),
-    docs/MANIFEST.json y .skevi/corpus-installed.json para el bump.
+    docs/MANIFEST.json para el bump. Superficie ampliada por el Operador
+    el 2026-11-07 tras el escalamiento de la ronda (registrado en
+    docs/reviews/2026-11-07-hv2-ronda.md): la plantilla
+    templates/skevi/corpus-installed.json con salto plantillas/v19 en su
+    manifiesto, y los espejos .skevi/corpus-installed.json y
+    .skevi/installed.json sincronizados al SHA del commit fuente.
   Prohibido: subir reading_path.limit; editar ADRs; efectos Git sin
     lote aceptado.
   Consumes: duplicación dossier/lote estándar↔04 señalada por la ronda;
     ADR-025 p3; ADR-031 (commit doble del espejo)
-  Produce: salida de check_sizes con ruta <=1618; corpus/v9 sellado
+  Produce: salida de check_sizes con ruta <=1618; corpus/v9 y
+    plantillas/v19 sellados, espejos .skevi/ al día
   Steps:
-  - [ ] Comprimir la duplicación conservando ambas normas —
+  - [x] Comprimir la duplicación conservando ambas normas —
         verificación: check_sizes OK con ruta <=1618 y diff sin reglas
         perdidas
-  - [ ] Bump corpus/v9 y espejo .skevi/ al SHA del commit fuente —
+  - [x] Bump corpus/v9 y espejo .skevi/ al SHA del commit fuente —
         verificación: unittest discover OK y check_templates al día
 
 TAREA HV-3 — Resolver el deadlock y ejecutar PROP-010 §8
@@ -152,7 +158,7 @@ TAREA HV-4 — Dossier de opciones sobre el doble commit del espejo
   Produce: dossier con las dos opciones y sus puntos de contacto; la
     decisión del Operador registrada
   Steps:
-  - [ ] Escribir el dossier con costes y riesgos por opción —
+  - [x] Escribir el dossier con costes y riesgos por opción —
         verificación: cita tests, CI y README con línea exacta
   - [ ] Registrar la decisión — verificación: registro en docs/reviews
 
@@ -180,7 +186,7 @@ TAREA HV-6 — Disposición de docs/orchestration/
     ADR-023 y ADR-044
   Produce: recomendación con tabla de desfases y decisión registrada
   Steps:
-  - [ ] Cotejar runbook contra el canon vigente — verificación: tabla
+  - [x] Cotejar runbook contra el canon vigente — verificación: tabla
         con cita de línea por desfase
   - [ ] Recomendar al Operador — verificación: registro con decisión
 
