@@ -1,15 +1,15 @@
 {
   "schema": "skevi/template-manifest/v1",
-  "version": "plantillas/v19",
-  "generated_at": "2026-11-07T11:50:41Z",
+  "version": "plantillas/v21",
+  "generated_at": "2026-11-07T13:39:52Z",
   "files": {
     "architecture-overview.md": "sha256:c7a03679ec978ff609e6216cc63b5043eeb185424895083970b399ac9912b2d3",
     "corpus-installed.json": "sha256:6f696a8a11afab0a7d2061285b21adc9d11a0c84954db6bfe1ded2813deab612",
     "frozen-trees.md": "sha256:768a87e69ef7da18b276f27d77d7cb2e492fb2eba2a55ae483d6d9b21d32751b",
-    "installed.json": "sha256:fb595239cbc889a90ebc0e2079f1449aafb94f0784fb4505d3eb0754ec59e787",
+    "installed.json": "sha256:33a6a1c8af281b9c11d377d604004e87f822250049f259f6a9d16338d47213aa",
     "plan-de-implementacion.md": "sha256:c9e27a08666eb727d39e755ca4df1d72757bb2bc7cee76a281967738199c9717",
     "registro-contexto.md": "sha256:60c768b449a416fa8727b1bf2515caecab0e9962111cc97a2d203f922fdc3227",
-    "scripts-installed.json": "sha256:eae4594474b7f5ecc566890f4de13db5759315d6d8a1b41f5ca3ad36709c407e",
+    "scripts-installed.json": "sha256:da535f99d86da8c5c47f28d95d6febff3b9c2aefde614f1de97b0af604de9765",
     "usage-guide.md": "sha256:209ed4a281077d8a721bd67a97d7d0be743bd270cef005ade442f36fc1d60815"
   },
   "history": [
@@ -183,6 +183,24 @@
       "changes": {
         "corpus-installed.json": "ejemplo sincronizado a corpus/v9 (HV-2): solo la version, placeholders intactos",
         "installed.json": "ejemplo sincronizado a plantillas/v19 (HV-2)"
+      }
+    },
+    {
+      "from": "plantillas/v19",
+      "to": "plantillas/v20",
+      "breaking": false,
+      "changes": {
+        "scripts-installed.json": "ejemplo sincronizado a gate/v14 (ADR-048)",
+        "installed.json": "ejemplo sincronizado a plantillas/v20"
+      }
+    },
+    {
+      "from": "plantillas/v20",
+      "to": "plantillas/v21",
+      "breaking": false,
+      "changes": {
+        "scripts-installed.json": "digest del ejemplo de check_templates.py al real de gate/v14 (hallazgo de la revision del PR #91)",
+        "installed.json": "ejemplo sincronizado a plantillas/v21"
       }
     }
   ]

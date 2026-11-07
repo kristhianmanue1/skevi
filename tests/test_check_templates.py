@@ -556,6 +556,7 @@ class SourceProvenanceTests(unittest.TestCase):
             "https://github.com/org/repo@" + "a" * 40,
             "https://github.com/org/repo@" + "a" * 64,
             "../espejo-local/skevi@0a1b2c3d",
+            "https://github.com/org/repo@HEAD",
         )
         self._regex_rejects(
             "skevi/templates/skevi",
@@ -563,6 +564,8 @@ class SourceProvenanceTests(unittest.TestCase):
             "repo@0a1b2c",
             "repo@a@0a1b2c3",
             "repo@0a1b2c3 extra",
+            "repo@head",
+            "repo@HEAD2",
             "",
         )
 
