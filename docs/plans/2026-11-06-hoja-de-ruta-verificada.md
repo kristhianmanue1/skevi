@@ -108,10 +108,10 @@ TAREA HV-2 — Holgura por compresión para desbloquear PROP-010 T06
   Produce: salida de check_sizes con ruta <=1618; corpus/v9 y
     plantillas/v19 sellados, espejos .skevi/ al día
   Steps:
-  - [ ] Comprimir la duplicación conservando ambas normas —
+  - [x] Comprimir la duplicación conservando ambas normas —
         verificación: check_sizes OK con ruta <=1618 y diff sin reglas
         perdidas
-  - [ ] Bump corpus/v9 y espejo .skevi/ al SHA del commit fuente —
+  - [x] Bump corpus/v9 y espejo .skevi/ al SHA del commit fuente —
         verificación: unittest discover OK y check_templates al día
 
 TAREA HV-3 — Resolver el deadlock y ejecutar PROP-010 §8
@@ -158,7 +158,7 @@ TAREA HV-4 — Dossier de opciones sobre el doble commit del espejo
   Produce: dossier con las dos opciones y sus puntos de contacto; la
     decisión del Operador registrada
   Steps:
-  - [ ] Escribir el dossier con costes y riesgos por opción —
+  - [x] Escribir el dossier con costes y riesgos por opción —
         verificación: cita tests, CI y README con línea exacta
   - [ ] Registrar la decisión — verificación: registro en docs/reviews
 
@@ -186,7 +186,7 @@ TAREA HV-6 — Disposición de docs/orchestration/
     ADR-023 y ADR-044
   Produce: recomendación con tabla de desfases y decisión registrada
   Steps:
-  - [ ] Cotejar runbook contra el canon vigente — verificación: tabla
+  - [x] Cotejar runbook contra el canon vigente — verificación: tabla
         con cita de línea por desfase
   - [ ] Recomendar al Operador — verificación: registro con decisión
 
