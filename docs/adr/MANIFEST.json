@@ -1,9 +1,9 @@
 {
   "schema": "skevi/adr-manifest/v1",
-  "version": "adr/v6",
-  "generated_at": "2026-10-29T15:35:14Z",
+  "version": "adr/v7",
+  "generated_at": "2026-11-07T13:31:45Z",
   "files": {
-    "00-INDICE.md": "sha256:f130d341d856d7b510f0e66ea99f314721396c239734192cc3da022792087bc1",
+    "00-INDICE.md": "sha256:c2ddda63b3e85d9f7b9e5cef8f92acffc149e200f31879f4008e0b754d771bf0",
     "ADR-001-gate-local-sin-ci.md": "sha256:8e935fba22b1e8023c304569b08c2503c975a0662b5db51035466932e1f6c875",
     "ADR-002-separacion-docs-por-vida-util.md": "sha256:1b0532904e903d0dd2bf45fed8ed3f8529be3c1900882dedd44fdf6fb00770af",
     "ADR-003-directorios-en-ingles.md": "sha256:b06d60a8079ae0c73f2d0b9124a0d7941aec04d82bfff0cc8df9972a90dd84c4",
@@ -49,7 +49,9 @@
     "ADR-043-continuacion-autonoma-acotada.md": "sha256:4c23e1d80b6010669b2394439475438eaf013cf0acb3d0f23a5dd8613aa226fb",
     "ADR-044-push-merge-condicional.md": "sha256:8af86ba671092dc8a2c143bf290ba1c03267e6a08333e61f458fd32ac33e452b",
     "ADR-045-regla-e6-lote-en-plan.md": "sha256:29e47d17baf0c2b7cdfd58a36cfb9b2a05959b510e3dfc20eccbed9318ba7a2a",
-    "ADR-046-frontera-final-e6.md": "sha256:f02cfd1f4d4c62794798a3b0f6f819f21d0553bb8be9a8b49fde4564f8b8eab2"
+    "ADR-046-frontera-final-e6.md": "sha256:f02cfd1f4d4c62794798a3b0f6f819f21d0553bb8be9a8b49fde4564f8b8eab2",
+    "ADR-047-rutas-historicas-propuestas.md": "sha256:718854f4f7c50425a478f6d37d900d6b80f33ee839e3f7d93dc886b0d023e4e3",
+    "ADR-048-sha-head-autohospedaje.md": "sha256:f039fcdc3d4fa411a07e36646c24687e8ff9d005e7f7c5e86d27bf23c899e5d1"
   },
   "history": [
     {
@@ -94,6 +96,16 @@
       "breaking": false,
       "changes": {
         "ADR-046-frontera-final-e6.md": "PROPUESTO: frontera final en E6 — flexiones (pushes, merged, mergeable) no activan la regla; hallazgo M1 de la revisión GLM; entrada de índice sólo al confirmar el Operador"
+      }
+    },
+    {
+      "from": "adr/v6",
+      "to": "adr/v7",
+      "breaking": false,
+      "changes": {
+        "00-INDICE.md": "filas de ADR-047 y ADR-048; anotaciones hacia adelante de ADR-009/017/020/021/038 (HV-5)",
+        "ADR-047-rutas-historicas-propuestas.md": "nuevo: doctrina de rutas historicas (opcion A del deadlock, confirmado)",
+        "ADR-048-sha-head-autohospedaje.md": "nuevo: @HEAD solo en auto-hospedaje (opcion 2 del dossier HV-4, confirmado)"
       }
     }
   ]

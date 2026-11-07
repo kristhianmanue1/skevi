@@ -188,12 +188,31 @@ class SelfInstalledRecordsStayInSyncTests(unittest.TestCase):
         """ADR-031: la revisión es la del último bump de CADA familia, no
         la del HEAD por comodidad — el registro no caduca con cada commit
         ajeno, y esta prueba sella esa propiedad: el sha declarado debe
-        ser el último commit que tocó el manifiesto de su familia."""
+        ser el último commit que tocó el manifiesto de su familia.
+        ADR-048: en auto-hospedaje (origen = remote de este repo) la
+        revisión simbólica @HEAD es válida; el sha literal sigue siendo
+        obligatorio para todo origen externo."""
         import subprocess
+
+        def _canon(url: str) -> str:
+            return (url.strip().removeprefix("https://")
+                    .removeprefix("git@").replace(":", "/")
+                    .removesuffix(".git").rstrip("/").lower())
+
         for manifest_rel, installed_rel in self.PAIRS:
             with self.subTest(installed=installed_rel):
                 source = self._installed(installed_rel)["source"]
-                revision = source.rsplit("@", 1)[1]
+                origen, _, revision = source.rpartition("@")
+                if revision == "HEAD":
+                    probe = subprocess.run(
+                        ["git", "config", "--get", "remote.origin.url"],
+                        cwd=self.REPO, capture_output=True, text=True)
+                    self.assertEqual(probe.returncode, 0)
+                    self.assertEqual(
+                        _canon(origen), _canon(probe.stdout),
+                        f"{installed_rel}: @HEAD con origen distinto al "
+                        "remote de este repositorio")
+                    continue
                 probe = subprocess.run(
                     ["git", "log", "-1", "--format=%H", "--", manifest_rel],
                     cwd=self.REPO, capture_output=True, text=True)
@@ -241,3 +260,39 @@ class AdrManifestRealRepoTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SelfHostingHeadSourceTests(unittest.TestCase):
+    """ADR-048: la referencia simbólica @HEAD sólo vale cuando el origen
+    declarado es el propio repositorio. Vive aquí y no en
+    test_check_templates por el techo de tamaño de ese archivo
+    (estándar §3.4)."""
+
+    REPO = Path(__file__).resolve().parent.parent
+
+    def test_head_with_foreign_origin_blocks(self):
+        """Extremo a extremo: fuera de todo repositorio Git, un registro
+        con source @HEAD y origen ajeno da BLOQ (fail-closed sin Git)."""
+        import subprocess
+        import sys
+        import tempfile
+        manifest = self.REPO / "templates" / "skevi" / "MANIFEST.json"
+        data = json.loads((self.REPO / "templates" / "skevi" /
+                           "installed.json").read_text(encoding="utf-8"))
+        data["version"] = json.loads(
+            manifest.read_text(encoding="utf-8"))["version"]
+        data["files"] = json.loads(
+            manifest.read_text(encoding="utf-8"))["files"]
+        data["source"] = "https://example.com/otro-repo@HEAD"
+        with tempfile.TemporaryDirectory() as tmp:
+            installed = Path(tmp) / "installed.json"
+            installed.write_text(json.dumps(data), encoding="utf-8")
+            probe = subprocess.run(
+                [sys.executable,
+                 str(self.REPO / "scripts" / "check_templates.py"),
+                 "--manifest", str(manifest),
+                 "--installed", str(installed)],
+                capture_output=True, text=True)
+            self.assertEqual(probe.returncode, 1,
+                             probe.stdout + probe.stderr)
+            self.assertIn("sólo en auto-hospedaje", probe.stdout)
