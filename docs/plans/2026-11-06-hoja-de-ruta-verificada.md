@@ -95,12 +95,18 @@ TAREA HV-1 — Corregir la deriva de README.md
 TAREA HV-2 — Holgura por compresión para desbloquear PROP-010 T06
   Permitido: docs/estandar-diseno-software-github.md (§4.3, §6.2, §6.6),
     docs/ai-agent-guide/04-ejecucion-y-verificacion.md (§7),
-    docs/MANIFEST.json y .skevi/corpus-installed.json para el bump.
+    docs/MANIFEST.json para el bump. Superficie ampliada por el Operador
+    el 2026-11-07 tras el escalamiento de la ronda (registrado en
+    docs/reviews/2026-11-07-hv2-ronda.md): la plantilla
+    templates/skevi/corpus-installed.json con salto plantillas/v19 en su
+    manifiesto, y los espejos .skevi/corpus-installed.json y
+    .skevi/installed.json sincronizados al SHA del commit fuente.
   Prohibido: subir reading_path.limit; editar ADRs; efectos Git sin
     lote aceptado.
   Consumes: duplicación dossier/lote estándar↔04 señalada por la ronda;
     ADR-025 p3; ADR-031 (commit doble del espejo)
-  Produce: salida de check_sizes con ruta <=1618; corpus/v9 sellado
+  Produce: salida de check_sizes con ruta <=1618; corpus/v9 y
+    plantillas/v19 sellados, espejos .skevi/ al día
   Steps:
   - [ ] Comprimir la duplicación conservando ambas normas —
         verificación: check_sizes OK con ruta <=1618 y diff sin reglas
