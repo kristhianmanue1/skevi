@@ -119,7 +119,8 @@ actitud positiva: es intentar demostrar que está mal.
 - **Ataca lo que rompe, no el estilo:** invariantes violados, errores
   silenciados, casos edge sin cubrir, contratos incumplidos byte a byte,
   compatibilidad rota, recursos sin liberar, entrada no confiable sin
-  validar, tests que pasan pero no prueban el requisito.
+  validar, tests que pasan pero no prueban el requisito — forma: el
+  catálogo de defectos de templates/skevi/review-defect-catalog.md (ADR-035).
 - **Prohibido:** una ronda que sólo elogia o comenta estilo no cuenta como
   adversarial.
 
@@ -263,7 +264,8 @@ reporta (estándar §4.3); no destruyas trabajo ajeno para «dejarlo limpio».
 - evidencia contradictoria: el entorno no coincide con lo que F0 registró;
 - falta un permiso o una dependencia;
 - llevas dos intentos fallidos en el mismo problema: el tercero empieza con
-  un diagnóstico escrito, no con otro intento ciego.
+  un diagnóstico escrito, no con otro intento ciego (forma: la sección de
+  diagnóstico del catálogo de defectos, ADR-035).
 
 ## 9. Gate de F3 (por tarea)
 

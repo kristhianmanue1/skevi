@@ -128,3 +128,12 @@ Sin esos dos pasos, el workflow es informativo, no un gate.
 Si tu proyecto tiene código que no se edita en sitio (export de
 generador, entrega de tercero, baseline sellado), copia también
 `frozen-trees.md` a tu `.skevi/` y sigue sus instrucciones (ADR-033).
+
+## Plantilla opcional: catálogo de defectos
+
+`review-defect-catalog.md` (experimental, ADR-035) da forma a la ronda
+adversarial de la guía `04` §5: nueve clases de defecto con pregunta de
+ataque y evidencia esperada, más la sección de diagnóstico escrito que
+`04` §8 exige tras dos intentos fallidos. La salida de una revisión
+asistida sigue siendo no determinista (ADR-024): el catálogo aporta forma
+comprobable, no certeza.

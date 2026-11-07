@@ -32,7 +32,7 @@ fuente de verdad, que es la que se consulta para el contenido vigente.
 | `docs/adr/` | Decisiones estructurales inmutables | Sólo crece | `00-INDICE.md` |
 | `docs/crosswalk-estandares.md` | Cotejo con NIST SSDF y OWASP LLM | Caduca con sus fuentes | Tabla de versiones del archivo |
 | `docs/mapa-orientacion.md` | Orientación visual y greppable del método | Caduca con el canon | Encabezado del archivo |
-| `docs/proposals/` | Cambios bajo deliberación, no normativos | Hasta decidir | Encabezado de cada archivo |
+| `docs/proposals/` | Deliberaciones no normativas; el directorio existe sólo mientras haya deliberación abierta | Hasta decidir | Encabezado de cada archivo |
 | `docs/specs/`, `docs/plans/` | F0/F1 y planes de programas de mejora | Por programa | Encabezado; planes: `check_plans` |
 | `docs/reviews/` | Rondas y cierres de programa | Congelado al cerrar | `skevi-gate.json` clave `reports` |
 | `docs/history/` | Registro de procedencia, no normativo | No cambia | — |
@@ -44,7 +44,8 @@ fuente de verdad, que es la que se consulta para el contenido vigente.
 La separación no es estética: cada carpeta tiene una **vida útil distinta**.
 El estándar cambia poco, la guía cambia con la práctica, `orchestration/`
 caduca cuando cambian las herramientas, `proposals/` vive mientras se delibera
-un cambio y `history/` no debería cambiar nunca. Mezclarlas en un archivo obliga
+un cambio (y desaparece cuando no hay deliberación abierta) y `history/` no
+debería cambiar nunca. Mezclarlas en un archivo obliga
 a revisar lo estable cada vez que se mueve lo volátil.
 
 ## Cómo se usa
