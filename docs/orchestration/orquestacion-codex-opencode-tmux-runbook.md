@@ -1,8 +1,10 @@
 # Runbook operativo — Codex/OpenCode/tmux
 
-**Tipo:** material de consulta con el teclado en la mano.
+**Estado:** adaptador por host — sin peso normativo, igual que su protocolo
+asociado (decisión del Operador del 2026-11-07, opción C del cotejo HV-6).  
+**Tipo:** material de consulta con el teclado en la mano.  
 **Protocolo asociado:** `orquestacion-codex-opencode-tmux.md`, que define roles,
-topologías, máquina de estados, tarjeta de trabajo y reglas de autoridad.
+topologías, máquina de estados, tarjeta de trabajo y reglas de autoridad.  
 **Cuándo se usa este archivo:** al adoptar el método en un proyecto nuevo, al
 lanzar una sesión y cuando algo se rompe durante la ejecución.
 
