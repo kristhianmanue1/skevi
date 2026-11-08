@@ -59,6 +59,15 @@ ofrece:
     complemento de adopción para árboles congelados —código que no se
     edita en sitio, sea cual sea su autoría—: baseline por derivación,
     que aterriza la iniciativa A-2 de PROP-002 (ADR-033)
+  - >
+    registro de decisiones intermedias de ejecución en archivos, con
+    formato de ruling y prevalencia de Git tras compactación (ADR-049)
+  - >
+    taxonomía de disposiciones de la ronda adversarial: tres pilas,
+    re-graduación por efecto y menores sin pase de arreglos (ADR-050)
+  - >
+    sección opcional Review Focus en la plantilla de plan: hasta cinco
+    clases de entrada no ejercitadas, con el paso que las fija (ADR-051)
   - registro histórico de pilotos con procedencia de cada regla
 
 no_ofrece:

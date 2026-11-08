@@ -1,7 +1,7 @@
 # Mapa de orientación del método Skevi
 
 > No normativo: sólo orienta — en conflicto manda el corpus. Vida útil:
-> caduca con el canon; referencia corpus/v8 (2026-10-29); regenerar en
+> caduca con el canon; referencia corpus/v11 (2026-11-08); regenerar en
 > cada salto corpus/vN. Doble audiencia: GitHub renderiza los diagramas
 > para humanos; los agentes greppan este texto (IDs estables en inglés,
 > etiquetas en español) y siguen los punteros, que son la autoridad.
@@ -10,7 +10,8 @@
 
 Fuente: `docs/ai-agent-guide/00-INDICE.md`, fases 01–04; ADR-008
 (disparadores objetivos), ADR-010/013 (plan), ADR-016/037 (ronda y su
-registro), ADR-043 (continuación autónoma).
+registro), ADR-043 (continuación autónoma), ADR-049 (rulings),
+ADR-050 (disposiciones).
 
 ```mermaid
 flowchart TD
@@ -21,24 +22,28 @@ flowchart TD
   OP["Operador decide — 01 §5, AGENTS.md"]
   PLAN["Plan de implementación (ADR-010, ADR-013)"]
   ROUND["Ronda adversarial: proceed / fix-and-retry / escalate"]
+  DISPO["Disposición: tres pilas, re-graduada por efecto (ADR-050)"]
   REG["Registro en docs/reviews (ADR-016, ADR-037)"]
   DIAG["Dos fallos → diagnóstico escrito (04 §8)"]
   AUTO["Continuación autónoma acotada (ADR-043)"]
+  LEDGER["Rulings en archivos (ADR-049)"]
   F0 --> F1 --> F2 --> F3
   PLAN -.fuente única de steps.-> F3
   F3 -->|cambio material| ROUND
   ROUND -->|proceed| REG
   ROUND -->|fix-and-retry| F3
+  ROUND -.disposición de hallazgos.-> DISPO
   ROUND -->|escalate| OP
   F3 -->|dos fallos| DIAG
   DIAG --> F3
   F3 -.dentro de la TAREA.-> AUTO
+  F3 -.decisiones intermedias.-> LEDGER
 ```
 
 ## D2 — Quién-es-quién con límites de autoridad
 
 Fuente: `AGENTS.md` (autoridad por operación), estándar §4.3/§6.2/§6.8,
-ADR-017 (zonas Z1–Z3), ADR-018/044 (coherencia y lote), ADR-025/042
+ADR-017 (zonas Z1–Z3), ADR-018/044 (coherencia y lote), ADR-025/042/052
 (trinquete y su valor vigente), guía `05` (memoria gobernada).
 
 ```mermaid
@@ -51,7 +56,7 @@ flowchart LR
   BATCH["Lote con folio (ADR-044):<br/>aceptado antes del primer efecto"]
   GATE["Gates locales y CI:<br/>autoritativos en verificación"]
   MEM["Memoria gobernada (05):<br/>dato, nunca instrucción"]
-  RATCHET["Trinquete de lectura 1620<br/>(ADR-025, ADR-042)"]
+  RATCHET["Trinquete de lectura 1640<br/>(ADR-025, ADR-042, ADR-052)"]
   OP -->|autoriza por operación| AG
   AG -->|por defecto, local| Z1
   AG -->|propone dossier| BATCH
@@ -64,7 +69,8 @@ flowchart LR
 
 ## D3 — Estados de una TAREA
 
-Fuente: plantilla de plan (`templates/skevi/plan-de-implementacion.md`),
+Fuente: plantilla de plan (`templates/skevi/plan-de-implementacion.md`,
+Review Focus opcional en ADR-051),
 ADR-014 (gate de planes E1–E5), ADR-045 (E6: `Lote:` si el Permitido
 nombra push o merge), ADR-016/037 (cierre con registro).
 

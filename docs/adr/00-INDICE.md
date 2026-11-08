@@ -49,6 +49,10 @@
 | [ADR-046](ADR-046-frontera-final-e6.md) | Frontera final en E6 — flexiones de push y merge no activan | Aceptado | `scripts/check_plans.py` (gate/v13) | Hallazgo M1 de la revisión GLM del 2026-10-29; confirmación expresa del Operador | 2026-10-29 |
 | [ADR-047](ADR-047-rutas-historicas-propuestas.md) | Rutas históricas en referencias hacia propuestas | Aceptado | Doctrina de ADR-036 extendida (índice como hogar de enlaces vigentes); habilita PROP-010 §8 | Opción A del deadlock (HV-3); registro `docs/reviews/2026-11-07-decisiones-operador.md`; confirmación literal del Operador | 2026-11-07 |
 | [ADR-048](ADR-048-sha-head-autohospedaje.md) | Exención de SHA literal en el auto-hospedaje del registro | Aceptado | `scripts/check_templates.py` (gate/v14), `tests/test_check_manifests.py` | Opción 2 del dossier HV-4; registro `docs/reviews/2026-11-07-decisiones-operador.md`; confirmación literal del Operador | 2026-11-07 |
+| [ADR-049](ADR-049-registro-decisiones-intermedias.md) | Registro de decisiones intermedias en F3 (rulings) | Aceptado | `04` §2 (corpus/v11) | [PROP-013](../proposals/PROP-013-superpowers-referencia.md) §2; confirmación estructural del Operador | 2026-11-08 |
+| [ADR-050](ADR-050-taxonomia-disposiciones-ronda.md) | Taxonomía de disposiciones de la ronda adversarial | Aceptado | `04` §5.2 (corpus/v11) | [PROP-013](../proposals/PROP-013-superpowers-referencia.md) §3; confirmación estructural del Operador | 2026-11-08 |
+| [ADR-051](ADR-051-review-focus-plantilla-plan.md) | Review Focus opcional en la plantilla de plan | Aceptado | `templates/skevi/plan-de-implementacion.md` (plantillas/v23) | [PROP-013](../proposals/PROP-013-superpowers-referencia.md) §4; confirmación estructural del Operador | 2026-11-08 |
+| [ADR-052](ADR-052-presupuesto-1640-adopcion-049-050.md) | Presupuesto de lectura 1640 — la adopción de 049 y 050 lo consume | Aceptado | `skevi-gate.json` clave `reading_path` | Política p3 de ADR-038; consecuencia declarada de la confirmación de ADR-049 | 2026-11-08 |
 
 **Reglas de este índice**
 
