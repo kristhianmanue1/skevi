@@ -1,10 +1,29 @@
 #!/usr/bin/env sh
 # Gate local de Skevi. Se instala con: git config core.hooksPath scripts/hooks
 # Verificación rápida previa al push; el gate autoritativo es el CI (ADR-034).
+# Los tres auto-chequeos de check_templates corren sólo cuando existe su
+# registro de instalación: sin registro no hay efecto alguno (ADR-020), así
+# que un adoptante sin .skevi/ no se bloquea y en auto-hospedaje el hook
+# queda en paridad con el CI (tarea B2 del piloto ADR-043).
 set -e
 
 repo_root="$(git rev-parse --show-toplevel)"
 python3 "$repo_root/scripts/check_sizes.py"
 python3 "$repo_root/scripts/check_plans.py"
 python3 "$repo_root/scripts/check_reports.py"
+if [ -f "$repo_root/.skevi/installed.json" ]; then
+  python3 "$repo_root/scripts/check_templates.py" \
+    --manifest "$repo_root/templates/skevi/MANIFEST.json" \
+    --installed "$repo_root/.skevi/installed.json"
+fi
+if [ -f "$repo_root/.skevi/scripts-installed.json" ]; then
+  python3 "$repo_root/scripts/check_templates.py" \
+    --manifest "$repo_root/scripts/MANIFEST.json" \
+    --installed "$repo_root/.skevi/scripts-installed.json"
+fi
+if [ -f "$repo_root/.skevi/corpus-installed.json" ]; then
+  python3 "$repo_root/scripts/check_templates.py" \
+    --manifest "$repo_root/docs/MANIFEST.json" \
+    --installed "$repo_root/.skevi/corpus-installed.json"
+fi
 python3 -m unittest discover -s "$repo_root/tests"
