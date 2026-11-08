@@ -7,7 +7,7 @@ del cotejo HV-6, `docs/reviews/2026-11-07-hv6-cotejo-orchestration.md`).
 **Ámbito:** proyectos de software locales en macOS o Linux  
 **Modelo principal:** humano orquestador → Codex CLI controlador → OpenCode ejecutor  
 **Modo directo validado:** humano → Codex Desktop controlador → OpenCode interactivo  
-**Dependencias conceptuales:** ADRC, sesiones persistentes, revisión adversarial y evidencia ejecutable  
+**Dependencias conceptuales:** ADRC, sesiones persistentes, revisión adversarial y evidencia ejecutable; rulings de ejecución (ADR-049) y disposiciones de ronda (ADR-050, corpus/v11)  
 **Dependencias de runtime:** ninguna respecto de Escrubery o Epistates  
 **Material operativo:** `orquestacion-codex-opencode-tmux-runbook.md` (recuperación, fallas comunes, prompts base, checklist de adopción)  
 **Ronda adversarial de esta guía:** `../history/orquestacion-codex-opencode-tmux-adversarial.md`  
@@ -35,6 +35,9 @@ El objetivo es que:
 - OpenCode despierte a Codex mediante un mensaje al terminar;
 - las ventanas de Codex y OpenCode permanezcan visibles para el orquestador;
 - exista una ronda adversarial antes de considerar terminado un hito;
+- las decisiones intermedias del ejecutor queden en archivos como
+  rulings y los hallazgos de la ronda se dispongan en tres pilas
+  (ADR-049 y ADR-050 — punteros al canon, que manda en conflicto);
 - el resultado se verifique con Git, pruebas y evidencia real.
 
 Este mecanismo no convierte la salida de un agente en verdad ni autorización.
