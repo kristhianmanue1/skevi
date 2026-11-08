@@ -1,9 +1,9 @@
 {
   "schema": "skevi/adr-manifest/v1",
-  "version": "adr/v9",
-  "generated_at": "2026-11-08T12:55:00Z",
+  "version": "adr/v10",
+  "generated_at": "2026-11-08T14:05:00Z",
   "files": {
-    "00-INDICE.md": "sha256:738ae325834cfcc78b374bf9070a44a673ea4a1b140caa5159ec305dfd45fe24",
+    "00-INDICE.md": "sha256:9b9ab2d2d2880918cbeee7628edac7002c7ccc53cee657cf1e666b11015caf1b",
     "ADR-001-gate-local-sin-ci.md": "sha256:8e935fba22b1e8023c304569b08c2503c975a0662b5db51035466932e1f6c875",
     "ADR-002-separacion-docs-por-vida-util.md": "sha256:1b0532904e903d0dd2bf45fed8ed3f8529be3c1900882dedd44fdf6fb00770af",
     "ADR-003-directorios-en-ingles.md": "sha256:b06d60a8079ae0c73f2d0b9124a0d7941aec04d82bfff0cc8df9972a90dd84c4",
@@ -130,6 +130,14 @@
         "ADR-050-taxonomia-disposiciones-ronda.md": "nuevo ADR aceptado: disposiciones de ronda (PROP-013 §3)",
         "ADR-051-review-focus-plantilla-plan.md": "nuevo ADR aceptado: Review Focus en plantillas/v23 (PROP-013 §4)",
         "ADR-052-presupuesto-1640-adopcion-049-050.md": "nuevo ADR aceptado: presupuesto 1620 -> 1640 (ADR-038 p3)"
+      }
+    },
+    {
+      "from": "adr/v9",
+      "to": "adr/v10",
+      "breaking": false,
+      "changes": {
+        "00-INDICE.md": "enlaces vivos de PROP-013 siguen su traslado a docs/history (ADR-047; tarea A1 del piloto ADR-043)"
       }
     }
   ]
