@@ -157,13 +157,19 @@ class TemplateManifestGateTests(unittest.TestCase):
 
     def test_deep_nested_json_fails_sanitized(self):
         """JSON anidado por debajo del límite de recursión: fallo controlado
-        sin excepción cruda (hallazgo BLOCKER de la ronda adversarial)."""
+        sin excepción cruda (hallazgo BLOCKER de la ronda adversarial).
+        El fallo controlado llega por cualquiera de las dos ramas según la
+        plataforma: algunos parsers resuelven la anidación sin
+        RecursionError y la raíz — una lista — falla el chequeo
+        estructural; otros la rechazan como JSON profundo. Ambas son
+        salidas controladas y ambas son aceptables; un traceback, no."""
         self.manifest_path.write_text("[" * 60000 + "]" * 60000,
                                       encoding="utf-8")
         failures = self._failures()
         self.assertEqual(len(failures), 1)
-        self.assertIn("JSON", failures[0])
         self.assertNotIn("Traceback", str(failures))
+        self.assertTrue(any("JSON" in f or "raíz debe ser un objeto" in f
+                            for f in failures))
 
     def test_symlink_in_templates_dir_fails(self):
         """Un symlink en templates/skevi/ no se sigue ni se digiere: fallo
