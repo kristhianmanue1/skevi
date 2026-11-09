@@ -1,7 +1,14 @@
 # PROP-014-S — Perfil mínimo del contrato de coordinación (sin Herdr, sin multi-modelo)
 
-**Estado: PROPUESTO — derivado de la familia PROP-014 v0.5.0; nada de
-este documento es norma vigente ni autoriza operación alguna.**
+**Estado: APROBADO como política de coordinación de skevi por orden del
+Operador (2026-11-09, «adelante para commits push merges y aprobación
+de perfil»); registro de la decisión:
+`docs/reviews/2026-11-09-prop014-perfil-aprobacion.md`.** Las
+precondiciones §8/§10 de la familia (hogar del estado, identidad de
+escritor, fuente de tiempo, designaciones) siguen pendientes para el
+primer uso real de coordinación — la aprobación es de la política, no
+de una colaboración concreta. Nada de este documento autoriza operación
+alguna por sí mismo.
 Versión: 0.5.0-S.1 (2026-11-09).
 
 Origen: Core `PROP-014-core-contrato-coordinacion.md` 0.5.0-C.1 (sha256
