@@ -1,17 +1,19 @@
 # PROP-014 — Contrato de coordinación multi-proyecto
 
 **Estado: PROPUESTO — deliberación abierta; nada de este documento es
-norma vigente ni autoriza operación alguna.** Fecha: 2026-11-08.
+norma vigente ni autoriza operación alguna.** Fecha: 2026-11-08;
+última modificación: 2026-11-09 (0.3.1).
 
-Origen: texto del Operador (contrato v0.2.0, PROPOSED), enmendado en
-esta propuesta como **v0.2.1-candidata** con las dos enmiendas ordenadas
-el 2026-11-08 — (1) subordinación al canon local de cada proyecto, nueva
-Rule A4, y (2) alineación de la atribución de causa en AR5 — y más las
-correcciones que la ronda adversarial fresca del mismo día exigió sobre
-ese texto nuevo (piso mínimo de A1-A3, definición de «executor», checks
-compartidos estricto-de-todos, SR-08). Todo cambio contra la v0.2.0 está
-declarado en §12; el revisor difunde contra el original preservado
-fuera del repo.
+Origen: texto del Operador (contrato v0.2.0, PROPOSED). Este archivo lleva la
+cadena completa de candidaturas: **v0.2.1** (dos enmiendas ordenadas el
+2026-11-08 — Rule A4 de subordinación al canon local y cláusula de causa
+en AR5 — más las correcciones de su ronda fresca), **v0.3.0** (paquete
+afinado por la ronda del 2026-11-09: Rule A5, AR2 inspeccionable, §7.2,
+E3, L3/L4, §8, tres planos, renuncia acotada) y **v0.3.1** (parches
+quirúrgicos de la tercera ronda: L5 concurrencia, cuatro escenarios de
+falsación, designación del Coordinator, procedencia documental y
+precedencia de los diagramas). Todo cambio contra la v0.2.0 está
+declarado en §12; cada ronda tiene registro con hash en `docs/reviews/`.
 
 Posición de Skevi frente al contrato (deliberación, no adopción): es
 **política de ecosistema**, no canon de Skevi — cubre coordinación entre
@@ -34,9 +36,9 @@ local — es la enmienda 1.
 3. **Aprobación**: el checklist §10 exige aprobación explícita del
    Operador; esta propuesta no la constituye.
 4. **Designación del Cross-Project Coordinator** (hallazgo M5 de la
-   ronda): parcialmente cerrada por Rule A5 (0.3.0) — su autoridad
-   anuda a la aprobación §10 del Operador. Resta decidir si se exige
-   además una línea de designación explícita en el CC o en §10.
+   ronda): **cerrada por 0.3.1** — el CC registra
+   `coordinator_designation` con `authorization_ref` a la aprobación §10
+   y el Deterministic Controller la valida en `proposed → agreed`.
 5. **Feedback 0.2.2 para el Operador** (hallazgos H2/L2/L3 de la ronda,
    heredados de v0.2.0): **resueltos por las correcciones 0.3.0** —
    Rules L3/L4 y la etiqueta de reanudación guardada cierran el path
@@ -66,7 +68,7 @@ nueva ronda general; el piloto falsifica.
 # Multi-Project Agent Coordination Contract
 
 **Status:** PROPOSED  
-**Version:** 0.3.0  
+**Version:** 0.3.1  
 **Scope:** Coordination of autonomous agent teams working within and across software projects  
 **Implementation:** Technology-neutral; Herdr may be used as an execution adapter  
 **Authority:** This document proposes a protocol. It does **not** grant permissions or authorize repository changes, commits, merges, releases, deployments, or persistent governance writes.
@@ -127,9 +129,9 @@ flowchart TB
 
 **Rule A3 — Human-reserved actions:** Scope expansion, material risk acceptance, production promotion, and any commit, push, merge, tag, release, deployment, publication, or governed-memory write require explicit authorization covering those actions. An agreed interface does not authorize its integration or release.
 
-**Rule A4 — Local canon precedence (enmienda 1):** Within any participating project, authority, evidence, and verification obligations are governed by that project's own adopted canon (for example, its skevi-gate and standard). This contract governs only cross-project coordination. Rules A1–A3 and §7.1 are a minimum floor within every participating project: a local canon may add obligations, never subtract from them, and "stricter" is computed against this contract as the baseline. A WO/CC/IA cannot grant, inside a project, what that project's canon denies, and no local canon can authorize, inside a project, what Rules A1–A3 reserve. For checks that feed a shared IA or CC, each participant applies its own canon to its own obligations, and the shared check passes only if it satisfies every applicable canon; a canon-versus-canon conflict escalates per §6 to the Human Operator, never to the Coordinator. The classification of a check as local or cross-project is recorded by the Verifier and is disputable via §6.
+**Rule A4 — Local canon precedence (enmienda 1):** Within any participating project, authority, evidence, and verification obligations are governed by that project's own adopted canon (for example, its skevi-gate and standard). This contract governs only cross-project coordination. Rules A1–A3 and §7.1 are a minimum floor within every participating project: a local canon may add obligations, never subtract from them, and "stricter" is computed against this contract as the baseline. A WO/CC/IA cannot grant, inside a project, what that project's canon denies, and no local canon can authorize, inside a project, what Rules A1–A3 reserve. For checks that feed a shared IA or CC, each participant applies its own canon to its own obligations, and the shared check passes only if it satisfies every applicable canon; a canon-versus-canon conflict escalates per §6 to the Human Operator, never to the Coordinator. «Strictest-of-all» presupposes that a satisfying option exists: where two canons impose contradictory treatments of the same evidence and no option satisfies both, the shared check cannot pass — the affected operation remains blocked until the conflict is resolved per §6. The rule is not a general solver for incompatible canons (0.3.1). The classification of a check as local or cross-project is recorded by the Verifier and is disputable via §6.
 
-**Rule A5 — Effective authorization (0.3.0):** Every effectful operation is checked against its effective authorization before execution; if authorization cannot be verified, the operation is denied. A WO or CC records an `authorization_ref` binding to the delegating mechanism: reserved actions of Rule A3 record the human acceptance; a captain's scope records the CC `authority` block; inside a participating project, the project's local canon governs the form of delegation (Rule A4) and the `authorization_ref` may point to that mechanism's own artifact. Authorization is evaluated against the current state of the delegating mechanism at each effectful transition — a recorded reference is never a cache of permissions: if the underlying authorization was revoked, expired, or superseded, the operation is denied and any in-flight step stops per Rule E2. The Coordinator's own authority binds to the operator approval of §10; no role self-issues authorization. An Execution Authorization Envelope (resources, paths, operations, constraints, expiry, revocation) may serve as an illustration and MUST NOT introduce a second delegation format inside a project whose canon already defines one.
+**Rule A5 — Effective authorization (0.3.0):** Every effectful operation is checked against its effective authorization before execution; if authorization cannot be verified, the operation is denied. A WO or CC records an `authorization_ref` binding to the delegating mechanism: reserved actions of Rule A3 record the human acceptance; a captain's scope records the CC `authority` block; inside a participating project, the project's local canon governs the form of delegation (Rule A4) and the `authorization_ref` may point to that mechanism's own artifact. Authorization is evaluated against the current state of the delegating mechanism at each effectful transition — a recorded reference is never a cache of permissions: if the underlying authorization was revoked, expired, or superseded, the operation is denied and any in-flight step stops per Rule E2. The Coordinator's own authority binds to the operator approval of §10; no role self-issues authorization. A CC MUST record the designation of its Cross-Project Coordinator and the scope of that designation (0.3.1), carrying an `authorization_ref` to the §10 approval; the Deterministic Controller validates the designation on the `proposed → agreed` transition, and an agent not so designated does not exercise Coordinator authority. An Execution Authorization Envelope (resources, paths, operations, constraints, expiry, revocation) may serve as an illustration and MUST NOT introduce a second delegation format inside a project whose canon already defines one.
 
 ## 3. Minimal coordination objects
 
@@ -137,7 +139,7 @@ Three distinct objects share `id`, `version`, `owner`, `status`, `references`, a
 
 | Object | Purpose | Minimum required fields |
 |---|---|---|
-| **Coordination Contract (CC)** | Who may coordinate, change, accept, or escalate a particular collaboration | `id`, `version`, `participants`, `scope`, `authority`, `escalation_policy`, `verification_policy`, `status` |
+| **Coordination Contract (CC)** | Who may coordinate, change, accept, or escalate a particular collaboration | `id`, `version`, `participants`, `scope`, `authority`, `coordinator_designation`, `escalation_policy`, `verification_policy`, `status` |
 | **Work Order (WO)** | Bounded unit of executable work | `id`, `project`, `owner`, `objective`, `allowed_scope`, `excluded_scope`, `dependencies`, `acceptance`, `permissions`, `authorization_ref`, `status` |
 | **Interface Agreement (IA)** | Observable technical commitments between provider and consumer projects | `id`, `version`, `provider`, `consumer`, `interface_reference`, `compatibility_policy`, `acceptance_tests`, `status` |
 
@@ -162,6 +164,10 @@ coordination_contract:
     project_captains: [propose, plan_within_scope, verify]
     cross_project_coordinator: [track, recommend, escalate]
     human_reserved: [approve_scope_expansion, accept_material_risk, authorize_release]
+    coordinator_designation:
+      agent_ref: <designated-agent>
+      scope: "IA registration and dependency tracking for CC-001"
+      authorization_ref: <operator-approval-per-section-10>
   escalation_policy:
     unresolved_contract_conflict: human_operator
     unauthorized_action: stop
@@ -239,6 +245,10 @@ stateDiagram-v2
 **Rule L3 — Ownership of registration (0.3.0):** Only a project's captain (or delegated owner) creates or modifies that project's Work Orders; the Coordinator records agreements and dependencies in the coordination state, never inside a project.
 
 **Rule L4 — Resume from blocked (0.3.0):** Resumption from `blocked` returns to the executable state recorded when the Work Order or collaboration entered `blocked`; a Work Order blocked before entering review cannot resume into `adversarial_review` — entering review requires passing `verification`.
+
+**Rule L5 — Concurrent transitions (0.3.1):** A state transition MUST NOT overwrite or silently supersede a conflicting concurrent transition. The Deterministic Controller arbitrates: a transition commits only against the object's current `prior_state` (compare-and-set, §8), and a rejected transition is itself recorded as a §8 event for reconciliation. L5 complements §8's duplicate-transition prevention — a duplicate is a replay of the same event; a conflict is a race between distinct events. Reconciliation runs under the negotiation budget of E3 and §6; the concrete storage mechanism is decided together with the canonical state home.
+
+The diagrams of §4, §5 and §7 are illustrative representations: they are not authorizations and do not replace the normative transition conditions (Rules L1–L5). Where a diagram and a rule diverge, the rule prevails.
 
 ## 5. Cross-project protocol
 
@@ -437,8 +447,13 @@ For multi-step cross-repository operations, reconcile each participant against i
 | Runtime completion is not proof | Worker reports done without test evidence | WO remains unverified/inconclusive |
 | Recovery avoids duplicates | Restart after an action with unknown result | No blind replay; reconciliation is logged |
 | Authority remains bounded | Request out-of-scope write or release | Affected action stops; valid in-scope positive control still works |
+| Revocation binds mid-flight (0.3.1) | Revoke an authorization while its WO step is pending | In-flight step stops (E2/A5); no permission cache outlives revocation; a non-revoked in-scope step proceeds |
+| Unsupported evidence reuse rejected (0.3.1) | Reuse a required check with a naked «no change» basis over a changed artifact | Reuse rejected or check rerun; no closure on stale evidence; a reuse with recorded impact basis is accepted |
+| Resume cannot skip verification (0.3.1) | Block a WO before review, then attempt to resume into `adversarial_review` | Resume returns to the recorded pre-block state (L4); review entry still requires `verification`; a WO blocked in review resumes to `adversarial_review` |
+| Conflicting transitions land safely (0.3.1) | Two actors commit conflicting transitions on the same object | Only one transition lands; the other is rejected and reconciled (L5) |
+| False Coordinator designation rejected (0.3.1) | An agent self-designates as Coordinator without §10-linked authorization | The `proposed → agreed` transition is denied by the Controller; a properly designated positive control proceeds |
 
-**Pilot exit criteria:** All five scenarios observed with reproducible records, plus an adversarial first round and a focused second round after a seeded defect is fixed; unresolved failures and limitations reported explicitly. This is a local architecture test, not a general safety certification.
+**Pilot exit criteria:** All ten scenarios observed with reproducible records, plus an adversarial first round and a focused second round after a seeded defect is fixed; unresolved failures and limitations reported explicitly. This is a local architecture test, not a general safety certification.
 
 ## 10. Adoption checklist
 
@@ -452,7 +467,7 @@ For multi-step cross-repository operations, reconcile each participant against i
 
 **Decision pending:** Approval of the contract and any separate implementation actions. No repository, persistent memory, CI, or production resource is changed by this document.
 
-## 11. Self-adversarial review of this specification (0.2.0)
+## 11. Self-adversarial review of this specification (0.2.0, amended)
 
 **Review type:** Author self-review of the text of this contract, **not independent audit**. **Evidence:** inspection of this Markdown specification and its internal consistency; no running agent fleet, cross-project protocol, policy enforcement, or end-to-end workflow was exercised. The checks below are design-level only. Findings were challenged against the revised text; their disposition does not certify implementation.
 
@@ -467,7 +482,7 @@ For multi-step cross-repository operations, reconcile each participant against i
 | SR-07 | A human risk acceptance could be misrepresented as proof that a failed technical check passed. | AR6 and AR9 preserve failed evidence and distinguish risk decisions from fulfillment. | Addressed in text; policy enforcement untested |
 | SR-08 | A local canon looser than this contract could displace Rules A1–A3 inside that project. | A4 (0.2.1) sets A1–A3 and §7.1 as a minimum floor, computes "stricter" against this contract as baseline, and routes canon-versus-canon conflicts to the Human Operator. | Addressed in text; behavior untested |
 
-**Residual material limitations:** The contract does not implement authentication, authorization enforcement, reviewer isolation, provenance attestation, a state machine, dependency analysis, or proof that review probes actually ran. A separate implementation must test both negative and positive controls. Review cannot establish the absence of undiscovered defects. No second independent reviewer participated. The normative rules still need validation against a real pilot before adoption. The 0.2.1 amendments (Rule A4 and the AR5 clause) were reviewed on 2026-11-08 by an external fresh-context session (register in skevi `docs/reviews/`); that round's findings on v0.2.0-inherited text — diagram/text divergences in §4 (WO `blocked → adversarial_review` path bypassing `verification`; missing `verifying → blocked` for collaborations) and the sequence diagram's Coordinator-write reading — were resolved by the 0.3.0 corrections (Rules L3/L4, the guarded resume label, the added collaboration transition, and the sequence diagram recording into coordination state).
+**Residual material limitations:** The contract does not implement authentication, authorization enforcement, reviewer isolation, provenance attestation, a state machine, dependency analysis, or proof that review probes actually ran. A separate implementation must test both negative and positive controls. Review cannot establish the absence of undiscovered defects. The normative rules still need validation against a real pilot before adoption. The SR table above is the 0.2.0 author self-review; later amendments were reviewed externally as follows, with no independence claimed beyond fresh-context separation: 0.2.1 — fresh adversarial round of 2026-11-08 (`docs/reviews/2026-11-08-prop014-contrato-ronda.md`, `report_sha256 = 8647d20d7dae2f951123af29d32eb425e90a2ba6d8393b0d21fd3a4dab3524e1`); 0.3.0 — refine-or-discard round of 2026-11-09 (`docs/reviews/2026-11-09-prop014-afinado-ronda.md`, `report_sha256 = 7337a4ea06e87b5f50b439076bfb550a03066816f295250551e726ec1610793c`); 0.3.1 — narrow delta round of 2026-11-09 (`docs/reviews/2026-11-09-prop014-031-ronda.md`). The v0.2.0-era diagram/text divergences were resolved by the 0.3.0 corrections (Rules L3/L4, the guarded resume label, the added collaboration transition, and the sequence diagram recording into coordination state).
 
 From 0.3.0, the contract's invariants are normative (MUST) for any implementation claiming conformance, and conformance is demonstrated by falsification tests on a real implementation (§9 style), not by further full-specification review. The waiver of full-spec review is bounded: it covers editorial changes, the enumerated 0.3.0 corrections, and pilot parameterization. Any change to Rules A1–A5, AR0–AR9, or the state semantics of §4 reopens review of the affected section before the pilot.
 
@@ -476,3 +491,4 @@ From 0.3.0, the contract's invariants are normative (MUST) for any implementatio
 - **0.2.0 (proposed):** Added falsification-oriented, evidence-granular, progressively narrowed adversarial review; amended terminal state gates, diagrams, and pilot criteria. No implementation or authorization implied.
 - **0.2.1 (proposed):** Per the Operator's directive of 2026-11-08 and the fresh adversarial round of the same date: added Rule A4 (local canon precedence) with Rules A1–A3 and §7.1 as minimum floor, shared-check strictest-of-all rule and §6 escalation for canon conflicts; added the stricter-local-cause clause of AR5 with the definition of «executor» and recorded cause attribution classified by the Verifier; added SR-08 and the external-review note to §11; updated the Version header. v0.2.0-inherited text is otherwise unchanged. No implementation or authorization implied.
 - **0.3.0 (proposed):** Per the refined adversarial round of 2026-11-09 (afinar/desechar): Rule A5 — effective authorization with `authorization_ref`, evaluation against the delegating mechanism's current state (no permission caching), revocation/expiry handling, Coordinator bootstrap bound to §10 approval, and the envelope demoted to illustration; evidence reuse in AR2 now requires a recorded, inspectable impact basis, and the §7.1 example models it; new §7.2 proportionality defaults (baseline tiers, raisable by local canon; executor-binding documents never Low); Rule E3 negotiation budget; Rules L3 (captain-only WO registration) and L4 (resume-from-blocked invariant) plus the guarded resume label, the collaboration `verifying → blocked` transition, and the sequence diagram recording into coordination state; §8 partial-failure recovery with pre-defined compensations and blocked-CC on unestablishable consistency; §2 three-planes clause; §11 normative invariants with bounded review waiver. Discarded by the round: the activable-modality proposal (fail-open) and the negotiation ladder (redundant; E3 survives it). Deferred to the pilot: conditional transitions and value metrics. No implementation or authorization implied.
+- **0.3.1 (proposed):** Per the third review's surviving findings, refined by the narrow delta round of 2026-11-09: Rule L5 — concurrent transitions arbitrated by the Deterministic Controller via compare-and-set on `prior_state`, rejected transitions recorded as §8 events, reconciliation under E3/§6; five new falsification scenarios in §9 (revocation mid-flight, unsupported evidence reuse, resume-cannot-skip-verification, conflicting concurrent transitions, false Coordinator designation — each with its positive control); explicit Coordinator designation recorded in the CC (`coordinator_designation` with `authorization_ref` to §10) and validated by the Controller on `proposed → agreed`; document provenance corrected (version chain in the header, §11 retitled, exact register paths and hashes, Version bumped); diagrams of §4/§5/§7 declared illustrative with normative precedence of Rules L1–L5; A4 «strictest-of-all» clarified as presupposing satisfiability — not a general solver. No implementation or authorization implied.
