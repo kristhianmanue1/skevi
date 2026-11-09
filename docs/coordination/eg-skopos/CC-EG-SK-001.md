@@ -57,16 +57,12 @@ coordination_contract:
     review_decisions: [proceed, fix_and_retry, escalate]
 ```
 
-## Hogar del estado (pendiente §10 — dos opciones, con recomendación)
+## Hogar del estado (designado 2026-11-09)
 
-1. **Repositorio dedicado `aria/coordination`** (recomendado): neutro,
-   sin dar a una parte la pizarra de la otra; eventos con commits
-   firmados cuando existan; costo: un repo más.
-2. Directorio `coordination/` versionado en el repo **consumidor**
-   (expertoGobernanza), donde ya vive la evidencia bilateral; más
-   barato, pero el proveedor escribe en casa ajena (requiere aceptarlo
-   por escrito en el encendido).
-
-Mientras no se designe: **este directorio en skevi es sólo el borrador
-de los candidatos** — no es hogar canónico y no registra transiciones
-de las partes; `events.jsonl` viaja al hogar al encender.
+**`aria/coordination`** (repo dedicado) es el hogar canónico, designado
+por el Operador al aceptar la opción recomendada junto al lote
+SKV-LOTE-20261109-02. La copia canónica del CC (v0.2.0, con
+`state_home_ref` y `time_source` llenos), los WOs, el IA-REGISTRO y el
+registro de eventos viven allí, con el controller mínimo (S3) ya
+operativo; este directorio de skevi queda como borrador de origen y
+señalética.
