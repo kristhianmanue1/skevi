@@ -45,6 +45,33 @@ local — es la enmienda 1.
    blocked` — y la lectura del diagrama de secuencia («Record agreed
    IA») como escritura del Coordinator en los proyectos.
 
+## Backlog 0.3.0 — afinado por ronda del 2026-11-09
+
+Ronda fresca con mandato de refutar sobre las once propuestas
+candidatas (registro: `2026-11-09-prop014-afinado-ronda.md`). Veredictos:
+**desechadas** P1 (modalidad local: fail-open autocalificado; A2+A4 ya
+son la modalidad local y el piso §7.1 es innegociable) y P6 (escalera de
+negociación redundante con §6/§5; sobrevive sólo el presupuesto de
+negociación como cláusula); **postergadas** P3 (transiciones
+condicionales: hasta decidir el hogar del estado y existir más de un
+escritor) y P10 (métricas de valor: al plan del piloto, con
+pre-registro de baseline y definiciones a prueba de cancelar-todo /
+rubber-stamp / defect-seeding); **afinadas** P2, P4, P5, P7, P8, P9 y
+P11, con sus textos de corrección en el registro de la ronda. Presupuesto
+del paquete: ~42 líneas netas, cero objetos obligatorios nuevos. La
+redacción del 0.3.0 queda pendiente de orden del Operador.
+
+Notas de redacción que la ronda dejó acotadas: P2 exige subordinación
+del envelope a A4/§6.8 del canon local, semántica de vigencia y
+revocación (hoy inexistente en el contrato) y cierra el bootstrap del
+Coordinator (su `authorization_ref` es la aprobación §10); P4 se ancla a
+los required checks de AR5 y corrige el ejemplo de §7.1; P5 excluye del
+tier Low los documentos que vinculan ejecutores y declara los tiers
+como baseline elevable por canon local; P7 añade la regla «el WO lo
+registra el capitán del proyecto, nunca el Coordinator»; P9 aclara que
+la deliberación de las rondas sigue legítima; P11 blinda su renuncia a
+revisión con guarda de reapertura por sección.
+
 ---
 
 # Multi-Project Agent Coordination Contract
