@@ -23,6 +23,10 @@ las partes hasta su encendido.
    (coordinator/controller) e **identidad de escritor** del hogar. La
    orden que habilita este kit vive registrada con hash en
    `docs/reviews/2026-11-09-piloto-eg-skopos-ronda.md` (AUTHORITY).
+   **ESTADO**: hogar designado y creado (`aria/coordination`, 2026-11-09)
+   con fuente de tiempo (UTC de sus commits), identidad de escritor
+   (commits firmados) y controller mínimo operativo — precondiciones
+   de infraestructura CERRADAS.
 2. **Capitán de Skopos**: registra WO-SK-001 y lo deja listo —
    **registra, no ejecuta**.
 3. **Capitán de expertoGobernanza**: registra WO-EG-001 y lo deja
