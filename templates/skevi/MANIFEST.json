@@ -1,12 +1,12 @@
 {
   "schema": "skevi/template-manifest/v1",
-  "version": "plantillas/v24",
-  "generated_at": "2026-11-13T12:18:31Z",
+  "version": "plantillas/v25",
+  "generated_at": "2026-11-13T15:54:31Z",
   "files": {
     "architecture-overview.md": "sha256:c7a03679ec978ff609e6216cc63b5043eeb185424895083970b399ac9912b2d3",
-    "corpus-installed.json": "sha256:9f183460e64309ca2e6e7441d364c84a8374f0d4d357003f07f92eceb319492c",
+    "corpus-installed.json": "sha256:68afbb6ada261b839c138f2a75d995e2e1155b752af7b16882eff104c0073954",
     "frozen-trees.md": "sha256:768a87e69ef7da18b276f27d77d7cb2e492fb2eba2a55ae483d6d9b21d32751b",
-    "installed.json": "sha256:9cb1de07ff2e29af20fabcef1ad3ee4318be46b7a4553f868d6edc63ff5debbc",
+    "installed.json": "sha256:7459fa4a90e90595d2410e8ce2fb4f48bb3b10a9b119c96843c77df0163c41ef",
     "plan-de-implementacion.md": "sha256:d0c7a570c0fbfb9a5fb4e2145281262d9949bf09225b467ed43deff7f5514f87",
     "registro-contexto.md": "sha256:60c768b449a416fa8727b1bf2515caecab0e9962111cc97a2d203f922fdc3227",
     "scripts-installed.json": "sha256:da535f99d86da8c5c47f28d95d6febff3b9c2aefde614f1de97b0af604de9765",
@@ -232,6 +232,15 @@
       "changes": {
         "corpus-installed.json": "ejemplo sincronizado a corpus/v12",
         "installed.json": "ejemplo sincronizado a plantillas/v24"
+      }
+    },
+    {
+      "from": "plantillas/v24",
+      "to": "plantillas/v25",
+      "breaking": false,
+      "changes": {
+        "corpus-installed.json": "ejemplo sincronizado a corpus/v13",
+        "installed.json": "ejemplo sincronizado a plantillas/v25"
       }
     }
   ]

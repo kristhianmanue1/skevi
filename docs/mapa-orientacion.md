@@ -1,7 +1,7 @@
 # Mapa de orientación del método Skevi
 
 > No normativo: sólo orienta — en conflicto manda el corpus. Vida útil:
-> caduca con el canon; referencia corpus/v12 (2026-11-13); regenerar en
+> caduca con el canon; referencia corpus/v13 (2026-11-13); regenerar en
 > cada salto corpus/vN. Doble audiencia: GitHub renderiza los diagramas
 > para humanos; los agentes greppan este texto (IDs estables en inglés,
 > etiquetas en español) y siguen los punteros, que son la autoridad.

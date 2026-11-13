@@ -69,3 +69,10 @@ segundo hallazgo se refutó con cita textual; las lecciones resultaron
 honestas respecto de su origen. Veredicto: **proceed**. El límite de
 capacidad del revisor quedó declarado en RISK y compensado con las
 verificaciones mecánicas; la capa técnica manda ante contradicción.
+
+> **Nota (2026-11-13, r1):** la revisión posterior de contexto fresco
+> (Sonnet r1, registro `2026-11-13-issue99-r1-fix.md`) **reabre la
+> disposición de esta ronda**: sin acceso a las notas de origen, este
+> revisor no podía contrastar la evidencia de las lecciones cuando afirmó
+> su honestidad. La r1 verificó contra las notas y corrigió dos
+> Evidencias (filas 7 y 8).
