@@ -1,9 +1,9 @@
 {
   "schema": "skevi/adr-manifest/v1",
-  "version": "adr/v10",
-  "generated_at": "2026-11-08T14:05:00Z",
+  "version": "adr/v11",
+  "generated_at": "2026-11-13T12:18:31Z",
   "files": {
-    "00-INDICE.md": "sha256:9b9ab2d2d2880918cbeee7628edac7002c7ccc53cee657cf1e666b11015caf1b",
+    "00-INDICE.md": "sha256:1c447683ff6a6f4f2487f924e12cfc9c4cf24d54f0e53604296859e6145f0e00",
     "ADR-001-gate-local-sin-ci.md": "sha256:8e935fba22b1e8023c304569b08c2503c975a0662b5db51035466932e1f6c875",
     "ADR-002-separacion-docs-por-vida-util.md": "sha256:1b0532904e903d0dd2bf45fed8ed3f8529be3c1900882dedd44fdf6fb00770af",
     "ADR-003-directorios-en-ingles.md": "sha256:b06d60a8079ae0c73f2d0b9124a0d7941aec04d82bfff0cc8df9972a90dd84c4",
@@ -55,7 +55,8 @@
     "ADR-049-registro-decisiones-intermedias.md": "sha256:1444238d6dd84e65d8cb128230bb3f7e047b89865243e6f050cf307733561509",
     "ADR-050-taxonomia-disposiciones-ronda.md": "sha256:a11f916f486ff83ed64242fcd6f685605cb10efe75ec515fdfbb06483a56ac05",
     "ADR-051-review-focus-plantilla-plan.md": "sha256:5c1add0c81de54413a6331910b41601e883c08c0ab9d258b20c98199f9688fe2",
-    "ADR-052-presupuesto-1640-adopcion-049-050.md": "sha256:06248a15fbf855067a6ed182de567f1e75bd85d283cb6532ab617034580a354d"
+    "ADR-052-presupuesto-1640-adopcion-049-050.md": "sha256:06248a15fbf855067a6ed182de567f1e75bd85d283cb6532ab617034580a354d",
+    "ADR-053-hogar-de-lecciones-de-metodo.md": "sha256:364751b9876ade457aa81c2025d0fce4da858dbe3e9e9b37057fcdf5bd36deb2"
   },
   "history": [
     {
@@ -138,6 +139,15 @@
       "breaking": false,
       "changes": {
         "00-INDICE.md": "enlaces vivos de PROP-013 siguen su traslado a docs/history (ADR-047; tarea A1 del piloto ADR-043)"
+      }
+    },
+    {
+      "from": "adr/v10",
+      "to": "adr/v11",
+      "breaking": false,
+      "changes": {
+        "00-INDICE.md": "fila de ADR-053",
+        "ADR-053-hogar-de-lecciones-de-metodo.md": "nuevo: hogar de lecciones de método (issue #99)"
       }
     }
   ]

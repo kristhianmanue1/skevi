@@ -53,6 +53,7 @@
 | [ADR-050](ADR-050-taxonomia-disposiciones-ronda.md) | Taxonomía de disposiciones de la ronda adversarial | Aceptado | `04` §5.2 (corpus/v11) | [PROP-013](../history/PROP-013-superpowers-referencia.md) §3; confirmación estructural del Operador | 2026-11-08 |
 | [ADR-051](ADR-051-review-focus-plantilla-plan.md) | Review Focus opcional en la plantilla de plan | Aceptado | `templates/skevi/plan-de-implementacion.md` (plantillas/v23) | [PROP-013](../history/PROP-013-superpowers-referencia.md) §4; confirmación estructural del Operador | 2026-11-08 |
 | [ADR-052](ADR-052-presupuesto-1640-adopcion-049-050.md) | Presupuesto de lectura 1640 — la adopción de 049 y 050 lo consume | Aceptado | `skevi-gate.json` clave `reading_path` | Política p3 de ADR-038; consecuencia declarada de la confirmación de ADR-049 | 2026-11-08 |
+| [ADR-053](ADR-053-hogar-de-lecciones-de-metodo.md) | Hogar de lecciones de método (`docs/lecciones/`) | Aceptado | `docs/lecciones/` y fila de hogares del `README.md` | [issue #99](https://github.com/kristhianmanue1/skevi/issues/99); decisión D1 aplicada por orden del Operador (2026-11-13) | 2026-11-13 |
 
 **Reglas de este índice**
 

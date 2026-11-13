@@ -48,8 +48,8 @@ Reglas:
   Procedencia: ADR-043; razón: autonomía acotada por TAREA y gates.
 - `Presupuesto` es opcional salvo que la tarea consuma cuota tarifada o
   recursos compartidos por invocación; ahí es obligatorio y su agotamiento
-  produce un estado de fallo explícito, nunca éxito inferido
-  (`06-componentes-con-llm.md` §4; principio 5 y §2.2 del estándar).
+  produce fallo explícito, nunca éxito inferido
+  (`06-componentes-con-llm.md` §4; estándar p5, §2.2).
 
 ## 2. Implementación
 
@@ -70,11 +70,10 @@ Reglas:
   con la forma `Ruling: <qué decidí> — <por qué> — <qué coste si fallo>`;
   una desviación sin registro es una decisión en secreto. Tras una
   compactación o relevo de sesión manda el estado de Git y esos archivos,
-  no el recuerdo. Sin gate ni dependencia nueva: archivos y Git valen con
-  o sin memoria instalada (K4). Procedencia: ADR-049; razón: la
-  compactación borra decisiones ya tomadas y el re-despacho de trabajo ya
-  completado es el fallo más caro reportado por adoptantes del método
-  (Referencia: PROP-013 §2; superpowers executing-plans).
+  no el recuerdo; valen con o sin memoria instalada (K4). Procedencia:
+  ADR-049; razón: la compactación borra decisiones tomadas y el
+  re-despacho de trabajo completado es el fallo más caro reportado por
+  adoptantes del método (PROP-013 §2; superpowers executing-plans).
 
 ## 3. Tests
 
@@ -151,20 +150,17 @@ proceed | fix-and-retry | escalate
 ```
 
 Ronda sobre tarea material: el reporte lleva las dos capas y el bloque
-de trazabilidad de ADR-016 (ver `00-INDICE.md`, §Reporte en dos capas);
-la decisión `proceed | fix-and-retry | escalate` vive en ambas capas.
-El informe y la disposición de sus hallazgos viven juntos en `docs/reviews/`,
-nunca dentro del documento que la ronda revisa (ADR-037, `02` §3.3).
+de trazabilidad de ADR-016 (ver `00-INDICE.md`); la decisión vive en ambas
+capas. El informe y la disposición de sus hallazgos viven en `docs/reviews/`,
+nunca dentro del documento revisado (ADR-037, `02` §3.3).
 
 La disposición de cada hallazgo nombra una de tres pilas: resuelto con
 una fuente ya existente (se cita), menor con decisión del ejecutor
 registrada, o del Operador (se formula la pregunta). La severidad se
-re-gradúa por el efecto real sobre el consumidor del artefacto, no por
-lo que el SPEC calló; los hallazgos informativos quedan registrados con
-su disposición y no abren pase de arreglos. El hogar de la disposición
-sigue siendo el registro (ADR-037): este complemento fija su
-vocabulario. Procedencia: ADR-050; razón: disposiciones comparables
-entre rondas (Referencia: PROP-013 §3).
+re-gradúa por el efecto real sobre el consumidor, no por lo que el SPEC
+calló; los hallazgos informativos se registran sin pase de arreglos.
+Hogar: el registro (ADR-037); vocabulario fijado aquí. Procedencia:
+ADR-050; razón: disposiciones comparables entre rondas (PROP-013 §3).
 
 ### 5.3 Reglas de cierre
 
@@ -198,22 +194,19 @@ entre rondas (Referencia: PROP-013 §3).
 
 Rasgos de un reporte adversarial válido, para que compares el tuyo:
 
-- **Los hallazgos son ejecutables, no estilísticos.** Ejemplo real de una
-  ronda sobre un protocolo de orquestación: *"la corrección se envía a un
-  proceso one-shot que ya terminó, así que el shell interpreta el texto como
-  comando"* — un `BLOCKER` que rompe el ciclo completo. Compáralo con
-  *"faltan comentarios"*, que no es un hallazgo adversarial.
+- **Los hallazgos son ejecutables, no estilísticos.** Ejemplo real: *"la
+  corrección se envía a un proceso one-shot que ya terminó, así que el shell
+  interpreta el texto como comando"* — `BLOCKER` que rompe el ciclo. Compáralo
+  con *"faltan comentarios"*, que no lo es.
 - **Cada hallazgo lleva cuatro campos:** problema, impacto, corrección
   aplicada y estado (`cerrado` / `abierto` / `aceptado como riesgo`). Un
   hallazgo sin impacto declarado no permite priorizar.
-- **La evidencia es de comandos, no de lectura.** Versiones reales de las
-  herramientas, salidas observadas, la prueba concreta que demuestra que la
-  corrección funciona. En esa misma ronda, el fallo *"el prompt se inyectó
-  antes de que la interfaz estuviera lista"* sólo se detectó al ejecutar el
-  flujo dos veces; ninguna relectura lo habría encontrado.
-- **Los riesgos residuales se enumeran y se aceptan explícitamente,** en vez
-  de silenciarse. Aceptar un riesgo con nombre es una decisión; omitirlo es
-  una omisión.
+- **La evidencia es de comandos, no de lectura.** Versiones reales, salidas
+  observadas, la prueba concreta de que la corrección funciona: *"el prompt
+  se inyectó antes de que la interfaz estuviera lista"* sólo se detectó
+  ejecutando el flujo dos veces; ninguna relectura lo encuentra.
+- **Los riesgos residuales se enumeran y se aceptan explícitamente**, no se
+  silencian: aceptar un riesgo con nombre es decisión; omitirlo, omisión.
 - **La decisión final es una de las tres palabras**, y viene después de
   repetir los checks afectados.
 
@@ -243,6 +236,11 @@ Hallazgos fuera de alcance: <lista o "ninguno">
   semántico no equivale al cumplimiento exacto.
 - Reporta `fail` e `inconclusive` con la misma precisión que `pass`. Un `BLOQ`
   honesto vale más que un `OK` inflado: el humano decide sobre datos reales.
+- Calibra los verbos: reporta («la salida muestra», «reporta»), no
+  certificas («verifica», «garantiza») — certifica el comando citado, no el
+  adjetivo. Cada señal nombra el instrumento que la emitió; evidencias
+  distintas no se suman en una frase; un universal («siempre», «todos») sólo
+  se reporta contrastado con los datos de esta ejecución (issue #99, fila 1).
 
 ## 7. Operaciones con autoridad separada
 
@@ -269,6 +267,10 @@ Procedencia: [ADR-018](../adr/ADR-018-coherencia-de-autoridad.md) y
 [ADR-044](../adr/ADR-044-push-merge-condicional.md).
 Razón: proponer operaciones oportunamente sin ampliar permisos vigentes.
 
+El CI remoto es un recurso compartido con presupuesto: depura en local
+(gates y suite) antes de abrir el PR; no iteres rompiendo contra la matriz
+completa (issue #99, fila 2; ADR-034).
+
 Instalar o actualizar una dependencia con efecto en archivos del
 repositorio es, como mínimo, tarea Bounded.
 Procedencia: [PROP-008](../history/PROP-008-integracion-ankla-por-contrato.md).
@@ -294,13 +296,11 @@ reporta (estándar §4.3); no destruyas trabajo ajeno para «dejarlo limpio».
 - [ ] salida del RED reportada, o su no-aplicación justificada (ADR-011);
 - [ ] diff mínimo, leído completo, sin sorpresas;
 - [ ] docs y comentarios coherentes con el código;
-- [ ] si la tarea toca un componente con CONTRATO (02 §4), cada campo de
-      entrada/salida declarado existe literalmente en la firma o esquema
-      real del código — verificado leyendo o grepeando el código ahora,
-      no de memoria de cuando se escribió el contrato (procedencia:
-      `docs/history/piloto-skopos.md` F5 — un contrato prometió una
-      interfaz nunca implementada y nada lo detectó hasta una ronda
-      adversarial ajena);
+- [ ] si la tarea toca un componente con CONTRATO (02 §4), cada campo
+      declarado existe literalmente en la firma o esquema real — verificado
+      grepeando el código ahora, no de memoria de cuando se escribió
+      (procedencia: `docs/history/piloto-skopos.md` F5 — un contrato
+      prometió una interfaz nunca implementada y ninguna relectura lo vio);
 - [ ] ronda adversarial ejecutada con decisión `proceed` o `escalate`;
 - [ ] reporte de evidencia emitido con estado real;
 - [ ] cero operaciones de autoridad separada sin autorización.

@@ -35,6 +35,7 @@ fuente de verdad, que es la que se consulta para el contenido vigente.
 | `docs/proposals/` | Deliberaciones no normativas; el directorio existe sólo mientras haya deliberación abierta | Hasta decidir | Encabezado de cada archivo |
 | `docs/specs/`, `docs/plans/` | F0/F1 y planes de programas de mejora | Por programa | Encabezado; planes: `check_plans` |
 | `docs/reviews/` | Rondas y cierres de programa | Congelado al cerrar | `skevi-gate.json` clave `reports` |
+| `docs/lecciones/` | Lecciones de método con evidencia; no son norma | Por lección; caduca al promoverse a guía | ADR-053 |
 | `docs/history/` | Registro de procedencia, no normativo | No cambia | — |
 | `docs/orchestration/` | Método concreto, acoplado a herramientas | Caduca con ellas | Fecha de verificación del archivo |
 | `templates/skevi/` | Plantillas y formatos copiables, versionados | Versionado | `templates/skevi/MANIFEST.json` |
