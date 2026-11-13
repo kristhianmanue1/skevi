@@ -18,7 +18,7 @@ Evidencia = El 2026-09-08, al afirmar quién adopta Skevi en el
   de las dos mediciones miraba ahí. El patrón siguió: nueve emisiones
   falsas en cinco rondas; la salida no fue otra corrección, sino retirar
   del merge los documentos donde vivía el censo.
-Origen = aria-Skevi/rehacer-el-barrido-no-parchear-el-caso; episodios
+Origen = aria-Skevi/rehacer-el-barrido-no-parchear-el-caso; episodio
   2026-09-08; issue #99 fila 8 (triaje 2026-11-12).
 Revisión = docs/reviews/2026-11-13-issue99-lecciones.md (ronda con
   contexto fresco de otra familia).
