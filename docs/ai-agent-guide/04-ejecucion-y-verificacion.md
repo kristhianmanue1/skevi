@@ -50,6 +50,8 @@ Reglas:
   recursos compartidos por invocación; ahí es obligatorio y su agotamiento
   produce fallo explícito, nunca éxito inferido
   (`06-componentes-con-llm.md` §4; estándar p5, §2.2).
+- El CI remoto es un recurso compartido y acotado: depura en local antes
+  del PR; no iteres rompiendo contra la matriz (issue #99, fila 2).
 
 ## 2. Implementación
 
@@ -150,9 +152,10 @@ proceed | fix-and-retry | escalate
 ```
 
 Ronda sobre tarea material: el reporte lleva las dos capas y el bloque
-de trazabilidad de ADR-016 (ver `00-INDICE.md`); la decisión vive en ambas
-capas. El informe y la disposición de sus hallazgos viven en `docs/reviews/`,
-nunca dentro del documento revisado (ADR-037, `02` §3.3).
+de trazabilidad de ADR-016 (ver `00-INDICE.md`, §Reporte en dos capas);
+la decisión vive en ambas. El informe y la disposición de sus hallazgos
+viven en `docs/reviews/`, nunca dentro del documento revisado (ADR-037,
+`02` §3.3).
 
 La disposición de cada hallazgo nombra una de tres pilas: resuelto con
 una fuente ya existente (se cita), menor con decisión del ejecutor
@@ -237,7 +240,7 @@ Hallazgos fuera de alcance: <lista o "ninguno">
 - Reporta `fail` e `inconclusive` con la misma precisión que `pass`. Un `BLOQ`
   honesto vale más que un `OK` inflado: el humano decide sobre datos reales.
 - Calibra los verbos: reporta («la salida muestra», «reporta»), no
-  certificas («verifica», «garantiza») — certifica el comando citado, no el
+  certifiques («verifica», «garantiza») — certifica el comando citado, no el
   adjetivo. Cada señal nombra el instrumento que la emitió; evidencias
   distintas no se suman en una frase; un universal («siempre», «todos») sólo
   se reporta contrastado con los datos de esta ejecución (issue #99, fila 1).
@@ -266,10 +269,6 @@ adoptado por humano e independiente; revalida justo antes de cada efecto.
 Procedencia: [ADR-018](../adr/ADR-018-coherencia-de-autoridad.md) y
 [ADR-044](../adr/ADR-044-push-merge-condicional.md).
 Razón: proponer operaciones oportunamente sin ampliar permisos vigentes.
-
-El CI remoto es un recurso compartido con presupuesto: depura en local
-(gates y suite) antes de abrir el PR; no iteres rompiendo contra la matriz
-completa (issue #99, fila 2; ADR-034).
 
 Instalar o actualizar una dependencia con efecto en archivos del
 repositorio es, como mínimo, tarea Bounded.
@@ -300,7 +299,8 @@ reporta (estándar §4.3); no destruyas trabajo ajeno para «dejarlo limpio».
       declarado existe literalmente en la firma o esquema real — verificado
       grepeando el código ahora, no de memoria de cuando se escribió
       (procedencia: `docs/history/piloto-skopos.md` F5 — un contrato
-      prometió una interfaz nunca implementada y ninguna relectura lo vio);
+      prometió una interfaz nunca implementada; sólo una ronda adversarial
+      ajena lo vio);
 - [ ] ronda adversarial ejecutada con decisión `proceed` o `escalate`;
 - [ ] reporte de evidencia emitido con estado real;
 - [ ] cero operaciones de autoridad separada sin autorización.

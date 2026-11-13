@@ -9,11 +9,14 @@ Regla = Si en una tarea se saltó una regla del método —ronda adversarial,
 Cómo aplicarla = El reporte de cierre incluye una línea por cada regla
   omitida: cuál, quién la dispensó y con qué autorización; sin esa
   línea, el cierre declara un cumplimiento que no ocurrió.
-Evidencia = Omisiones de regla de método con permiso humano quedaron
-  silenciadas en cierres previos del ecosistema y se supieron después,
-  cuando el registro ya no podía distinguir permiso de descuido.
-Origen = aria-Skevi/flag-skipped-method-rules; issue #99 fila 7
-  (2026-11-12).
+Evidencia = El 2026-08-15 se mergeó un fix sin la ronda adversarial que
+  exigía practicas-ingenieria.md §1; al señalarlo en el cierre, el
+  Operador respondió «muy bien que lo viste» y explicó que a un humano se
+  le pasa y un agente puede sostener esa vigilancia. Se señaló en el
+  momento, sin convertirlo en objeción bloqueante; la decisión siguió
+  siendo del maintainer.
+Origen = aria-Skevi/flag-skipped-method-rules; episodio 2026-08-15;
+  issue #99 fila 7 (triaje 2026-11-12).
 Revisión = docs/reviews/2026-11-13-issue99-lecciones.md (ronda con
   contexto fresco de otra familia).
 ```
