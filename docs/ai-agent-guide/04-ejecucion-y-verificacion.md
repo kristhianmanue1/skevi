@@ -48,7 +48,8 @@ Reglas:
   Procedencia: ADR-043; razón: autonomía acotada por TAREA y gates.
 - `Presupuesto` es opcional salvo que la tarea consuma cuota tarifada o
   recursos compartidos por invocación; ahí es obligatorio y su agotamiento
-  produce fallo explícito, nunca éxito inferido (`06` §4; estándar p5, §2.2).
+  produce fallo explícito, nunca éxito inferido
+  (`06-componentes-con-llm.md` §4; estándar p5, §2.2).
 
 ## 2. Implementación
 
@@ -204,9 +205,8 @@ Rasgos de un reporte adversarial válido, para que compares el tuyo:
   observadas, la prueba concreta de que la corrección funciona: *"el prompt
   se inyectó antes de que la interfaz estuviera lista"* sólo se detectó
   ejecutando el flujo dos veces; ninguna relectura lo encuentra.
-- **Los riesgos residuales se enumeran y se aceptan explícitamente,** en vez
-  de silenciarse. Aceptar un riesgo con nombre es una decisión; omitirlo es
-  una omisión.
+- **Los riesgos residuales se enumeran y se aceptan explícitamente**, no se
+  silencian: aceptar un riesgo con nombre es decisión; omitirlo, omisión.
 - **La decisión final es una de las tres palabras**, y viene después de
   repetir los checks afectados.
 
